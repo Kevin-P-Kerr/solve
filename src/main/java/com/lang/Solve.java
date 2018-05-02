@@ -12,6 +12,7 @@ public class Solve {
 			System.out.println(s);
 			System.out.print(" > ");
 		}
+		scanner.close();
 	}
 
 }
