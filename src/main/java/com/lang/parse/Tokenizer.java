@@ -45,8 +45,11 @@ public class Tokenizer {
 			} else {
 				type = TokenType.TT_VAR;
 				i++;
-				c = ln.charAt(i);
-				while (c != ' ' && i < ii) {
+				while (i < ii && (c = ln.charAt(i)) != ' ') {
+					if (isReserved(c)) {
+						i--;
+						break;
+					}
 					lit += Character.toString(c);
 					i++;
 				}
@@ -56,6 +59,10 @@ public class Tokenizer {
 
 		}
 		return new TokenStream(tokens);
+	}
+
+	private static boolean isReserved(char c) {
+		return c == ':' || c == '+' || c == '*' || c == '(' || c == ')';
 	}
 
 	public static class TokenStream {
@@ -81,7 +88,7 @@ public class Tokenizer {
 			String ret = "";
 			for (Token t : tokens) {
 				ret += t.toString();
-				ret += " ";
+				ret += ", ";
 			}
 			return ret;
 		}
