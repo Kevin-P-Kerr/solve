@@ -2,6 +2,7 @@ package com.lang;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.lang.Prop.CompoundProp;
@@ -88,11 +89,31 @@ public class Interpreter {
 		}
 	}
 
-	public Prop eval() throws ParseException {
+	public Prop evalProp() throws ParseException {
 		Prop p = new Prop();
 		evalPrefix(p);
 		evalMatrix(p);
 		return p;
+	}
+
+	public Prop eval(Map<String, Prop> env) throws ParseException {
+		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_VAR)) {
+			tokens.getNext();
+			String varName = t.getLit();
+			t = tokens.peek();
+			if (t.getType().equals(TokenType.TT_EQUALS)) {
+				tokens.getNext();
+				Prop p = eval(env);
+				env.put(varName, p);
+				return p;
+			} else {
+				return env.get(varName);
+			}
+		} else {
+			return evalProp();
+		}
+
 	}
 
 }
