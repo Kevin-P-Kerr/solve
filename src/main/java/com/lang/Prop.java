@@ -80,15 +80,22 @@ public class Prop {
 			}
 			Hecceity h = q.getHecceity();
 			sb.append(h2s.get(h));
+			sb.append(" ");
 		}
 		sb.append(":");
 		for (AtomicProp prop: matrix) {
 			String name = prop.getName();
 			sb.append(name+"(");
+			boolean first = true;
 			for (Hecceity h:prop.getHecceities()) {
+				if (!first) {
+					sb.append(" ");
+				}
+				else {
+					first = false;
+				}
 				String c = h2s.get(h);
 				sb.append(c);
-				sb.append(" ");
 			}
 			sb.append(")");
 		}
