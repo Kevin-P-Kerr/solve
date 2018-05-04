@@ -26,7 +26,7 @@ public class Interpreter {
 			if (t.getType().equals(TokenType.TT_COLON)) {
 				break;
 			}
-			if (!(t.equals(TokenType.TT_FORALL) || t.equals(TokenType.TT_THEREIS))) {
+			if (!(t.getType().equals(TokenType.TT_FORALL) || t.getType().equals(TokenType.TT_THEREIS))) {
 				throw new ParseException("expecting quantifier", 0);
 			}
 			QuantifierType qt = t.getType().equals(TokenType.TT_FORALL) ? QuantifierType.FORALL
@@ -98,16 +98,16 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
 			String varName = t.getLit();
-			t = tokens.peek();
-			if (t.getType().equals(TokenType.TT_EQUALS)) {
-				tokens.getNext();
-				Prop p = eval(env);
-				System.out.println(p.toString());
-				env.put(varName, p);
-				return p;
-			} else {
-				return env.get(varName);
+			if (tokens.hasToken()) {
+				t = tokens.peek();
+				if (t.getType().equals(TokenType.TT_EQUALS)) {
+					tokens.getNext();
+					Prop p = eval(env);
+					env.put(varName, p);
+					return p;
+				}
 			}
+			return env.get(varName);
 		} else {
 			return evalProp();
 		}

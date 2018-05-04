@@ -125,6 +125,10 @@ public class Tokenizer {
 			}
 			return ret;
 		}
+
+		public boolean lookAhead(int i) {
+			return tokens.size() > (ptr + i);
+		}
 	}
 
 }
