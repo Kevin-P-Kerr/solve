@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class Prop {
+public class Prop extends Value {
 	private static class IDMaker {
 		private long c = 0;
 

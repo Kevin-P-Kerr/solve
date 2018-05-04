@@ -2,8 +2,6 @@ package com.lang;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
@@ -11,6 +9,7 @@ import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
 import com.lang.val.Prop.CompoundProp;
 import com.lang.val.Prop.QuantifierType;
+import com.lang.val.Value;
 
 public class Interpreter {
 
@@ -94,7 +93,7 @@ public class Interpreter {
 		return p;
 	}
 
-	public Prop eval(Map<String, Prop> env) throws ParseException {
+	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
@@ -103,12 +102,12 @@ public class Interpreter {
 				t = tokens.peek();
 				if (t.getType().equals(TokenType.TT_EQUALS)) {
 					tokens.getNext();
-					Prop p = eval(env);
+					Value p = eval(env);
 					env.put(varName, p);
 					return p;
 				}
 			}
-			return env.get(varName);
+			return env.lookUp(varName);
 		} else {
 			return evalProp();
 		}
