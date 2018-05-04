@@ -26,15 +26,12 @@ public class Interpreter {
 			if (t.getType().equals(TokenType.TT_COLON)) {
 				break;
 			}
-			QuantifierType qt;
-			String lit = t.getLit();
-			if (lit.equals("forall")) {
-				qt = QuantifierType.FORALL;
-			} else if (lit.equals("thereis")) {
-				qt = QuantifierType.THEREIS;
-			} else {
-				throw new ParseException(lit, 0);
+			if (!(t.equals(TokenType.TT_FORALL) || t.equals(TokenType.TT_THEREIS))) {
+				throw new ParseException("expecting quantifier", 0);
 			}
+			QuantifierType qt = t.getType().equals(TokenType.TT_FORALL) ? QuantifierType.FORALL
+					: QuantifierType.THEREIS;
+
 			t = tokens.getNext();
 			p.addQuantifier(qt, t.getLit());
 		}
@@ -105,6 +102,7 @@ public class Interpreter {
 			if (t.getType().equals(TokenType.TT_EQUALS)) {
 				tokens.getNext();
 				Prop p = eval(env);
+				System.out.println(p.toString());
 				env.put(varName, p);
 				return p;
 			} else {

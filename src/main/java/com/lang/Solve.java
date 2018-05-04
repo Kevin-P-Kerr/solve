@@ -22,7 +22,7 @@ public class Solve {
 				Prop p = i.eval(env);
 				System.out.println(p.toString());
 				System.out.print(" > ");
-			} catch (ParseException | NullPointerException e) {
+			} catch (ParseException e) {
 				System.out.println(e);
 			}
 		}

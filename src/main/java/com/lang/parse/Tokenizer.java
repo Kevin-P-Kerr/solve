@@ -8,7 +8,7 @@ import com.lang.parse.Tokenizer.Token.TokenType;
 public class Tokenizer {
 	public static class Token {
 		public enum TokenType {
-			TT_PLUS, TT_LPAREN, TT_RPAREN, TT_COLON, TT_ASTER, TT_VAR, TT_PERIOD, TT_EQUALS;
+			TT_PLUS, TT_LPAREN, TT_RPAREN, TT_COLON, TT_ASTER, TT_VAR, TT_PERIOD, TT_EQUALS, TT_FORALL, TT_THEREIS;
 		}
 
 		private final TokenType type;
@@ -62,7 +62,7 @@ public class Tokenizer {
 			} else if (c == '=') {
 				type = TokenType.TT_EQUALS;
 			} else {
-				type = TokenType.TT_VAR;
+
 				i++;
 				while (i < ii && (c = ln.charAt(i)) != ' ') {
 					if (isReserved(c)) {
@@ -71,6 +71,13 @@ public class Tokenizer {
 					}
 					lit += Character.toString(c);
 					i++;
+				}
+				if (lit.equals("forall")) {
+					type = TokenType.TT_FORALL;
+				} else if (lit.equals("thereis")) {
+					type = TokenType.TT_THEREIS;
+				} else {
+					type = TokenType.TT_VAR;
 				}
 			}
 			Token t = new Token(type, lit);
