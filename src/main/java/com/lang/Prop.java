@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lang.parse.Tokenizer.Token;
 
 public class Prop {
 	private static class IDMaker {
@@ -64,11 +65,12 @@ public class Prop {
 	
 	private List<Quantifier> prefix = Lists.newArrayList();
 	private List<AtomicProp> matrix = Lists.newArrayList();
-	
+	private Map<Hecceity,String> h2s = Maps.newHashMap();
+	private Map<String,Hecceity> s2h = Maps.newHashMap();
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		Map<Hecceity,Character> h2s = Maps.newHashMap();
-		char a = 'a';
+		
 		for (Quantifier q: prefix) {
 			if (q.getType() == QuantifierType.FORALL) {
 				sb.append("forall ");
@@ -77,27 +79,46 @@ public class Prop {
 				sb.append("thereis ");
 			}
 			Hecceity h = q.getHecceity();
-			if (h2s.containsKey(h)) {
-				sb.append(h2s.get(h));
-			}
-			else {
-				sb.append(a);
-				h2s.put(h, a);
-				a++;
-			}
+			sb.append(h2s.get(h));
 		}
 		sb.append(":");
 		for (AtomicProp prop: matrix) {
 			String name = prop.getName();
 			sb.append(name+"(");
 			for (Hecceity h:prop.getHecceities()) {
-				char c = h2s.get(h);
+				String c = h2s.get(h);
 				sb.append(c);
 				sb.append(" ");
 			}
 			sb.append(")");
 		}
 		return sb.toString();
+	}
+	
+	public void addQuantifier(Quantifier q) {
+		this.prefix.add(q);
+	}
+	
+	public void addAtomicProp (AtomicProp p) {
+		this.matrix.add(p);
+	}
+
+	public void addQuantifier(QuantifierType qt, String lit) {
+			Hecceity h = s2h.get(lit);
+			if (h == null) {
+				h = new Hecceity(idMaker.getID());
+				h2s.put(h, lit);
+				s2h.put(lit, h);
+			}
+			addQuantifier(new Quantifier(qt, h));
+	}
+
+	public void addAtomicProp(String name, List<String> hecceities) {
+		List<Hecceity> ents = Lists.newArrayList();
+		for (String s:hecceities) {
+			ents.add(s2h.get(s));
+		}
+		addAtomicProp(new AtomicProp(name, ents));
 	}
 
 }

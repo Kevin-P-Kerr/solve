@@ -18,6 +18,14 @@ public class Tokenizer {
 			this.type = type;
 			this.literal = lit;
 		}
+		
+		public TokenType getType () {
+			return type;
+		}
+		
+		public String getLit () {
+			return literal;
+		}
 
 		@Override
 		public String toString() {
