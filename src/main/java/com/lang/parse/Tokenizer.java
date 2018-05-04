@@ -18,12 +18,12 @@ public class Tokenizer {
 			this.type = type;
 			this.literal = lit;
 		}
-		
-		public TokenType getType () {
+
+		public TokenType getType() {
 			return type;
 		}
-		
-		public String getLit () {
+
+		public String getLit() {
 			return literal;
 		}
 
@@ -89,6 +89,13 @@ public class Tokenizer {
 			Token t = tokens.get(ptr);
 			ptr++;
 			return t;
+		}
+
+		/**
+		 * get the next token without incrementing the token counter
+		 */
+		public Token peek() {
+			return tokens.get(ptr);
 		}
 
 		@Override
