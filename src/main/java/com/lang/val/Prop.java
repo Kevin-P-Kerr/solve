@@ -1,4 +1,4 @@
-package com.lang;
+package com.lang.val;
 
 import java.util.List;
 import java.util.Map;

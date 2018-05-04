@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.lang.Prop.CompoundProp;
-import com.lang.Prop.QuantifierType;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
+import com.lang.val.Prop;
+import com.lang.val.Prop.CompoundProp;
+import com.lang.val.Prop.QuantifierType;
 
 public class Interpreter {
 
