@@ -74,10 +74,17 @@ public class Interpreter {
 		while (tokens.hasToken()) {
 			CompoundProp cp = p.makeBlankCompoundProp();
 			addAtomicProp(cp);
-			if (tokens.hasToken() && !tokens.peek().getType().equals(TokenType.TT_PLUS)) {
-				throw new ParseException("expected +", 0);
+			p.addCompoundProp(cp);
+			if (tokens.hasToken()) {
+				if (!tokens.peek().getType().equals(TokenType.TT_PLUS)) {
+					System.out.println(p.toString());
+					System.out.println(tokens.toString());
+					throw new ParseException(
+							"expected + got " + tokens.peek().getType() + " with lit " + tokens.peek().getLit(), 0);
+				}
+				// increment forward
+				tokens.getNext();
 			}
-
 		}
 	}
 

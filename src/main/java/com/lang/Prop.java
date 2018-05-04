@@ -113,9 +113,20 @@ public class Prop {
 			sb.append(" ");
 		}
 		sb.append(":");
+		boolean firstCP = true;
 		for (CompoundProp cp : matrix) {
+			if (!firstCP) {
+				sb.append(" + ");
+			} else {
+				firstCP = false;
+			}
 			boolean firstAtomicProp = true;
 			for (AtomicProp prop : cp.getAtomicProps()) {
+				if (!firstAtomicProp) {
+					sb.append("*");
+				} else {
+					firstAtomicProp = false;
+				}
 				String name = prop.getName();
 				sb.append(name + "(");
 				boolean first = true;
@@ -129,13 +140,9 @@ public class Prop {
 					sb.append(c);
 				}
 				sb.append(")");
-				if (!firstAtomicProp) {
-					sb.append("*");
-				} else {
-					firstAtomicProp = false;
-				}
+
 			}
-			sb.append(" + ");
+
 		}
 		return sb.toString();
 	}

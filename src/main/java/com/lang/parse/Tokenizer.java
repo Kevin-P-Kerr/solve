@@ -33,11 +33,18 @@ public class Tokenizer {
 		}
 	}
 
+	private static boolean isWhite(char c) {
+		return c == ' ';
+	}
+
 	public static TokenStream tokenize(String ln) {
 
 		List<Token> tokens = Lists.newArrayList();
 		for (int i = 0, ii = ln.length(); i < ii; i++) {
 			char c = ln.charAt(i);
+			if (isWhite(c)) {
+				continue;
+			}
 			String lit = Character.toString(c);
 			TokenType type;
 			if (c == '+') {
