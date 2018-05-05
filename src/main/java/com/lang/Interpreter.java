@@ -123,6 +123,7 @@ public class Interpreter {
 		addAllCompoundProps(p3,p1);
 		addAllCompoundProps(p3,p2);
 	}
+	
 	private void multMatrix(Prop p1, Prop p2, Prop p3) {
 		for (CompoundProp m: p1.getMatrix()) {
 			for (CompoundProp mc: p2.getMatrix()) {
