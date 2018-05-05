@@ -118,7 +118,7 @@ public class Prop extends Value {
 			addAtomicProp(new AtomicProp(name, ents));
 		}
 
-		private void addAtomicProp(AtomicProp atomicProp) {
+		public void addAtomicProp(AtomicProp atomicProp) {
 			this.atomicProps.add(atomicProp);
 
 		}
@@ -220,4 +220,5 @@ public class Prop extends Value {
 		return new CompoundProp();
 	}
 
+	
 }

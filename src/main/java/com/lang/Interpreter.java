@@ -7,6 +7,7 @@ import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
+import com.lang.val.Prop.AtomicProp;
 import com.lang.val.Prop.CompoundProp;
 import com.lang.val.Prop.Quantifier;
 import com.lang.val.Prop.QuantifierType;
@@ -103,9 +104,20 @@ public class Interpreter {
 			p3.addQuantifierUnique(q);
 		}
 	}
+	
+	private void addAllCompoundProps (Prop base, Prop from) {
+		for (CompoundProp p: from.getMatrix()) {
+			CompoundProp np = base.makeBlankCompoundProp();
+			for (AtomicProp ap:p.getAtomicProps()) {
+				np.addAtomicProp(ap);
+			}
+			base.addCompoundProp(np);
+		}
+	}
 
 	public void addMatrix(Prop p1, Prop p2, Prop p3) {
-
+		addAllCompoundProps(p3,p1);
+		addAllCompoundProps(p3,p2);
 	}
 
 	private Prop sumProps(Prop p1, Prop p2) {
