@@ -20,7 +20,7 @@ import com.lang.val.Value;
 public class Interpreter {
 
 	private final TokenStream tokens;
-	private final Map<String,List<Prop>> constructors = Maps.newConcurrentMap();
+	private final static Map<String,List<Prop>> constructors = Maps.newConcurrentMap();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -182,6 +182,33 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		List<Quantifier> prefix = p.getPrefix();
+		List<Quantifier> foralls = Lists.newArrayList();
+		for (Quantifier q: prefix) {
+			if (q.getType().equals(QuantifierType.FORALL)) {
+				foralls.add(q);
+			}
+			else {
+				break;
+			}
+		}
+		List<CompoundProp> matrix = p.getMatrix();
+		if (foralls.size() == 0) {
+			return;
+		}
+		for (CompoundProp cp: matrix) {
+			for (AtomicProp ap:cp.getAtomicProps()) {
+				String name = ap.getName();
+				List<Prop> props = constructors.get(name);
+				if (props == null) {
+					props = Lists.newArrayList();
+					constructors.put(name, props);
+				}
+				if (!props.contains(p)) {
+					props.add(p);
+				}
+				
+			}
+		}
 		
 	}
 
