@@ -100,7 +100,7 @@ public class Interpreter {
 		for (Quantifier q : p1.getPrefix()) {
 			p3.addQuantifierUnique(q);
 		}
-		for (Quantifier q : p1.getPrefix()) {
+		for (Quantifier q : p2.getPrefix()) {
 			p3.addQuantifierUnique(q);
 		}
 	}
@@ -140,6 +140,8 @@ public class Interpreter {
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_PLUS)) {
+			// move forward
+			tokens.getNext();
 			Value v1 = eval(env);
 			Value v2 = eval(env);
 			return sum(v1, v2);

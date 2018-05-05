@@ -26,22 +26,7 @@ public class Prop extends Value {
 		public String getString() {
 			int i = c;
 			c++;
-			int digits = 0;
-			int m = mod;
-			while (mod < i) {
-				m *= mod;
-				digits++;
-			}
-			m = m / mod;
-			String ret = "";
-			while (digits > 0) {
-				int n = i / m;
-				i = i % m;
-				m = m / mod;
-				ret += alpha[n];
-				digits--;
-			}
-			return ret;
+			return alpha[i];
 
 		}
 	}
@@ -196,6 +181,7 @@ public class Prop extends Value {
 	public void addQuantifierUnique(Quantifier q) {
 		if (!h2s.containsKey(q.hecceity)) {
 			String s = uniqueString.getString();
+			System.out.println(s);
 			h2s.put(q.hecceity, s);
 			s2h.put(s, q.hecceity);
 		}
