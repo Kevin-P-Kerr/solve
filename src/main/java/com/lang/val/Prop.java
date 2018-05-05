@@ -31,12 +31,23 @@ public class Prop extends Value {
 			while (m < i) {
 				m = m*mod;
 				if (m > i) {
-					return m/mod;
+					m = m/mod;
 				}
 				digits++;
 			}
-			return alpha[i];
-
+			String ret = "";
+			while (digits > 0) {
+				if (i > m) {
+					ret += alpha[0];
+				}
+				else {
+					int index = i%m;
+					ret += alpha[index];
+				}
+				m = m/mod;
+				digits--;
+			}
+			return ret;
 		}
 	}
 
