@@ -12,6 +12,7 @@ import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
 import com.lang.val.Prop.AtomicProp;
 import com.lang.val.Prop.CompoundProp;
+import com.lang.val.Prop.Hecceity;
 import com.lang.val.Prop.Quantifier;
 import com.lang.val.Prop.QuantifierType;
 import com.lang.val.Undefined;
@@ -237,6 +238,18 @@ public class Interpreter {
 		 return ret;
 	}
 	
+	private Prop apply(Prop p, Prop constructor) {
+		Map<String, List<Hecceity>> argMap = constructor.getPredicates2Hecceity();
+		
+		Prop ret = new Prop();
+		for (CompoundProp cp : p.getMatrix()) {
+			for (AtomicProp ap: cp.getAtomicProps()) {
+				String name = ap.getName();
+				
+			}
+		}
+	}
+	
 	
 	private Value doInference (Value v) {
 		if (!(v instanceof Prop)) {
@@ -244,6 +257,10 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		List<Prop> consts = getConstructors(p);
+		for (Prop constructor: consts) {
+			p =apply(p, constructor);
+		}
+		return p;
 		
 	}
 
