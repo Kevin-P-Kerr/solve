@@ -3,6 +3,7 @@ package com.lang;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -238,16 +239,66 @@ public class Interpreter {
 		 return ret;
 	}
 	
-	private Prop apply(Prop p, Prop constructor) {
-		Map<String, List<Hecceity>> argMap = constructor.getPredicates2Hecceity();
-		
-		Prop ret = new Prop();
-		for (CompoundProp cp : p.getMatrix()) {
-			for (AtomicProp ap: cp.getAtomicProps()) {
-				String name = ap.getName();
-				
+	private Map<Hecceity,List<String>> invertPredMap (Map<String,List<Hecceity>> argMap) {
+		Map<Hecceity,List<String>> ret = Maps.newHashMap();
+		for (Entry<String, List<Hecceity>> entry: argMap.entrySet()) {
+			for (Hecceity h : entry.getValue()) {
+				List<String> v = ret.get(h);
+				if (v == null) {
+					v = Lists.newArrayList();
+					ret.put(h, v);
+				}
+				v.add(entry.getKey());
 			}
 		}
+		return ret;
+	}
+	
+	private Prop apply(Prop p, Prop constructor) {
+		Map<String, List<Hecceity>> argMap = constructor.getPredicates2Hecceity();
+		Map<Hecceity,List<String>>  prefixInfo = invertPredMap(argMap);
+		Map<String, List<Hecceity>> prefixMap = p.getPredicates2Hecceity();
+		Prop ret = new Prop();
+		boolean forallFlag = true;
+		for (Quantifier q: constructor.getPrefix()) {
+			QuantifierType type;
+			if (forallFlag) {
+				if (q.getType().equals(QuantifierType.THEREIS)) {
+					forallFlag = false;
+				}
+				type = QuantifierType.THEREIS;
+			}
+			else {
+				type = q.getType();
+			}
+			Hecceity h = q.getHecceity();
+			Hecceity hecceity = null;
+			List<String> preds = prefixInfo.get(h);
+			for (String predName : preds) {
+				List<Hecceity> predInfo = prefixMap.get(predName);
+				if (predInfo == null) {
+					continue;
+				}
+				List<Hecceity> consInfo = argMap.get(predName);
+				int i = consInfo.indexOf(h);
+				hecceity = predInfo.get(i);
+				break;
+			}
+			
+			Quantifier nq = new Quantifier(type, hecceity);
+			ret.addQuantifierUnique(nq);
+		}
+		for (CompoundProp cp: constructor.getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			for (AtomicProp ap: cp.getAtomicProps()) {
+				String name = ap.getName();
+				List<Hecceity> hecs = ap.getHecceities();
+				List<Hecceity> ents = Lists.newArrayList();
+				List<he>
+				AtomicProp nap = new AtomicProp(name, ents);
+			}
+		}
+		
 	}
 	
 	
