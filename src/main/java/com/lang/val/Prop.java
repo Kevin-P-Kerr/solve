@@ -201,7 +201,6 @@ public class Prop extends Value {
 	public void addQuantifierUnique(Quantifier q) {
 		if (!h2s.containsKey(q.hecceity)) {
 			String s = uniqueString.getString();
-			System.out.println(s);
 			h2s.put(q.hecceity, s);
 			s2h.put(s, q.hecceity);
 		}
