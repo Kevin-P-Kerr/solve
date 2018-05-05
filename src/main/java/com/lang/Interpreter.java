@@ -133,6 +133,7 @@ public class Interpreter {
 				for (AtomicProp ap: mc.getAtomicProps()) {
 					np.addAtomicProp(ap);
 				}
+				p3.addCompoundProp(np);
 			}
 		}
 	}
