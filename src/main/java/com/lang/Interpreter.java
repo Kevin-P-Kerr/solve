@@ -212,9 +212,9 @@ public class Interpreter {
 		
 	}
 	
-	private List<Prop> getConstructorsRecurs(Prop p, List<Prop> constructors) {
+	private void getConstructorsRecurs(Prop p, List<Prop> constructors) {
 		if (constructors.contains(p)) {
-			return constructors;
+			return;
 		}
 		for (CompoundProp cp: p.getMatrix()) {
 			for (AtomicProp ap: cp.getAtomicProps()) {
@@ -228,12 +228,13 @@ public class Interpreter {
 				}
 			}
 		}
-		return constructors;
+		return;
 	}
 	
 	private List<Prop> getConstructors (Prop p) {
 		List<Prop> ret = Lists.newArrayList();
-		return getConstructorsRecurs(p,ret);
+		 getConstructorsRecurs(p,ret);
+		 return ret;
 	}
 	
 	
