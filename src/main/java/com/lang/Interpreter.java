@@ -8,7 +8,9 @@ import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
 import com.lang.val.Prop.CompoundProp;
+import com.lang.val.Prop.Quantifier;
 import com.lang.val.Prop.QuantifierType;
+import com.lang.val.Undefined;
 import com.lang.val.Value;
 
 public class Interpreter {
@@ -69,7 +71,7 @@ public class Interpreter {
 	}
 
 	private void evalMatrix(Prop p) throws ParseException {
-		while (tokens.hasToken()) {
+		while (tokens.hasToken() && !tokens.peek().getType().equals(TokenType.TT_PERIOD)) {
 			CompoundProp cp = p.makeBlankCompoundProp();
 			addAtomicProp(cp);
 			p.addCompoundProp(cp);
@@ -93,8 +95,43 @@ public class Interpreter {
 		return p;
 	}
 
+	private void addPrefix(Prop p1, Prop p2, Prop p3) {
+		for (Quantifier q : p1.getPrefix()) {
+			p3.addQuantifierUnique(q);
+		}
+		for (Quantifier q : p1.getPrefix()) {
+			p3.addQuantifierUnique(q);
+		}
+	}
+
+	public void addMatrix(Prop p1, Prop p2, Prop p3) {
+
+	}
+
+	private Prop sumProps(Prop p1, Prop p2) {
+		Prop prop3 = new Prop();
+		addPrefix(p1, p2, prop3);
+		addMatrix(p1, p2, prop3);
+		return prop3;
+
+	}
+
+	private Value sum(Value v1, Value v2) {
+		if (v1 instanceof Undefined || v2 instanceof Undefined) {
+			return Undefined.undefined;
+		}
+		Prop p1 = (Prop) v1;
+		Prop p2 = (Prop) v2;
+		return sumProps(p1, p2);
+	}
+
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_PLUS)) {
+			Value v1 = eval(env);
+			Value v2 = eval(env);
+			return sum(v1, v2);
+		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
 			String varName = t.getLit();

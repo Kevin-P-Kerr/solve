@@ -17,9 +17,40 @@ public class Prop extends Value {
 		}
 	}
 
+	private static class UniqueString {
+		private static int c = 0;
+		private static int mod = 26;
+		private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+				"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z " };
+
+		public String getString() {
+			int i = c;
+			c++;
+			int digits = 0;
+			int m = mod;
+			while (mod < i) {
+				m *= mod;
+				digits++;
+			}
+			m = m / mod;
+			String ret = "";
+			while (digits > 0) {
+				int n = i / m;
+				i = i % m;
+				m = m / mod;
+				ret += alpha[n];
+				digits--;
+			}
+			return ret;
+
+		}
+	}
+
 	private static final IDMaker idMaker = new IDMaker();
+	private static final UniqueString uniqueString = new UniqueString();
 
 	public static class Hecceity {
+		// TODO : Do we need this?
 		private final long id;
 
 		public Hecceity(long id) {
@@ -98,6 +129,14 @@ public class Prop extends Value {
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
 
+	public List<Quantifier> getPrefix() {
+		return prefix;
+	}
+
+	public List<CompoundProp> getMatrix() {
+		return matrix;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -147,8 +186,20 @@ public class Prop extends Value {
 		return sb.toString();
 	}
 
-	public void addQuantifier(Quantifier q) {
+	private void addQuantifier(Quantifier q) {
 		this.prefix.add(q);
+	}
+
+	/**
+	 * add quantifier with unique hecceties
+	 */
+	public void addQuantifierUnique(Quantifier q) {
+		if (!h2s.containsKey(q.hecceity)) {
+			String s = uniqueString.getString();
+			h2s.put(q.hecceity, s);
+			s2h.put(s, q.hecceity);
+		}
+		addQuantifier(q);
 	}
 
 	public void addCompoundProp(CompoundProp p) {
