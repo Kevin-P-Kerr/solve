@@ -26,6 +26,15 @@ public class Prop extends Value {
 		public String getString() {
 			int i = c;
 			c++;
+			int digits = 1;
+			int m  = mod;
+			while (m < i) {
+				m = m*mod;
+				if (m > i) {
+					return m/mod;
+				}
+				digits++;
+			}
 			return alpha[i];
 
 		}
