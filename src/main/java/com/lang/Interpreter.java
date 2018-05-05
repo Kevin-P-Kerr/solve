@@ -72,11 +72,15 @@ public class Interpreter {
 	}
 
 	private void evalMatrix(Prop p) throws ParseException {
-		while (tokens.hasToken() && !tokens.peek().getType().equals(TokenType.TT_PERIOD)) {
+		while (tokens.hasToken()) {
 			CompoundProp cp = p.makeBlankCompoundProp();
 			addAtomicProp(cp);
 			p.addCompoundProp(cp);
 			if (tokens.hasToken()) {
+				if (tokens.peek().getType().equals(TokenType.TT_PERIOD)) {
+					tokens.getNext();
+					break;
+				}
 				if (!tokens.peek().getType().equals(TokenType.TT_PLUS)) {
 					System.out.println(p.toString());
 					System.out.println(tokens.toString());
