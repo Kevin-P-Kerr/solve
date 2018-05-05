@@ -123,6 +123,19 @@ public class Interpreter {
 		addAllCompoundProps(p3,p1);
 		addAllCompoundProps(p3,p2);
 	}
+	private void multMatrix(Prop p1, Prop p2, Prop p3) {
+		for (CompoundProp m: p1.getMatrix()) {
+			for (CompoundProp mc: p2.getMatrix()) {
+				CompoundProp np = p3.makeBlankCompoundProp();
+				for (AtomicProp ap: m.getAtomicProps()) {
+					np.addAtomicProp(ap);
+				}
+				for (AtomicProp ap: mc.getAtomicProps()) {
+					np.addAtomicProp(ap);
+				}
+			}
+		}
+	}
 
 	private Prop sumProps(Prop p1, Prop p2) {
 		Prop prop3 = new Prop();
@@ -140,6 +153,22 @@ public class Interpreter {
 		Prop p2 = (Prop) v2;
 		return sumProps(p1, p2);
 	}
+	
+	private Prop prodProps(Prop p1, Prop p2) {
+		Prop prop3 = new Prop();
+		addPrefix(p1,p2,prop3);
+		multMatrix(p1,p2,prop3);
+		return prop3;
+	}
+	
+	private Value product(Value v1, Value v2) {
+		if (v1 instanceof Undefined || v2 instanceof Undefined) {
+			return Undefined.undefined;
+		}
+		Prop p1 = (Prop) v1;
+		Prop p2 = (Prop) v2;
+		return prodProps(p1,p2);
+	}
 
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
@@ -149,6 +178,12 @@ public class Interpreter {
 			Value v1 = eval(env);
 			Value v2 = eval(env);
 			return sum(v1, v2);
+		}
+		if (t.getType().equals(TokenType.TT_ASTER)) {
+			tokens.getNext();
+			Value v1 = eval(env);
+			Value v2 = eval(env);
+			return product(v1,v2);
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
