@@ -211,6 +211,40 @@ public class Interpreter {
 		}
 		
 	}
+	
+	private List<Prop> getConstructorsRecurs(Prop p, List<Prop> constructors) {
+		if (constructors.contains(p)) {
+			return constructors;
+		}
+		for (CompoundProp cp: p.getMatrix()) {
+			for (AtomicProp ap: cp.getAtomicProps()) {
+				List<Prop> intermediateConstructors = Interpreter.constructors.get(ap.getName());
+				if (intermediateConstructors == null) {
+					continue;
+				}
+				constructors.addAll(intermediateConstructors);
+				for (Prop ip: intermediateConstructors) {
+					getConstructors(ip);
+				}
+			}
+		}
+		return constructors;
+	}
+	
+	private List<Prop> getConstructors (Prop p) {
+		List<Prop> ret = Lists.newArrayList();
+		return getConstructorsRecurs(p,ret);
+	}
+	
+	
+	private Value doInference (Value v) {
+		if (!(v instanceof Prop)) {
+			return Undefined.undefined;
+		}
+		Prop p = (Prop) v;
+		List<Prop> consts = getConstructors(p);
+		
+	}
 
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
@@ -226,6 +260,11 @@ public class Interpreter {
 			Value v1 = eval(env);
 			Value v2 = eval(env);
 			return product(v1,v2);
+		}
+		if (t.getType().equals(TokenType.TT_DOLLAR)) {
+			tokens.getNext();
+			Value v = eval(env);
+			return doInference(v);
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
