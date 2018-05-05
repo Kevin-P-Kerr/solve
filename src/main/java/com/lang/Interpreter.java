@@ -2,7 +2,10 @@ package com.lang;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -17,6 +20,7 @@ import com.lang.val.Value;
 public class Interpreter {
 
 	private final TokenStream tokens;
+	private final Map<String,List<Prop>> constructors = Maps.newConcurrentMap();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -171,6 +175,15 @@ public class Interpreter {
 		Prop p2 = (Prop) v2;
 		return prodProps(p1,p2);
 	}
+	
+	private final void addConstructors (Value v) {
+		if (!(v instanceof Prop)) {
+			return;
+		}
+		Prop p = (Prop) v;
+		List<Quantifier> prefix = p.getPrefix();
+		
+	}
 
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
@@ -195,6 +208,7 @@ public class Interpreter {
 				if (t.getType().equals(TokenType.TT_EQUALS)) {
 					tokens.getNext();
 					Value p = eval(env);
+					addConstructors(p);
 					env.put(varName, p);
 					return p;
 				}
