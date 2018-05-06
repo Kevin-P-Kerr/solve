@@ -93,8 +93,6 @@ public class Interpreter {
 					break;
 				}
 				if (!tokens.peek().getType().equals(TokenType.TT_PLUS)) {
-					System.out.println(p.toString());
-					System.out.println(tokens.toString());
 					throw new ParseException(
 							"expected + got " + tokens.peek().getType() + " with lit " + tokens.peek().getLit(), 0);
 				}
@@ -220,6 +218,7 @@ public class Interpreter {
 	}
 	
 	private void getConstructorsRecurs(Prop p, List<Prop> constructors) {
+		/*
 		System.out.println("print map");
 		for (Entry<String, List<Prop>> e:Interpreter.constructors.entrySet()) {
 			System.out.println(e.getKey());
@@ -227,6 +226,7 @@ public class Interpreter {
 				System.out.println(pp.toString());
 			}
 		}
+		*/
 		if (constructors.contains(p)) {
 			return;
 		}
@@ -370,7 +370,6 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		List<Prop> consts = getConstructors(p);
-		System.out.println("size "+consts.size());
 		for (Prop constructor: consts) {
 			p =apply(p, constructor);
 		}
