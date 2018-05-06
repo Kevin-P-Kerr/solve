@@ -327,7 +327,40 @@ public class Interpreter {
 			 }
 			 ret.addCompoundProp(ncp);
 		 }
-		 return prodProps(p, ret);
+		 return removeContradictions(prodProps(p, ret));
+	}
+	
+	private boolean contradiction(CompoundProp cp) {
+		Map<String,Boolean> boolMap = Maps.newHashMap();
+		for (AtomicProp ap:cp.getAtomicProps()) {
+			String name = ap.getName();
+			Boolean b = boolMap.get(name);
+			if (b == null) {
+				boolMap.put(name, ap.getTruthValue());
+				continue;
+			}
+			if (b != ap.getTruthValue()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Prop removeContradictions (Prop p) {
+		Prop ret = new Prop();
+		for (Quantifier q: p.getPrefix()) {
+			ret.addQuantifierUnique(q);
+		}
+		for (CompoundProp cp: p.getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			if (!contradiction(cp)) {
+				for (AtomicProp ap: cp.getAtomicProps()) {
+					ncp.addAtomicProp(ap);
+				}
+				ret.addCompoundProp(ncp);
+			}
+		}
+		return ret;
 	}
 	
 	
