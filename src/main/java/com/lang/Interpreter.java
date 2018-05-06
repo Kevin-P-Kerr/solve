@@ -220,6 +220,13 @@ public class Interpreter {
 	}
 	
 	private void getConstructorsRecurs(Prop p, List<Prop> constructors) {
+		System.out.println("print map");
+		for (Entry<String, List<Prop>> e:Interpreter.constructors.entrySet()) {
+			System.out.println(e.getKey());
+			for (Prop pp : e.getValue()) {
+				System.out.println(pp.toString());
+			}
+		}
 		if (constructors.contains(p)) {
 			return;
 		}
@@ -330,6 +337,7 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		List<Prop> consts = getConstructors(p);
+		System.out.println("size "+consts.size());
 		for (Prop constructor: consts) {
 			p =apply(p, constructor);
 		}
@@ -372,7 +380,9 @@ public class Interpreter {
 			}
 			return env.lookUp(varName);
 		} else {
-			return evalProp();
+			Prop p = evalProp();
+			addConstructors(p);
+			return p;
 		}
 
 	}
