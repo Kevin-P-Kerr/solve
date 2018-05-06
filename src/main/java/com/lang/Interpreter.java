@@ -278,6 +278,7 @@ public class Interpreter {
 				 qt = q.getType();
 			 }
 			 List<String> preds = preds2hecceity.get(q.getHecceity());
+			 boolean foundPred = false;
 			 for (String pred:preds) {
 				 List<Hecceity> ph = p.getPredicates2Hecceity().get(pred);
 				 if (ph == null) {
@@ -288,6 +289,11 @@ public class Interpreter {
 				 Hecceity h = ph.get(i);
 				 Quantifier quantifier = new Quantifier(qt, h);
 				 ret.addQuantifierUnique(quantifier);
+				 foundPred = true;
+				 break;
+			 }
+			 if (!foundPred) {
+				 ret.addQuantifier(qt);
 			 }
 		 }
 	}

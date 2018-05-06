@@ -229,6 +229,11 @@ public class Prop extends Value {
 		}
 		addQuantifier(new Quantifier(qt, h));
 	}
+	
+	public void addQuantifier(QuantifierType qt) {
+		String name = uniqueString.getString();
+		addQuantifier(qt,name);
+	}
 
 	public CompoundProp makeBlankCompoundProp() {
 		return new CompoundProp();
