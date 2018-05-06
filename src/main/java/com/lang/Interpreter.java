@@ -52,8 +52,13 @@ public class Interpreter {
 	 * @param cp
 	 * @throws ParseException
 	 */
-	private void addAtomicProp(CompoundProp cp, boolean truthValue) throws ParseException {
+	private void addAtomicProp(CompoundProp cp) throws ParseException {
 		Token t = tokens.getNext();
+		boolean truthValue = !tokens.peek().getType().equals(TokenType.TT_TILDE);
+		if (!truthValue) {
+			// seek past the tilde
+			tokens.getNext();
+		}
 		String name = t.getLit();
 		List<String> hecceities = Lists.newArrayList();
 		t = tokens.getNext();
@@ -71,8 +76,7 @@ public class Interpreter {
 			if (t.getType().equals(TokenType.TT_ASTER)) {
 				// seek past the asterisk
 				tokens.getNext();
-				boolean tv = !tokens.peek().getType().equals(TokenType.TT_TILDE);
-				addAtomicProp(cp, tv);
+				addAtomicProp(cp);
 			}
 
 		}
