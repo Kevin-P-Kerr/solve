@@ -52,7 +52,7 @@ public class Interpreter {
 	 * @param cp
 	 * @throws ParseException
 	 */
-	private void addAtomicProp(CompoundProp cp) throws ParseException {
+	private void addAtomicProp(CompoundProp cp, boolean truthValue) throws ParseException {
 		Token t = tokens.getNext();
 		String name = t.getLit();
 		List<String> hecceities = Lists.newArrayList();
@@ -65,13 +65,14 @@ public class Interpreter {
 			hecceities.add(t.getLit());
 			t = tokens.getNext();
 		}
-		cp.addAtomicProp(name, hecceities);
+		cp.addAtomicProp(name, hecceities, truthValue);
 		if (tokens.hasToken()) {
 			t = tokens.peek();
 			if (t.getType().equals(TokenType.TT_ASTER)) {
 				// seek past the asterisk
 				tokens.getNext();
-				addAtomicProp(cp);
+				boolean tv = !tokens.peek().getType().equals(TokenType.TT_TILDE);
+				addAtomicProp(cp, tv);
 			}
 
 		}
@@ -309,7 +310,7 @@ public class Interpreter {
 					 int i = constructorHecs.indexOf(h);
 					 corh.add(corresponding.get(i));
 				 }
-				 AtomicProp nap = new AtomicProp(name,corh);
+				 AtomicProp nap = new AtomicProp(name,corh,ap.getTruthValue());
 				 ncp.addAtomicProp(nap);
 				 
 			 }

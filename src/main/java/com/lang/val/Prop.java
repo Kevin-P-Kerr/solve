@@ -89,10 +89,12 @@ public class Prop extends Value {
 	public static class AtomicProp {
 		private final String name;
 		private final List<Hecceity> hecceities;
+		private final boolean truthValue;
 
-		public AtomicProp(String name, List<Hecceity> ents) {
+		public AtomicProp(String name, List<Hecceity> ents, boolean tv) {
 			this.name = name;
 			this.hecceities = ents;
+			this.truthValue = tv;
 		}
 
 		public String getName() {
@@ -101,6 +103,10 @@ public class Prop extends Value {
 
 		public List<Hecceity> getHecceities() {
 			return hecceities;
+		}
+		
+		public boolean getTruthValue () {
+			return truthValue;
 		}
 	}
 
@@ -115,12 +121,12 @@ public class Prop extends Value {
 			return atomicProps;
 		}
 
-		public void addAtomicProp(String name, List<String> hecceities) {
+		public void addAtomicProp(String name, List<String> hecceities, boolean tv) {
 			List<Hecceity> ents = Lists.newArrayList();
 			for (String s : hecceities) {
 				ents.add(s2h.get(s));
 			}
-			addAtomicProp(new AtomicProp(name, ents));
+			addAtomicProp(new AtomicProp(name, ents,tv));
 		}
 
 		public void addAtomicProp(AtomicProp atomicProp) {
