@@ -217,6 +217,10 @@ public class Prop extends Value {
 	 * add quantifier with unique hecceties
 	 */
 	public void addQuantifierUnique(Quantifier q) {
+		// don't add duplicate quantifiers
+		if (getHecceties().indexOf(q.getHecceity()) >= 0) {
+			return;
+		}
 		if (!h2s.containsKey(q.hecceity)) {
 			String s = uniqueString.getString();
 			h2s.put(q.hecceity, s);
