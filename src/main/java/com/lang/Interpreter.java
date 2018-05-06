@@ -1,5 +1,8 @@
 package com.lang;
 
+import static org.junit.Assume.assumeNoException;
+
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,7 @@ public class Interpreter {
 
 	private final TokenStream tokens;
 	private final static Map<String,List<Prop>> constructors = Maps.newConcurrentMap();
+	private final static Map<Hecceity,List<String>> hec2pred = Maps.newConcurrentMap();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -368,6 +372,44 @@ public class Interpreter {
 		return ret;
 	}
 	
+	private BigInteger resolveNat(AtomicProp atomicProp) {
+		
+	}
+	
+	private void checkForNativeVals(Prop p) throws ParseException {
+		Map<Hecceity,String> nativeValMap = Maps.newHashMap();
+		for (CompoundProp cp: p.getMatrix()) {
+			for (AtomicProp ap: cp.getAtomicProps()) {
+				String predName = ap.getName();
+				if (predName.equals("INT")) {
+					if (ap.getHecceities().size() > 1) {
+						throw new ParseException("NAT is predefined",0);
+					}
+					BigInteger b = resolveNat(ap);
+					
+				}
+				else if (predName.equals("POLY")) {
+					
+				}
+				else if (predName.equals("ARRAY")) {
+					
+				}
+				else if (predName.equals("SET")) {
+					
+				}
+				else if (predName.equals("DIGRAPH")) {
+					
+				}
+				else if (predName.equals("RAT")) {
+					
+				}
+				else if (predName.equals("REAL")) {
+					
+				}
+			}
+		}
+	}
+	
 	
 	private Value doInference (Value v) throws ParseException {
 		if (!(v instanceof Prop)) {
@@ -378,6 +420,7 @@ public class Interpreter {
 		for (Prop constructor: consts) {
 			p =apply(p, constructor);
 		}
+		checkForNativeVals(p);
 		return p;
 		
 	}
@@ -410,7 +453,6 @@ public class Interpreter {
 				if (t.getType().equals(TokenType.TT_EQUALS)) {
 					tokens.getNext();
 					Value p = eval(env);
-					addConstructors(p);
 					env.put(varName, p);
 					return p;
 				}
@@ -419,9 +461,21 @@ public class Interpreter {
 		} else {
 			Prop p = evalProp();
 			addConstructors(p);
+			addHecs(p);
 			return p;
 		}
 
 	}
-
+	private static void addHecs(Prop p) {
+		 for (CompoundProp cp : p.getMatrix()) {
+			 for (AtomicProp ap : cp.getAtomicProps()) {
+				 String name = ap.getName();
+				 List<Hecceity> hecs = ap.getHecceities();
+				 
+			 }
+		 }
+		
+	}
 }
+
+
