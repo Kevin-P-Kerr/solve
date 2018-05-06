@@ -231,7 +231,7 @@ public class Interpreter {
 				}
 				constructors.addAll(intermediateConstructors);
 				for (Prop ip: intermediateConstructors) {
-					getConstructors(ip);
+					getConstructorsRecurs(ip, constructors);
 				}
 			}
 		}
