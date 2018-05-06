@@ -187,6 +187,9 @@ public class Prop extends Value {
 					firstAtomicProp = false;
 				}
 				String name = prop.getName();
+				if (!prop.getTruthValue()) {
+					name = "~"+name;
+				}
 				sb.append(name + "(");
 				boolean first = true;
 				for (Hecceity h : prop.getHecceities()) {

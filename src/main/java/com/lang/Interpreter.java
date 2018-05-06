@@ -53,17 +53,17 @@ public class Interpreter {
 	 * @throws ParseException
 	 */
 	private void addAtomicProp(CompoundProp cp) throws ParseException {
-		Token t = tokens.getNext();
 		boolean truthValue = !tokens.peek().getType().equals(TokenType.TT_TILDE);
 		if (!truthValue) {
 			// seek past the tilde
 			tokens.getNext();
 		}
+		Token t = tokens.getNext();
 		String name = t.getLit();
 		List<String> hecceities = Lists.newArrayList();
 		t = tokens.getNext();
 		if (!t.getType().equals(TokenType.TT_LPAREN)) {
-			throw new ParseException(t.getLit(), 0);
+			throw new ParseException("expecting a LPAREN, got "+t.getLit(), 0);
 		}
 		t = tokens.getNext();
 		while (!t.getType().equals(TokenType.TT_RPAREN)) {
