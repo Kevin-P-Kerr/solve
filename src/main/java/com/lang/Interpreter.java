@@ -255,7 +255,41 @@ public class Interpreter {
 	}
 	
 	private Prop apply(Prop p, Prop constructor) {
-		
+		/*
+		 * to apply a constructor to a prop, 
+		 * first create a new prop which we will return
+		 * then populate the prefix of the prop by the following method
+		 *   for each hecceity in the constructor
+		 *      if that hecceity populates a boolean predicate found in the prop, replace that hecceity with the one in the prod
+		 */
+		 Map<Hecceity, List<String>> preds2hecceity = invertPredMap(constructor.getPredicates2Hecceity());
+		 //Map<Hecceity, List<String>> propPreds2h = invertPredMap(p.getPredicates2Hecceity());
+		 Prop ret = new Prop();
+		 boolean forallFlag = true;
+		 for (Quantifier q:constructor.getPrefix()) {
+			 QuantifierType qt;
+			 if (forallFlag) {
+				 if (q.getType().equals(QuantifierType.THEREIS)) {
+					 forallFlag = false;
+				 }
+				 qt = QuantifierType.THEREIS;
+			 }
+			 else {
+				 qt = q.getType();
+			 }
+			 List<String> preds = preds2hecceity.get(q.getHecceity());
+			 for (String pred:preds) {
+				 List<Hecceity> ph = p.getPredicates2Hecceity().get(pred);
+				 if (ph == null) {
+					 continue;
+				 }
+				 List<Hecceity> ch = constructor.getPredicates2Hecceity().get(pred);
+				 int i = ch.indexOf(q.getHecceity());
+				 Hecceity h = ph.get(i);
+				 Quantifier quantifier = new Quantifier(qt, h);
+				 ret.addQuantifierUnique(quantifier);
+			 }
+		 }
 	}
 	
 	
