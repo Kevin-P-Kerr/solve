@@ -255,49 +255,6 @@ public class Interpreter {
 	}
 	
 	private Prop apply(Prop p, Prop constructor) {
-		Map<String, List<Hecceity>> argMap = constructor.getPredicates2Hecceity();
-		Map<Hecceity,List<String>>  prefixInfo = invertPredMap(argMap);
-		Map<String, List<Hecceity>> prefixMap = p.getPredicates2Hecceity();
-		Prop ret = new Prop();
-		boolean forallFlag = true;
-		for (Quantifier q: constructor.getPrefix()) {
-			QuantifierType type;
-			if (forallFlag) {
-				if (q.getType().equals(QuantifierType.THEREIS)) {
-					forallFlag = false;
-				}
-				type = QuantifierType.THEREIS;
-			}
-			else {
-				type = q.getType();
-			}
-			Hecceity h = q.getHecceity();
-			Hecceity hecceity = null;
-			List<String> preds = prefixInfo.get(h);
-			for (String predName : preds) {
-				List<Hecceity> predInfo = prefixMap.get(predName);
-				if (predInfo == null) {
-					continue;
-				}
-				List<Hecceity> consInfo = argMap.get(predName);
-				int i = consInfo.indexOf(h);
-				hecceity = predInfo.get(i);
-				break;
-			}
-			
-			Quantifier nq = new Quantifier(type, hecceity);
-			ret.addQuantifierUnique(nq);
-		}
-		for (CompoundProp cp: constructor.getMatrix()) {
-			CompoundProp ncp = ret.makeBlankCompoundProp();
-			for (AtomicProp ap: cp.getAtomicProps()) {
-				String name = ap.getName();
-				List<Hecceity> hecs = ap.getHecceities();
-				List<Hecceity> ents = Lists.newArrayList();
-				List<he>
-				AtomicProp nap = new AtomicProp(name, ents);
-			}
-		}
 		
 	}
 	
