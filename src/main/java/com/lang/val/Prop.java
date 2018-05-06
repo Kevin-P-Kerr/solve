@@ -239,5 +239,13 @@ public class Prop extends Value {
 		return new CompoundProp();
 	}
 
+	public List<Hecceity> getHecceties() {
+		List<Hecceity> ret = Lists.newArrayList();
+		for (Quantifier q: getPrefix()) {
+			ret.add(q.getHecceity());
+		}
+		return ret;
+	}
+
 	
 }

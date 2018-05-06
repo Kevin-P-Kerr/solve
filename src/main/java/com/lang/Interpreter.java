@@ -296,6 +296,26 @@ public class Interpreter {
 				 ret.addQuantifier(qt);
 			 }
 		 }
+		 List<Hecceity> constructorHecs = constructor.getHecceties();
+		 List<Hecceity> corresponding = ret.getHecceties();
+		 // matrix
+		 for (CompoundProp cp:constructor.getMatrix()) {
+			 CompoundProp ncp = ret.makeBlankCompoundProp();
+			 for (AtomicProp ap:cp.getAtomicProps()) {
+				 String name = ap.getName();
+				 List<Hecceity> hecs = ap.getHecceities();
+				 List<Hecceity> corh = Lists.newArrayList();
+				 for (Hecceity h:hecs) {
+					 int i = constructorHecs.indexOf(h);
+					 corh.add(corresponding.get(i));
+				 }
+				 AtomicProp nap = new AtomicProp(name,corh);
+				 ncp.addAtomicProp(nap);
+				 
+			 }
+			 ret.addCompoundProp(ncp);
+		 }
+		 return prodProps(p, ret);
 	}
 	
 	
