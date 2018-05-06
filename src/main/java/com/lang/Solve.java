@@ -23,6 +23,8 @@ public class Solve {
 				System.out.print(" > ");
 			} catch (ParseException e) {
 				System.out.println(e);
+				System.out.println("continue...");
+				System.out.print(" > ");
 			}
 		}
 		scanner.close();
