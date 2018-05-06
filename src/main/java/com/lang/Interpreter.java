@@ -266,7 +266,7 @@ public class Interpreter {
 		return ret;
 	}
 	
-	private Prop apply(Prop p, Prop constructor) {
+	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		/*
 		 * to apply a constructor to a prop, 
 		 * first create a new prop which we will return
@@ -319,7 +319,12 @@ public class Interpreter {
 				 List<Hecceity> corh = Lists.newArrayList();
 				 for (Hecceity h:hecs) {
 					 int i = constructorHecs.indexOf(h);
+					 try {
 					 corh.add(corresponding.get(i));
+					 } catch (IndexOutOfBoundsException e) {
+						 System.out.println("unbounded hecceity");
+						 throw new ParseException(name, 0);
+					 }
 				 }
 				 AtomicProp nap = new AtomicProp(name,corh,ap.getTruthValue());
 				 ncp.addAtomicProp(nap);
@@ -364,7 +369,7 @@ public class Interpreter {
 	}
 	
 	
-	private Value doInference (Value v) {
+	private Value doInference (Value v) throws ParseException {
 		if (!(v instanceof Prop)) {
 			return Undefined.undefined;
 		}
