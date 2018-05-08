@@ -390,6 +390,7 @@ public class Interpreter {
 		if (name == "EQ") {
 
 		}
+		return null;
 	}
 
 	private BigInteger resolveNat(AtomicProp atomicProp) {
