@@ -172,6 +172,7 @@ public class Interpreter {
 		Prop prop3 = new Prop();
 		addPrefix(p1, p2, prop3);
 		multMatrix(p1, p2, prop3);
+		System.out.println(prop3.toString());
 		return prop3;
 	}
 
@@ -271,7 +272,7 @@ public class Interpreter {
 		 */
 		Prop ret = new Prop();
 		List<String> sharedPreds = Lists.newArrayList(
-				Sets.union(p.getPredicates2Hecceity().keySet(), constructor.getPredicates2Hecceity().keySet()));
+				Sets.intersection(p.getPredicates2Hecceity().keySet(), constructor.getPredicates2Hecceity().keySet()));
 		Map<Hecceity, Hecceity> cons2p = Maps.newHashMap();
 		for (String sp : sharedPreds) {
 			List<Hecceity> proph = p.getPredicates2Hecceity().get(sp);
@@ -327,6 +328,7 @@ public class Interpreter {
 			}
 			ret.addCompoundProp(ncp);
 		}
+		System.out.println(ret.toString());
 		return removeContradictions(prodProps(p, ret));
 	}
 
