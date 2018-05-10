@@ -205,6 +205,24 @@ public class Interpreter {
 		constructors.add(p);
 	}
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
+		int numOfForall = 0;
+		for (Quantifier q: constructor.getPrefix()) {
+			if (q.getType().equals(QuantifierType.FORALL)) {
+				numOfForall++;
+			}
+			else {
+				break;
+			}
+		}
+		int numThereis = 0;
+		for (Quantifier q: p.getPrefix()) {
+			if (q.getType().equals(QuantifierType.THEREIS)) {
+				numThereis++;
+			}
+		}
+		if (numThereis < numOfForall) {
+			return p;
+		}
 		
 		
 	}
