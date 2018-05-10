@@ -19,11 +19,11 @@ public class Prop extends Value {
 
 	private static class UniqueString {
 		private static int c = 0;
-		private static int mod = 26;
 		private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
 				"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z " };
 
 		public String getString() {
+			int mod = alpha.length;
 			int i = c;
 			c++;
 			int digits = 1;
@@ -32,13 +32,17 @@ public class Prop extends Value {
 				m = m*mod;
 				if (m > i) {
 					m = m/mod;
+					digits++;
+					break;
 				}
 				digits++;
 			}
 			String ret = "";
 			while (digits > 0) {
 				if (i > m) {
-					ret += alpha[0];
+					int index = i/m;
+					i = m%i;
+					ret += alpha[index-1];
 				}
 				else {
 					int index = i%m;
