@@ -41,7 +41,7 @@ public class Prop extends Value {
 			while (digits > 0) {
 				if (i > m) {
 					int index = i/m;
-					i = m%i;
+					i = i%m;
 					ret += alpha[index-1];
 				}
 				else {
@@ -254,6 +254,24 @@ public class Prop extends Value {
 		List<Hecceity> ret = Lists.newArrayList();
 		for (Quantifier q: getPrefix()) {
 			ret.add(q.getHecceity());
+		}
+		return ret;
+	}
+
+	public Prop copy() {
+		Prop ret = new Prop();
+		for (Quantifier q: getPrefix()) {
+			ret.addQuantifier(q.getType());
+		}
+		for (CompoundProp cp: getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				List<Hecceity> args = Lists.newArrayList();
+				for (Hecceity h :ap.getHecceities()) {
+					args.add(ret.getHecceties().get(getHecceties().indexOf(h)));
+				}
+				ncp.addAtomicProp(new AtomicProp(ap.getName(), args, ap.getTruthValue()));
+			}
 		}
 		return ret;
 	}

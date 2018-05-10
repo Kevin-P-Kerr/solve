@@ -165,7 +165,7 @@ public class Interpreter {
 		}
 		Prop p1 = (Prop) v1;
 		Prop p2 = (Prop) v2;
-		return sumProps(p1, p2);
+		return sumProps(p1.copy(), p2.copy());
 	}
 
 	private Prop prodProps(Prop p1, Prop p2) {
@@ -181,7 +181,7 @@ public class Interpreter {
 		}
 		Prop p1 = (Prop) v1;
 		Prop p2 = (Prop) v2;
-		return prodProps(p1, p2);
+		return prodProps(p1.copy(), p2.copy());
 	}
 
 	private final void addConstructors(Value v) {
@@ -250,7 +250,7 @@ public class Interpreter {
 				}
 				intermediate.addCompoundProp(ncp);
 			}
-			p = prodProps(p, intermediate);
+			p = prodProps(p.copy(), intermediate.copy());
 		}
 		 return removeContradictions(p);
 	}
