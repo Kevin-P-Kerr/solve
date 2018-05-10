@@ -204,96 +204,9 @@ public class Interpreter {
 		}
 		constructors.add(p);
 	}
-
-	private void getConstructorsRecurs(Prop p, List<Prop> constructors) {
-		/*
-		 * System.out.println("print map"); for (Entry<String, List<Prop>> e:Interpreter.constructors.entrySet()) {
-		 * System.out.println(e.getKey()); for (Prop pp : e.getValue()) { System.out.println(pp.toString()); } }
-		 */
-		if (constructors.contains(p)) {
-			return;
-		}
-		for (CompoundProp cp : p.getMatrix()) {
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				List<Prop> intermediateConstructors = Interpreter.constructors.get(ap.getName());
-				if (intermediateConstructors == null) {
-					continue;
-				}
-				constructors.addAll(intermediateConstructors);
-				for (Prop ip : intermediateConstructors) {
-					getConstructorsRecurs(ip, constructors);
-				}
-			}
-		}
-		return;
-	}
-
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
-		/*
-		 * to apply a constructor to a prop, first create a new prop which we will return then populate the prefix of
-		 * the prop by the following method for each hecceity in the constructor if that hecceity populates a boolean
-		 * predicate found in the prop, replace that hecceity with the one in the prod
-		 */
-		Prop ret = new Prop();
-		List<String> sharedPreds = Lists.newArrayList(
-				Sets.intersection(p.getPredicates2Hecceity().keySet(), constructor.getPredicates2Hecceity().keySet()));
-		Map<Hecceity, Hecceity> cons2p = Maps.newHashMap();
-		for (String sp : sharedPreds) {
-			List<Hecceity> proph = p.getPredicates2Hecceity().get(sp);
-			List<Hecceity> consh = constructor.getPredicates2Hecceity().get(sp);
-			if (proph.size() != consh.size()) {
-				throw new ParseException("identical predicates need identical argument length: " + sp, 0);
-			}
-			for (int i = 0, ii = proph.size(); i < ii; i++) {
-				cons2p.put(consh.get(i), proph.get(i));
-			}
-		}
-		// make the prefix
-		boolean forallFlag = true;
-		for (Quantifier q : constructor.getPrefix()) {
-			QuantifierType qt;
-			if (forallFlag) {
-				qt = QuantifierType.THEREIS;
-				if (q.getType().equals(QuantifierType.THEREIS)) {
-					forallFlag = false;
-				}
-			} else {
-				qt = q.getType();
-			}
-			Hecceity ph = cons2p.get(q.getHecceity());
-			if (ph == null) {
-				ret.addQuantifier(qt);
-			} else {
-				ret.addQuantifierUnique(new Quantifier(qt, ph));
-			}
-		}
-		List<Hecceity> constructorHecs = constructor.getHecceties();
-		List<Hecceity> corresponding = ret.getHecceties();
-
-		// matrix
-		for (CompoundProp cp : constructor.getMatrix()) {
-			CompoundProp ncp = ret.makeBlankCompoundProp();
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				String name = ap.getName();
-				List<Hecceity> hecs = ap.getHecceities();
-				List<Hecceity> corh = Lists.newArrayList();
-				for (Hecceity h : hecs) {
-					int i = constructorHecs.indexOf(h);
-					try {
-						corh.add(corresponding.get(i));
-					} catch (IndexOutOfBoundsException e) {
-						System.out.println("unbounded hecceity");
-						throw new ParseException(name, 0);
-					}
-				}
-				AtomicProp nap = new AtomicProp(name, corh, ap.getTruthValue());
-				ncp.addAtomicProp(nap);
-
-			}
-			ret.addCompoundProp(ncp);
-		}
-		System.out.println(ret.toString());
-		return removeContradictions(prodProps(p, ret));
+		
+		
 	}
 
 	private boolean contradiction(CompoundProp cp) {
@@ -406,8 +319,7 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Prop p = (Prop) v;
-		List<Prop> consts = getConstructors(p);
-		for (Prop constructor : consts) {
+		for (Prop constructor : constructors) {
 			p = apply(p, constructor);
 		}
 		checkForNativeVals(p);
