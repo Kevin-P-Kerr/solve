@@ -24,8 +24,7 @@ import com.lang.val.Value;
 public class Interpreter {
 
 	private final TokenStream tokens;
-	private final static Map<String, List<Prop>> constructors = Maps.newConcurrentMap();
-	private final static Map<Hecceity, List<String>> hec2pred = Maps.newConcurrentMap();
+	private final static List<Prop> constructors = Maps.newConcurrentMap();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -241,27 +240,6 @@ public class Interpreter {
 			}
 		}
 		return;
-	}
-
-	private List<Prop> getConstructors(Prop p) {
-		List<Prop> ret = Lists.newArrayList();
-		getConstructorsRecurs(p, ret);
-		return ret;
-	}
-
-	private Map<Hecceity, List<String>> invertPredMap(Map<String, List<Hecceity>> argMap) {
-		Map<Hecceity, List<String>> ret = Maps.newHashMap();
-		for (Entry<String, List<Hecceity>> entry : argMap.entrySet()) {
-			for (Hecceity h : entry.getValue()) {
-				List<String> v = ret.get(h);
-				if (v == null) {
-					v = Lists.newArrayList();
-					ret.put(h, v);
-				}
-				v.add(entry.getKey());
-			}
-		}
-		return ret;
 	}
 
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
