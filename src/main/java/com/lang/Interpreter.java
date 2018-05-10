@@ -2,6 +2,7 @@ package com.lang;
 
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -171,7 +172,6 @@ public class Interpreter {
 		Prop prop3 = new Prop();
 		addPrefix(p1, p2, prop3);
 		multMatrix(p1, p2, prop3);
-		System.out.println(prop3.toString());
 		return prop3;
 	}
 
@@ -226,6 +226,7 @@ public class Interpreter {
 			return p;
 		}
 		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
+		System.out.println(allQuants.size());
 		for (List<Quantifier> lq: allQuants) {
 			Prop intermediate = new Prop();
 			for (Quantifier q: lq) {
@@ -246,7 +247,7 @@ public class Interpreter {
 			}
 			p = prodProps(p, intermediate);
 		}
-		 return p;
+		 return removeContradictions(p);
 	}
 	
 	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
@@ -282,6 +283,10 @@ public class Interpreter {
 	
 	private static <T> List<List<T>> rearrange(List<T> tuple) {
 		List<List<T>> ret = Lists.newArrayList();
+		if (tuple.size() == 1) {
+			ret.add(tuple);
+			return ret;
+		}
 		if (tuple.size() == 2) {
 			List<T> a = Lists.newArrayList(tuple.get(0),tuple.get(1));
 			List<T> b = Lists.newArrayList(tuple.get(1),tuple.get(0));
@@ -300,7 +305,8 @@ public class Interpreter {
 			}
 			List<List<T>> subPerms = rearrange(subTuple);
 			for (List<T> sub: subPerms) {
-				List<T> l = Lists.newArrayList(t);
+				List<T> l = new ArrayList<T>();
+				l.add(t);
 				for (T tt: sub) {
 					l.add(tt);
 				}
