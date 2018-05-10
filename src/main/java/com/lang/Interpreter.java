@@ -225,12 +225,84 @@ public class Interpreter {
 		if (numThereis < numOfForall) {
 			return p;
 		}
-		
+		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
 		 
 		
 		
 	}
-
+	
+	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
+		List<List<T>> ret = Lists.newArrayList();
+		if (n == l.size()) {
+			ret.add(l);
+			return ret;
+		}
+		List<T> copy = Lists.newArrayList();
+		for (T t: l) {
+			copy.add(t);
+		}
+		int remaining = n-1;
+		while (copy.size() >= n) {
+			for (int i = 1,ii=copy.size();i<ii;i++) {
+				T head = copy.get(0);
+				List<T> tuple = Lists.newArrayList();
+				tuple.add(head);
+				int endIndex = remaining+i;
+				if (endIndex >= copy.size()) {
+					break;
+				}
+				for (int z = i;z<endIndex;z++) {
+					tuple.add(copy.get(z));
+				}
+				ret.add(tuple);
+				copy.remove(0);
+			}
+		}
+		return ret;
+		
+	}
+	
+	private static <T> List<List<T>> rearrange(List<T> tuple) {
+		List<List<T>> ret = Lists.newArrayList();
+		if (tuple.size() == 2) {
+			List<T> a = Lists.newArrayList(tuple.get(0),tuple.get(1));
+			List<T> b = Lists.newArrayList(tuple.get(1),tuple.get(0));
+			ret.add(a);
+			ret.add(b);
+			return ret;
+		}
+		for(int i=0, ii = tuple.size();i<ii;i++) {
+			T t = tuple.get(i);
+			List<T> subTuple = Lists.newArrayList();
+			for (int n=0,nn=tuple.size();n<nn;n++) {
+				if (n == i) {
+					continue;
+				}
+				subTuple.add(tuple.get(n));
+			}
+			List<List<T>> subPerms = rearrange(subTuple);
+			for (List<T> sub: subPerms) {
+				List<T> l = Lists.newArrayList(t);
+				for (T tt: sub) {
+					l.add(tt);
+				}
+				ret.add(l);
+			}
+		}
+		return ret;
+	}
+	
+	// we already know that n >= l.length
+	private static <T> List<List<T>> getPermutations(List<T> l,int n) {
+		List<List<T>> ret = Lists.newArrayList();
+		List<List<T>> ntuples = getNtuples(l,n);
+		
+		for (List<T>tuple: ntuples) {
+			ret.addAll(rearrange(tuple));
+		}
+		return ret;
+	}
+	
 	private boolean contradiction(CompoundProp cp) {
 		Map<String, Boolean> boolMap = Maps.newHashMap();
 		for (AtomicProp ap : cp.getAtomicProps()) {
