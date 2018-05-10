@@ -226,9 +226,27 @@ public class Interpreter {
 			return p;
 		}
 		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
-		 
-		
-		
+		for (List<Quantifier> lq: allQuants) {
+			Prop intermediate = new Prop();
+			for (Quantifier q: lq) {
+				intermediate.addQuantifierUnique(q);
+			}
+			List<Hecceity> consHecs = constructor.getHecceties();
+			List<Hecceity> corresponding = intermediate.getHecceties();
+			for (CompoundProp cp: constructor.getMatrix()) {
+				CompoundProp ncp = intermediate.makeBlankCompoundProp();
+				for (AtomicProp ap: cp.getAtomicProps()) {
+					List<Hecceity> neh = Lists.newArrayList();
+					for (Hecceity h : ap.getHecceities()) {
+						neh.add(corresponding.get(consHecs.indexOf(h)));
+					}
+					ncp.addAtomicProp(new AtomicProp(ap.getName(), neh, ap.getTruthValue()));
+				}
+				intermediate.addCompoundProp(ncp);
+			}
+			p = prodProps(p, intermediate);
+		}
+		 return p;
 	}
 	
 	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
