@@ -198,7 +198,6 @@ public class Interpreter {
 				break;
 			}
 		}
-		List<CompoundProp> matrix = p.getMatrix();
 		if (foralls.size() == 0) {
 			return;
 		}
@@ -225,12 +224,17 @@ public class Interpreter {
 		if (numThereis < numOfForall) {
 			return p;
 		}
+		
 		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
-		System.out.println(allQuants.size());
 		for (List<Quantifier> lq: allQuants) {
 			Prop intermediate = new Prop();
 			for (Quantifier q: lq) {
 				intermediate.addQuantifierUnique(q);
+			}
+			int lastQuant = lq.size();
+			for(;lastQuant < constructor.getPrefix().size();lastQuant++) {
+				Quantifier q = constructor.getPrefix().get(lastQuant);
+				intermediate.addQuantifier(q.getType());
 			}
 			List<Hecceity> consHecs = constructor.getHecceties();
 			List<Hecceity> corresponding = intermediate.getHecceties();
@@ -262,9 +266,11 @@ public class Interpreter {
 		}
 		int remaining = n-1;
 		while (copy.size() >= n) {
+			T head = copy.get(0);
+			List<T> tuple = Lists.newArrayList();
+			copy.remove(0);
 			for (int i = 1,ii=copy.size();i<ii;i++) {
-				T head = copy.get(0);
-				List<T> tuple = Lists.newArrayList();
+				
 				tuple.add(head);
 				int endIndex = remaining+i;
 				if (endIndex >= copy.size()) {
@@ -274,7 +280,7 @@ public class Interpreter {
 					tuple.add(copy.get(z));
 				}
 				ret.add(tuple);
-				copy.remove(0);
+				
 			}
 		}
 		return ret;
@@ -405,7 +411,6 @@ public class Interpreter {
 	}
 
 	private void checkForNativeVals(Prop p) throws ParseException {
-		Map<Hecceity, String> nativeValMap = Maps.newHashMap();
 		for (CompoundProp cp : p.getMatrix()) {
 			for (AtomicProp ap : cp.getAtomicProps()) {
 				String predName = ap.getName();
