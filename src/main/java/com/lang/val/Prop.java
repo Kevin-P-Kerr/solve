@@ -132,7 +132,6 @@ public class Prop extends Value {
 		public void addAtomicProp(AtomicProp atomicProp) {
 			String name = atomicProp.getName();
 			List<Hecceity> hecs = atomicProp.getHecceities();
-			predicates2hecceity.put(name, hecs);
 			this.atomicProps.add(atomicProp);
 		}
 		
@@ -142,12 +141,7 @@ public class Prop extends Value {
 	private List<CompoundProp> matrix = Lists.newArrayList();
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
-	private  Map<String,List<Hecceity>> predicates2hecceity = Maps.newConcurrentMap();
 
-	
-	public Map<String,List<Hecceity>> getPredicates2Hecceity () {
-		return predicates2hecceity;
-	}
 
 	public List<Quantifier> getPrefix() {
 		return prefix;

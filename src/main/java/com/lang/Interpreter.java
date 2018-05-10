@@ -215,14 +215,18 @@ public class Interpreter {
 			}
 		}
 		int numThereis = 0;
+		List<Quantifier> thereisQuants = Lists.newArrayList();
 		for (Quantifier q: p.getPrefix()) {
 			if (q.getType().equals(QuantifierType.THEREIS)) {
 				numThereis++;
+				thereisQuants.add(q);
 			}
 		}
 		if (numThereis < numOfForall) {
 			return p;
 		}
+		
+		 
 		
 		
 	}
