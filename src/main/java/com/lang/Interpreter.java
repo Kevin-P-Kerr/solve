@@ -226,6 +226,7 @@ public class Interpreter {
 		}
 		
 		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
+		System.out.println("all quants size: " + allQuants.size());
 		for (List<Quantifier> lq: allQuants) {
 			Prop intermediate = new Prop();
 			for (Quantifier q: lq) {
@@ -269,11 +270,12 @@ public class Interpreter {
 			T head = copy.get(0);
 			List<T> tuple = Lists.newArrayList();
 			copy.remove(0);
-			for (int i = 1,ii=copy.size();i<ii;i++) {
+			for (int i = 1,ii=copy.size();i<=ii;i++) {
 				
 				tuple.add(head);
 				int endIndex = remaining+i;
-				if (endIndex >= copy.size()) {
+				
+				if (endIndex > copy.size()) {
 					break;
 				}
 				for (int z = i;z<endIndex;z++) {
