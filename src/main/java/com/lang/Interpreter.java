@@ -250,9 +250,10 @@ public class Interpreter {
 				}
 				intermediate.addCompoundProp(ncp);
 			}
-			p = prodProps(p.copy(), intermediate.copy());
+			p = prodProps(p, intermediate);
 		}
 		 return removeContradictions(p);
+		
 	}
 	
 	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
@@ -270,9 +271,12 @@ public class Interpreter {
 			T head = copy.get(0);
 			List<T> tuple = Lists.newArrayList();
 			copy.remove(0);
+			tuple.add(head);
+			if (tuple.size() == n) {
+				ret.add(tuple);
+				continue;
+			}
 			for (int i = 1,ii=copy.size();i<=ii;i++) {
-				
-				tuple.add(head);
 				int endIndex = remaining+i;
 				
 				if (endIndex > copy.size()) {
@@ -336,12 +340,19 @@ public class Interpreter {
 	}
 	
 	private boolean contradiction(CompoundProp cp) {
-		Map<String, Boolean> boolMap = Maps.newHashMap();
+		Map<String, Map<List<Hecceity>, Boolean>> boolMap = Maps.newHashMap();
+		
 		for (AtomicProp ap : cp.getAtomicProps()) {
 			String name = ap.getName();
-			Boolean b = boolMap.get(name);
+			 Map<List<Hecceity>, Boolean> m = boolMap.get(name);
+			 if (m == null) {
+				 m = Maps.newHashMap();
+				 boolMap.put(name, m);
+			 }
+			 Boolean b = m.get(ap.getHecceities());
+			 
 			if (b == null) {
-				boolMap.put(name, ap.getTruthValue());
+				m.put(ap.getHecceities(), ap.getTruthValue());
 				continue;
 			}
 			if (b != ap.getTruthValue()) {

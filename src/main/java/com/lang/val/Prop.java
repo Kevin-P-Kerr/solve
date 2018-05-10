@@ -18,7 +18,7 @@ public class Prop extends Value {
 	}
 
 	private static class UniqueString {
-		private static int c = 0;
+		private  int c = 0;
 		private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
 				"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z " };
 
@@ -56,7 +56,7 @@ public class Prop extends Value {
 	}
 
 	private static final IDMaker idMaker = new IDMaker();
-	private static final UniqueString uniqueString = new UniqueString();
+	private  final UniqueString uniqueString = new UniqueString();
 
 	public static class Hecceity {
 		// TODO : Do we need this?
@@ -272,6 +272,7 @@ public class Prop extends Value {
 				}
 				ncp.addAtomicProp(new AtomicProp(ap.getName(), args, ap.getTruthValue()));
 			}
+			ret.addCompoundProp(ncp);
 		}
 		return ret;
 	}
