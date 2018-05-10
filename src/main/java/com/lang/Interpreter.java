@@ -24,7 +24,7 @@ import com.lang.val.Value;
 public class Interpreter {
 
 	private final TokenStream tokens;
-	private final static List<Prop> constructors = Maps.newConcurrentMap();
+	private final static List<Prop> constructors = Lists.newArrayList();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -202,21 +202,7 @@ public class Interpreter {
 		if (foralls.size() == 0) {
 			return;
 		}
-		for (CompoundProp cp : matrix) {
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				String name = ap.getName();
-				List<Prop> props = constructors.get(name);
-				if (props == null) {
-					props = Lists.newArrayList();
-					constructors.put(name, props);
-				}
-				if (!props.contains(p)) {
-					props.add(p);
-				}
-
-			}
-		}
-
+		constructors.add(p);
 	}
 
 	private void getConstructorsRecurs(Prop p, List<Prop> constructors) {
