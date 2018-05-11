@@ -18,7 +18,7 @@ public class Prop extends Value {
 	}
 
 	private static class UniqueString {
-		private  int c = 0;
+		private int c = 0;
 		private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
 				"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z " };
 
@@ -27,11 +27,11 @@ public class Prop extends Value {
 			int i = c;
 			c++;
 			int digits = 1;
-			int m  = mod;
+			int m = mod;
 			while (m < i) {
-				m = m*mod;
+				m = m * mod;
 				if (m > i) {
-					m = m/mod;
+					m = m / mod;
 					digits++;
 					break;
 				}
@@ -40,15 +40,14 @@ public class Prop extends Value {
 			String ret = "";
 			while (digits > 0) {
 				if (i > m) {
-					int index = i/m;
-					i = i%m;
-					ret += alpha[index-1];
-				}
-				else {
-					int index = i%m;
+					int index = i / m;
+					i = i % m;
+					ret += alpha[index - 1];
+				} else {
+					int index = i % m;
 					ret += alpha[index];
 				}
-				m = m/mod;
+				m = m / mod;
 				digits--;
 			}
 			return ret;
@@ -56,7 +55,7 @@ public class Prop extends Value {
 	}
 
 	private static final IDMaker idMaker = new IDMaker();
-	private  final UniqueString uniqueString = new UniqueString();
+	private final UniqueString uniqueString = new UniqueString();
 
 	public static class Hecceity {
 		// TODO : Do we need this?
@@ -106,18 +105,18 @@ public class Prop extends Value {
 		}
 
 		public List<Hecceity> getHecceities() {
-			
+
 			return hecceities;
 		}
-		
-		public boolean getTruthValue () {
+
+		public boolean getTruthValue() {
 			return truthValue;
 		}
 	}
 
 	public class CompoundProp {
 		private final List<AtomicProp> atomicProps;
-		
+
 		private CompoundProp() {
 			this.atomicProps = Lists.newArrayList();
 		}
@@ -131,7 +130,7 @@ public class Prop extends Value {
 			for (String s : hecceities) {
 				ents.add(s2h.get(s));
 			}
-			addAtomicProp(new AtomicProp(name, ents,tv));
+			addAtomicProp(new AtomicProp(name, ents, tv));
 		}
 
 		public void addAtomicProp(AtomicProp atomicProp) {
@@ -139,16 +138,13 @@ public class Prop extends Value {
 			List<Hecceity> hecs = atomicProp.getHecceities();
 			this.atomicProps.add(atomicProp);
 		}
-		
+
 	}
 
 	private List<Quantifier> prefix = Lists.newArrayList();
 	private List<CompoundProp> matrix = Lists.newArrayList();
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
-	private boolean captured = false;
-	private Prop capture;
-
 
 	public List<Quantifier> getPrefix() {
 		return prefix;
@@ -189,7 +185,7 @@ public class Prop extends Value {
 				}
 				String name = prop.getName();
 				if (!prop.getTruthValue()) {
-					name = "~"+name;
+					name = "~" + name;
 				}
 				sb.append(name + "(");
 				boolean first = true;
@@ -243,10 +239,10 @@ public class Prop extends Value {
 		}
 		addQuantifier(new Quantifier(qt, h));
 	}
-	
+
 	public void addQuantifier(QuantifierType qt) {
 		String name = uniqueString.getString();
-		addQuantifier(qt,name);
+		addQuantifier(qt, name);
 	}
 
 	public CompoundProp makeBlankCompoundProp() {
@@ -254,35 +250,24 @@ public class Prop extends Value {
 	}
 
 	public List<Hecceity> getHecceties() {
-		
+
 		List<Hecceity> ret = Lists.newArrayList();
-		List<Hecceity> local = Lists.newArrayList();
-		for (Quantifier q: getPrefix()) {
-			local.add(q.getHecceity());
+		for (Quantifier q : getPrefix()) {
+			ret.add(q.getHecceity());
 		}
-		if (captured) {
-			List<Hecceity> hlist  = capture.getHecceties();
-			for (Hecceity h: hlist) {
-				if (local.indexOf(h) >= 0) {
-					break;
-				}
-				ret.add(h);
-			}
-		}
-		ret.addAll(local);
 		return ret;
 	}
 
 	public Prop copy() {
 		Prop ret = new Prop();
-		for (Quantifier q: getPrefix()) {
+		for (Quantifier q : getPrefix()) {
 			ret.addQuantifier(q.getType());
 		}
-		for (CompoundProp cp: getMatrix()) {
+		for (CompoundProp cp : getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			for (AtomicProp ap : cp.getAtomicProps()) {
 				List<Hecceity> args = Lists.newArrayList();
-				for (Hecceity h :ap.getHecceities()) {
+				for (Hecceity h : ap.getHecceities()) {
 					args.add(ret.getHecceties().get(getHecceties().indexOf(h)));
 				}
 				ncp.addAtomicProp(new AtomicProp(ap.getName(), args, ap.getTruthValue()));
@@ -291,14 +276,4 @@ public class Prop extends Value {
 		}
 		return ret;
 	}
-
-	public void addCapture(Prop p) {
-		this.captured = true;
-		if (this.capture != null) {
-			// error
-		}
-		this.capture = p;
-		
-	}
-	
 }

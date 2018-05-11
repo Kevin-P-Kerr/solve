@@ -5,11 +5,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -203,41 +200,42 @@ public class Interpreter {
 		}
 		constructors.add(p);
 	}
-	private static List<Prop> extractImplicitConstructors (Prop p) {
+
+	private static List<Prop> extractImplicitConstructors(Prop p) {
 		List<Prop> ret = Lists.newArrayList();
-		for (int i =0,ii=p.getPrefix().size();i<ii;i++) {
+		for (int i = 0, ii = p.getPrefix().size(); i < ii; i++) {
 			Quantifier q = p.getPrefix().get(i);
 			if (q.getType().equals(QuantifierType.FORALL)) {
 				Prop c = new Prop();
 				c.addQuantifierUnique(q);
 				i++;
-				while (i < p.getPrefix().size() && (q = p.getPrefix().get(i)).getType().equals(QuantifierType.THEREIS)) {
+				while (i < p.getPrefix().size()
+						&& (q = p.getPrefix().get(i)).getType().equals(QuantifierType.THEREIS)) {
 					c.addQuantifierUnique(q);
 					i++;
 				}
-				for (CompoundProp cp: p.getMatrix()) {
+				for (CompoundProp cp : p.getMatrix()) {
 					c.addCompoundProp(cp);
 				}
-				c.addCapture(p);
 				ret.add(c);
 			}
 		}
 		return ret;
 	}
+
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		List<Prop> implicitConstructors = extractImplicitConstructors(p);
 		int numOfForall = 0;
-		for (Quantifier q: constructor.getPrefix()) {
+		for (Quantifier q : constructor.getPrefix()) {
 			if (q.getType().equals(QuantifierType.FORALL)) {
 				numOfForall++;
-			}
-			else {
+			} else {
 				break;
 			}
 		}
 		int numThereis = 0;
 		List<Quantifier> thereisQuants = Lists.newArrayList();
-		for (Quantifier q: p.getPrefix()) {
+		for (Quantifier q : p.getPrefix()) {
 			if (q.getType().equals(QuantifierType.THEREIS)) {
 				numThereis++;
 				thereisQuants.add(q);
@@ -246,24 +244,24 @@ public class Interpreter {
 		if (numThereis < numOfForall) {
 			return p;
 		}
-		
-		List<List<Quantifier>> allQuants = getPermutations(thereisQuants,numOfForall);
+
+		List<List<Quantifier>> allQuants = getPermutations(thereisQuants, numOfForall);
 		System.out.println("all quants size: " + allQuants.size());
-		for (List<Quantifier> lq: allQuants) {
+		for (List<Quantifier> lq : allQuants) {
 			Prop intermediate = new Prop();
-			for (Quantifier q: lq) {
+			for (Quantifier q : lq) {
 				intermediate.addQuantifierUnique(q);
 			}
 			int lastQuant = lq.size();
-			for(;lastQuant < constructor.getPrefix().size();lastQuant++) {
+			for (; lastQuant < constructor.getPrefix().size(); lastQuant++) {
 				Quantifier q = constructor.getPrefix().get(lastQuant);
 				intermediate.addQuantifier(q.getType());
 			}
 			List<Hecceity> consHecs = constructor.getHecceties();
 			List<Hecceity> corresponding = intermediate.getHecceties();
-			for (CompoundProp cp: constructor.getMatrix()) {
+			for (CompoundProp cp : constructor.getMatrix()) {
 				CompoundProp ncp = intermediate.makeBlankCompoundProp();
-				for (AtomicProp ap: cp.getAtomicProps()) {
+				for (AtomicProp ap : cp.getAtomicProps()) {
 					List<Hecceity> neh = Lists.newArrayList();
 					for (Hecceity h : ap.getHecceities()) {
 						try {
@@ -275,17 +273,17 @@ public class Interpreter {
 					ncp.addAtomicProp(new AtomicProp(ap.getName(), neh, ap.getTruthValue()));
 				}
 				intermediate.addCompoundProp(ncp);
-				for (Prop ic:implicitConstructors) {
+				for (Prop ic : implicitConstructors) {
 					intermediate = apply(intermediate, ic);
 					intermediate = removeContradictions(intermediate);
 				}
 			}
 			p = prodProps(p, intermediate);
 		}
-		 return removeContradictions(p);
-		
+		return removeContradictions(p);
+
 	}
-	
+
 	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
 		if (n == l.size()) {
@@ -293,10 +291,10 @@ public class Interpreter {
 			return ret;
 		}
 		List<T> copy = Lists.newArrayList();
-		for (T t: l) {
+		for (T t : l) {
 			copy.add(t);
 		}
-		int remaining = n-1;
+		int remaining = n - 1;
 		while (copy.size() >= n) {
 			T head = copy.get(0);
 			List<T> tuple = Lists.newArrayList();
@@ -306,23 +304,23 @@ public class Interpreter {
 				ret.add(tuple);
 				continue;
 			}
-			for (int i = 1,ii=copy.size();i<=ii;i++) {
-				int endIndex = remaining+i;
-				
+			for (int i = 1, ii = copy.size(); i <= ii; i++) {
+				int endIndex = remaining + i;
+
 				if (endIndex > copy.size()) {
 					break;
 				}
-				for (int z = i;z<endIndex;z++) {
+				for (int z = i; z < endIndex; z++) {
 					tuple.add(copy.get(z));
 				}
 				ret.add(tuple);
-				
+
 			}
 		}
 		return ret;
-		
+
 	}
-	
+
 	private static <T> List<List<T>> rearrange(List<T> tuple) {
 		List<List<T>> ret = Lists.newArrayList();
 		if (tuple.size() == 1) {
@@ -330,26 +328,26 @@ public class Interpreter {
 			return ret;
 		}
 		if (tuple.size() == 2) {
-			List<T> a = Lists.newArrayList(tuple.get(0),tuple.get(1));
-			List<T> b = Lists.newArrayList(tuple.get(1),tuple.get(0));
+			List<T> a = Lists.newArrayList(tuple.get(0), tuple.get(1));
+			List<T> b = Lists.newArrayList(tuple.get(1), tuple.get(0));
 			ret.add(a);
 			ret.add(b);
 			return ret;
 		}
-		for(int i=0, ii = tuple.size();i<ii;i++) {
+		for (int i = 0, ii = tuple.size(); i < ii; i++) {
 			T t = tuple.get(i);
 			List<T> subTuple = Lists.newArrayList();
-			for (int n=0,nn=tuple.size();n<nn;n++) {
+			for (int n = 0, nn = tuple.size(); n < nn; n++) {
 				if (n == i) {
 					continue;
 				}
 				subTuple.add(tuple.get(n));
 			}
 			List<List<T>> subPerms = rearrange(subTuple);
-			for (List<T> sub: subPerms) {
+			for (List<T> sub : subPerms) {
 				List<T> l = new ArrayList<T>();
 				l.add(t);
-				for (T tt: sub) {
+				for (T tt : sub) {
 					l.add(tt);
 				}
 				ret.add(l);
@@ -357,30 +355,30 @@ public class Interpreter {
 		}
 		return ret;
 	}
-	
+
 	// we already know that n >= l.length
-	private static <T> List<List<T>> getPermutations(List<T> l,int n) {
+	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
-		List<List<T>> ntuples = getNtuples(l,n);
-		
-		for (List<T>tuple: ntuples) {
+		List<List<T>> ntuples = getNtuples(l, n);
+
+		for (List<T> tuple : ntuples) {
 			ret.addAll(rearrange(tuple));
 		}
 		return ret;
 	}
-	
+
 	private boolean contradiction(CompoundProp cp) {
 		Map<String, Map<List<Hecceity>, Boolean>> boolMap = Maps.newHashMap();
-		
+
 		for (AtomicProp ap : cp.getAtomicProps()) {
 			String name = ap.getName();
-			 Map<List<Hecceity>, Boolean> m = boolMap.get(name);
-			 if (m == null) {
-				 m = Maps.newHashMap();
-				 boolMap.put(name, m);
-			 }
-			 Boolean b = m.get(ap.getHecceities());
-			 
+			Map<List<Hecceity>, Boolean> m = boolMap.get(name);
+			if (m == null) {
+				m = Maps.newHashMap();
+				boolMap.put(name, m);
+			}
+			Boolean b = m.get(ap.getHecceities());
+
 			if (b == null) {
 				m.put(ap.getHecceities(), ap.getTruthValue());
 				continue;
