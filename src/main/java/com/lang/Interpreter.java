@@ -203,7 +203,29 @@ public class Interpreter {
 		}
 		constructors.add(p);
 	}
+	private static List<Prop> extractImplicitConstructors (Prop p) {
+		List<Prop> ret = Lists.newArrayList();
+		for (int i =0,ii=p.getPrefix().size();i<ii;i++) {
+			Quantifier q = p.getPrefix().get(i);
+			if (q.getType().equals(QuantifierType.FORALL)) {
+				Prop c = new Prop();
+				c.addQuantifierUnique(q);
+				i++;
+				while (i < p.getPrefix().size() && (q = p.getPrefix().get(i)).getType().equals(QuantifierType.THEREIS)) {
+					c.addQuantifierUnique(q);
+					i++;
+				}
+				for (CompoundProp cp: p.getMatrix()) {
+					c.addCompoundProp(cp);
+				}
+				c.addCapture(p);
+				ret.add(c);
+			}
+		}
+		return ret;
+	}
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
+		List<Prop> implicitConstructors = extractImplicitConstructors(p);
 		int numOfForall = 0;
 		for (Quantifier q: constructor.getPrefix()) {
 			if (q.getType().equals(QuantifierType.FORALL)) {
@@ -244,11 +266,19 @@ public class Interpreter {
 				for (AtomicProp ap: cp.getAtomicProps()) {
 					List<Hecceity> neh = Lists.newArrayList();
 					for (Hecceity h : ap.getHecceities()) {
-						neh.add(corresponding.get(consHecs.indexOf(h)));
+						try {
+							neh.add(corresponding.get(consHecs.indexOf(h)));
+						} catch (IndexOutOfBoundsException e) {
+							neh.add(h);
+						}
 					}
 					ncp.addAtomicProp(new AtomicProp(ap.getName(), neh, ap.getTruthValue()));
 				}
 				intermediate.addCompoundProp(ncp);
+				for (Prop ic:implicitConstructors) {
+					intermediate = apply(intermediate, ic);
+					intermediate = removeContradictions(intermediate);
+				}
 			}
 			p = prodProps(p, intermediate);
 		}

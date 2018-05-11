@@ -106,6 +106,7 @@ public class Prop extends Value {
 		}
 
 		public List<Hecceity> getHecceities() {
+			
 			return hecceities;
 		}
 		
@@ -145,6 +146,8 @@ public class Prop extends Value {
 	private List<CompoundProp> matrix = Lists.newArrayList();
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
+	private boolean captured = false;
+	private Prop capture;
 
 
 	public List<Quantifier> getPrefix() {
@@ -251,10 +254,22 @@ public class Prop extends Value {
 	}
 
 	public List<Hecceity> getHecceties() {
+		
 		List<Hecceity> ret = Lists.newArrayList();
+		List<Hecceity> local = Lists.newArrayList();
 		for (Quantifier q: getPrefix()) {
-			ret.add(q.getHecceity());
+			local.add(q.getHecceity());
 		}
+		if (captured) {
+			List<Hecceity> hlist  = capture.getHecceties();
+			for (Hecceity h: hlist) {
+				if (local.indexOf(h) >= 0) {
+					break;
+				}
+				ret.add(h);
+			}
+		}
+		ret.addAll(local);
 		return ret;
 	}
 
@@ -275,6 +290,15 @@ public class Prop extends Value {
 			ret.addCompoundProp(ncp);
 		}
 		return ret;
+	}
+
+	public void addCapture(Prop p) {
+		this.captured = true;
+		if (this.capture != null) {
+			// error
+		}
+		this.capture = p;
+		
 	}
 	
 }
