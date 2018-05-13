@@ -241,6 +241,25 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public Prop copyWithHecceities() {
+		Prop ret = new Prop();
+		for (Quantifier q : getPrefix()) {
+			ret.addQuantifierUnique(q);
+		}
+		for (CompoundProp cp : getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				List<Hecceity> args = Lists.newArrayList();
+				for (Hecceity h : ap.getHecceities()) {
+					args.add(h);
+				}
+				ncp.addAtomicProp(new AtomicProp(ap.getName(), args, ap.getTruthValue()));
+			}
+			ret.addCompoundProp(ncp);
+		}
+		return ret;
+	}
+
 	public Prop copy() {
 		Prop ret = new Prop();
 		for (Quantifier q : getPrefix()) {

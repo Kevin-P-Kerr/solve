@@ -270,26 +270,19 @@ public class Interpreter {
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		Prop product = prodProps(p, constructor);
 		List<Quantifier> prefix = product.getPrefix();
-		List<Quantifier> thereis = Lists.newArrayList();
-		int numThereis = 0;
-		Map<Hecceity, List<AtomicProp>> h2ap = product.hecceties2atomicProps();
-		Map<Hecceity, Quantifier> h2q = Maps.newHashMap();
-		for (Quantifier q : prefix) {
-			h2q.put(q.getHecceity(), q);
+		List<List<Quantifier>> segments = getSegments(prefix);
+		if (segments.get(0).get(0).getType().equals(QuantifierType.FORALL)) {
+			throw new ParseException("wrong quantifier order", 0);
 		}
-		for (Quantifier q : prefix) {
-			if (q.getType().equals(QuantifierType.THEREIS)) {
-				numThereis++;
-				thereis.add(q);
-			} else {
-				Hecceity h = q.getHecceity();
-				List<AtomicProp> apl = h2ap.get(h);
-				for (AtomicProp ap : apl) {
-					List<Hecceity> args = ap.getHecceities();
-
-				}
+		List<Quantifier> allQuants = Lists.newArrayList();
+		for (List<Quantifier> quants : segments) {
+			if (quants.get(0).getType().equals(QuantifierType.THEREIS)) {
+				allQuants.addAll(quants);
+				continue;
 			}
+			List<List<Quantifier>> perms = getPermutations(allQuants, quants.size());
 		}
+
 		return removeContradictions(p);
 
 	}
@@ -329,41 +322,6 @@ public class Interpreter {
 		}
 		return ret;
 
-	}
-
-	private static <T> List<List<T>> rearrange(List<T> tuple) {
-		List<List<T>> ret = Lists.newArrayList();
-		if (tuple.size() == 1) {
-			ret.add(tuple);
-			return ret;
-		}
-		if (tuple.size() == 2) {
-			List<T> a = Lists.newArrayList(tuple.get(0), tuple.get(1));
-			List<T> b = Lists.newArrayList(tuple.get(1), tuple.get(0));
-			ret.add(a);
-			ret.add(b);
-			return ret;
-		}
-		for (int i = 0, ii = tuple.size(); i < ii; i++) {
-			T t = tuple.get(i);
-			List<T> subTuple = Lists.newArrayList();
-			for (int n = 0, nn = tuple.size(); n < nn; n++) {
-				if (n == i) {
-					continue;
-				}
-				subTuple.add(tuple.get(n));
-			}
-			List<List<T>> subPerms = rearrange(subTuple);
-			for (List<T> sub : subPerms) {
-				List<T> l = new ArrayList<T>();
-				l.add(t);
-				for (T tt : sub) {
-					l.add(tt);
-				}
-				ret.add(l);
-			}
-		}
-		return ret;
 	}
 
 	// we already know that n >= l.length
