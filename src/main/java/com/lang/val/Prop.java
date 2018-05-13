@@ -2,6 +2,7 @@ package com.lang.val;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -141,7 +142,7 @@ public class Prop extends Value {
 
 	}
 
-	private List<Quantifier> prefix = Lists.newArrayList();
+	private final List<Quantifier> prefix = Lists.newArrayList();
 	private List<CompoundProp> matrix = Lists.newArrayList();
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
@@ -275,5 +276,46 @@ public class Prop extends Value {
 			ret.addCompoundProp(ncp);
 		}
 		return ret;
+	}
+
+	private static class ReplaceOp implements UnaryOperator<Hecceity> {
+
+		private final Hecceity from;
+		private final Hecceity to;
+
+		public ReplaceOp(Hecceity from, Hecceity to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		@Override
+		public Hecceity apply(Hecceity t) {
+			if (t == from) {
+				return to;
+			}
+			return t;
+		}
+
+	}
+
+	public void replace(Quantifier from, Quantifier to) {
+		List<Quantifier> pre = getPrefix();
+		Hecceity fh = from.getHecceity();
+		Hecceity th = to.getHecceity();
+		ReplaceOp op = new ReplaceOp(fh, th);
+		pre.remove(from);
+		List<CompoundProp> m = getMatrix();
+		for (CompoundProp cp : m) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				ap.getHecceities().replaceAll(op);
+			}
+		}
+
+	}
+
+	public void addAllQuants(List<Quantifier> quants) {
+		for (Quantifier q : quants) {
+			addQuantifierUnique(q);
+		}
 	}
 }

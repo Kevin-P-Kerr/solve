@@ -165,9 +165,53 @@ public class Interpreter {
 		return sumProps(p1.copy(), p2.copy());
 	}
 
+	private static List<List<Quantifier>> getSegments(List<Quantifier> prefix) {
+		List<List<Quantifier>> ret = Lists.newArrayList();
+		QuantifierType qt = prefix.get(0).getType();
+		List<Quantifier> intermediate = Lists.newArrayList();
+		for (Quantifier q : prefix) {
+			if (q.getType().equals(qt)) {
+				intermediate.add(q);
+			} else {
+				ret.add(intermediate);
+				intermediate = Lists.newArrayList(q);
+				qt = q.getType();
+			}
+		}
+		ret.add(intermediate);
+		return ret;
+	}
+
+	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
+		List<List<Quantifier>> segment1 = getSegments(p1.getPrefix());
+		List<List<Quantifier>> segment2 = getSegments(p2.getPrefix());
+		for (int i = 0, ii = Math.max(segment1.size(), segment2.size()); i < ii; i++) {
+			if (i >= segment1.size()) {
+				List<Quantifier> quants2 = segment2.get(i);
+				p3.addAllQuants(quants2);
+				continue;
+			}
+			List<Quantifier> quants1 = segment1.get(i);
+			if (i >= segment2.size()) {
+				p3.addAllQuants(quants1);
+				continue;
+			}
+			List<Quantifier> quants2 = segment2.get(i);
+			if (quants1.get(0).getType().equals(QuantifierType.THEREIS)) {
+				p3.addAllQuants(quants1);
+				p3.addAllQuants(quants2);
+
+			} else {
+				p3.addAllQuants(quants2);
+				p3.addAllQuants(quants1);
+			}
+
+		}
+	}
+
 	private Prop prodProps(Prop p1, Prop p2) {
 		Prop prop3 = new Prop();
-		addPrefix(p1, p2, prop3);
+		multPrefix(p1, p2, prop3);
 		multMatrix(p1, p2, prop3);
 		return prop3;
 	}
@@ -224,7 +268,6 @@ public class Interpreter {
 	}
 
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
-		List<Prop> implicitConstructors = extractImplicitConstructors(p);
 		int numOfForall = 0;
 		for (Quantifier q : constructor.getPrefix()) {
 			if (q.getType().equals(QuantifierType.FORALL)) {
@@ -246,40 +289,18 @@ public class Interpreter {
 		}
 
 		List<List<Quantifier>> allQuants = getPermutations(thereisQuants, numOfForall);
+		List<Quantifier> consPrefix = constructor.getPrefix();
 		System.out.println("all quants size: " + allQuants.size());
-		for (List<Quantifier> lq : allQuants) {
-			Prop intermediate = new Prop();
-			for (Quantifier q : lq) {
-				intermediate.addQuantifierUnique(q);
+		for (List<Quantifier> quants : allQuants) {
+			p = prodProps(p, constructor);
+			for (int i = 0, ii = quants.size(); i < ii; i++) {
+				Quantifier from = consPrefix.get(i);
+				Quantifier to = quants.get(i);
+				p.replace(from, to);
 			}
-			int lastQuant = lq.size();
-			for (; lastQuant < constructor.getPrefix().size(); lastQuant++) {
-				Quantifier q = constructor.getPrefix().get(lastQuant);
-				intermediate.addQuantifier(q.getType());
-			}
-			List<Hecceity> consHecs = constructor.getHecceties();
-			List<Hecceity> corresponding = intermediate.getHecceties();
-			for (CompoundProp cp : constructor.getMatrix()) {
-				CompoundProp ncp = intermediate.makeBlankCompoundProp();
-				for (AtomicProp ap : cp.getAtomicProps()) {
-					List<Hecceity> neh = Lists.newArrayList();
-					for (Hecceity h : ap.getHecceities()) {
-						try {
-							neh.add(corresponding.get(consHecs.indexOf(h)));
-						} catch (IndexOutOfBoundsException e) {
-							neh.add(h);
-						}
-					}
-					ncp.addAtomicProp(new AtomicProp(ap.getName(), neh, ap.getTruthValue()));
-				}
-				intermediate.addCompoundProp(ncp);
-				for (Prop ic : implicitConstructors) {
-					intermediate = apply(intermediate, ic);
-					intermediate = removeContradictions(intermediate);
-				}
-			}
-			p = prodProps(p, intermediate);
+			p = removeContradictions(p);
 		}
+
 		return removeContradictions(p);
 
 	}
@@ -484,7 +505,7 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		for (Prop constructor : constructors) {
-			p = apply(p, constructor);
+			p = prodProps(p, constructor);
 		}
 		checkForNativeVals(p);
 		return p;
