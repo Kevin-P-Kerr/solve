@@ -17,8 +17,8 @@ public class Solve {
 		Environment env = new Environment();
 		List<String> lines = Lists.newArrayList();
 		lines.add("a = forall a : ~Man(a) + Mortal(a)");
-		lines.add("b = forall a thereis b forall c: ~Man(a) + Man(b)*Mother(b a)*~Mother(c a)");
-		lines.add("forall a: ~Man(a) + ~Mother(a a)");
+		lines.add("b = forall a thereis b forall c: ~Man(a) + Man(b)*Mother(b a)*~Mother(c a)*~Mother(a a)");
+		// lines.add("forall a: ~Man(a) + ~Mother(a a)");
 		// lines.add("x = thereis a thereis b forall c :Man(a)*Mortal(a)*Man(b)*Mother(b a)*~Mother(c a)");
 		lines.add("$ thereis a : Man(a)");
 		// lines.add("* forall a thereis b: A(a) + ~B(a b) . thereis c: E(c)");

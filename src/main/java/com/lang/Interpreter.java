@@ -238,6 +238,10 @@ public class Interpreter {
 		return ret;
 	}
 
+	private static Prop removeDefects(Prop p) {
+		return removeRedundant(removeContradictions(p));
+	}
+
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		Prop product = prodProps(p, constructor);
 		List<Quantifier> prefix = product.getPrefix();
@@ -260,14 +264,14 @@ public class Interpreter {
 				for (int i = 0, ii = quants.size(); i < ii; i++) {
 					copy.replace(quants.get(i), perm.get(i));
 				}
-				altered.add(copy);
+				altered.add(removeDefects(copy));
 
 			}
 			Prop base = altered.get(0);
 			for (int i = 1, ii = altered.size(); i < ii; i++) {
 				base = prodProps(base, altered.get(i));
 			}
-			intermediate = base;
+			intermediate = removeDefects(base);
 		}
 
 		return removeRedundant(removeContradictions(intermediate));
@@ -367,7 +371,7 @@ public class Interpreter {
 		return false;
 	}
 
-	private Prop removeContradictions(Prop p) {
+	private static Prop removeContradictions(Prop p) {
 		Prop ret = new Prop();
 		for (Quantifier q : p.getPrefix()) {
 			ret.addQuantifierUnique(q);
