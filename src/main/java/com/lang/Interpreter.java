@@ -266,20 +266,27 @@ public class Interpreter {
 		return ret;
 	}
 
+	private static <T> List<T> reverse(List<T> in) {
+		List<T> ret = Lists.newArrayList();
+		for (int i = in.size() - 1, ii = -1; i > ii; i--) {
+			ret.add(in.get(i));
+		}
+		return ret;
+	}
+
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		Prop product = prodProps(p, constructor);
 		List<Quantifier> prefix = product.getPrefix();
-		List<List<Quantifier>> segments = getSegments(prefix);
-		if (segments.get(0).get(0).getType().equals(QuantifierType.FORALL)) {
-			throw new ParseException("wrong quantifier order", 0);
-		}
-		List<Quantifier> allQuants = Lists.newArrayList();
+		List<List<Quantifier>> segments = reverse(getSegments(prefix));
+
+		List<Quantifier> thereisQuants = Lists.newArrayList();
 		for (List<Quantifier> quants : segments) {
 			if (quants.get(0).getType().equals(QuantifierType.THEREIS)) {
-				allQuants.addAll(quants);
+				thereisQuants.addAll(quants);
 				continue;
 			}
-			List<List<Quantifier>> perms = getPermutations(allQuants, quants.size());
+			List<List<Quantifier>> perms = getPermutations(thereisQuants, quants.size());
+			List<AtomicProp> atomics = p.getAtomicPropsForQuants(quants);
 		}
 
 		return removeContradictions(p);

@@ -336,4 +336,13 @@ public class Prop extends Value {
 		}
 		return ret;
 	}
+
+	public List<AtomicProp> getAtomicPropsForQuants(List<Quantifier> quants) {
+		List<AtomicProp> ret = Lists.newArrayList();
+		Map<Hecceity, List<AtomicProp>> m = hecceties2atomicProps();
+		for (Quantifier q : quants) {
+			ret.addAll(m.get(q.getHecceity()));
+		}
+		return ret;
+	}
 }
