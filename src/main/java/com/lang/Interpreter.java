@@ -244,28 +244,6 @@ public class Interpreter {
 		constructors.add(p);
 	}
 
-	private static List<Prop> extractImplicitConstructors(Prop p) {
-		List<Prop> ret = Lists.newArrayList();
-		for (int i = 0, ii = p.getPrefix().size(); i < ii; i++) {
-			Quantifier q = p.getPrefix().get(i);
-			if (q.getType().equals(QuantifierType.FORALL)) {
-				Prop c = new Prop();
-				c.addQuantifierUnique(q);
-				i++;
-				while (i < p.getPrefix().size()
-						&& (q = p.getPrefix().get(i)).getType().equals(QuantifierType.THEREIS)) {
-					c.addQuantifierUnique(q);
-					i++;
-				}
-				for (CompoundProp cp : p.getMatrix()) {
-					c.addCompoundProp(cp);
-				}
-				ret.add(c);
-			}
-		}
-		return ret;
-	}
-
 	private static <T> List<T> reverse(List<T> in) {
 		List<T> ret = Lists.newArrayList();
 		for (int i = in.size() - 1, ii = -1; i > ii; i--) {
@@ -286,7 +264,15 @@ public class Interpreter {
 				continue;
 			}
 			List<List<Quantifier>> perms = getPermutations(thereisQuants, quants.size());
-			List<AtomicProp> atomics = p.getAtomicPropsForQuants(quants);
+			for (List<Quantifier> perm : perms) {
+				Prop copy = product.copyWithHecceities();
+				for (int i = 0, ii = quants.size(); i < ii; i++) {
+					copy.replace(quants.get(i), perm.get(i));
+				}
+				multMatrix(product, copy, product);
+				product = removeContradictions(product);
+
+			}
 		}
 
 		return removeContradictions(p);
@@ -454,7 +440,7 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		for (Prop constructor : constructors) {
-			p = prodProps(p, constructor);
+			p = apply(p, constructor);
 		}
 		checkForNativeVals(p);
 		return p;

@@ -320,29 +320,4 @@ public class Prop extends Value {
 		}
 	}
 
-	public Map<Hecceity, List<AtomicProp>> hecceties2atomicProps() {
-		Map<Hecceity, List<AtomicProp>> ret = Maps.newHashMap();
-		for (Quantifier q : getPrefix()) {
-			Hecceity h = q.getHecceity();
-			List<AtomicProp> apl = Lists.newArrayList();
-			ret.put(h, apl);
-			for (CompoundProp cp : getMatrix()) {
-				for (AtomicProp ap : cp.getAtomicProps()) {
-					if (ap.getHecceities().contains(h)) {
-						apl.add(ap);
-					}
-				}
-			}
-		}
-		return ret;
-	}
-
-	public List<AtomicProp> getAtomicPropsForQuants(List<Quantifier> quants) {
-		List<AtomicProp> ret = Lists.newArrayList();
-		Map<Hecceity, List<AtomicProp>> m = hecceties2atomicProps();
-		for (Quantifier q : quants) {
-			ret.addAll(m.get(q.getHecceity()));
-		}
-		return ret;
-	}
 }
