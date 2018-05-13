@@ -269,6 +269,27 @@ public class Interpreter {
 
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
 		Prop product = prodProps(p, constructor);
+		List<Quantifier> prefix = product.getPrefix();
+		List<Quantifier> thereis = Lists.newArrayList();
+		int numThereis = 0;
+		Map<Hecceity, List<AtomicProp>> h2ap = product.hecceties2atomicProps();
+		Map<Hecceity, Quantifier> h2q = Maps.newHashMap();
+		for (Quantifier q : prefix) {
+			h2q.put(q.getHecceity(), q);
+		}
+		for (Quantifier q : prefix) {
+			if (q.getType().equals(QuantifierType.THEREIS)) {
+				numThereis++;
+				thereis.add(q);
+			} else {
+				Hecceity h = q.getHecceity();
+				List<AtomicProp> apl = h2ap.get(h);
+				for (AtomicProp ap : apl) {
+					List<Hecceity> args = ap.getHecceities();
+
+				}
+			}
+		}
 		return removeContradictions(p);
 
 	}

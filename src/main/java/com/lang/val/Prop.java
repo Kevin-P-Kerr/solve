@@ -300,4 +300,21 @@ public class Prop extends Value {
 			addQuantifierUnique(q);
 		}
 	}
+
+	public Map<Hecceity, List<AtomicProp>> hecceties2atomicProps() {
+		Map<Hecceity, List<AtomicProp>> ret = Maps.newHashMap();
+		for (Quantifier q : getPrefix()) {
+			Hecceity h = q.getHecceity();
+			List<AtomicProp> apl = Lists.newArrayList();
+			ret.put(h, apl);
+			for (CompoundProp cp : getMatrix()) {
+				for (AtomicProp ap : cp.getAtomicProps()) {
+					if (ap.getHecceities().contains(h)) {
+						apl.add(ap);
+					}
+				}
+			}
+		}
+		return ret;
+	}
 }
