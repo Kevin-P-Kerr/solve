@@ -8,15 +8,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class Prop extends Value {
-	private static class IDMaker {
-		private long c = 0;
-
-		public long getID() {
-			long i = c;
-			c++;
-			return i;
-		}
-	}
 
 	private static class UniqueString {
 		private int c = 0;
@@ -55,16 +46,9 @@ public class Prop extends Value {
 		}
 	}
 
-	private static final IDMaker idMaker = new IDMaker();
 	private final UniqueString uniqueString = new UniqueString();
 
 	public static class Hecceity {
-		// TODO : Do we need this?
-		private final long id;
-
-		public Hecceity(long id) {
-			this.id = id;
-		}
 	}
 
 	public static enum QuantifierType {
@@ -135,8 +119,6 @@ public class Prop extends Value {
 		}
 
 		public void addAtomicProp(AtomicProp atomicProp) {
-			String name = atomicProp.getName();
-			List<Hecceity> hecs = atomicProp.getHecceities();
 			this.atomicProps.add(atomicProp);
 		}
 
@@ -234,7 +216,7 @@ public class Prop extends Value {
 	public void addQuantifier(QuantifierType qt, String lit) {
 		Hecceity h = s2h.get(lit);
 		if (h == null) {
-			h = new Hecceity(idMaker.getID());
+			h = new Hecceity();
 			h2s.put(h, lit);
 			s2h.put(lit, h);
 		}

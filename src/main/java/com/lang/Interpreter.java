@@ -268,39 +268,7 @@ public class Interpreter {
 	}
 
 	private Prop apply(Prop p, Prop constructor) throws ParseException {
-		int numOfForall = 0;
-		for (Quantifier q : constructor.getPrefix()) {
-			if (q.getType().equals(QuantifierType.FORALL)) {
-				numOfForall++;
-			} else {
-				break;
-			}
-		}
-		int numThereis = 0;
-		List<Quantifier> thereisQuants = Lists.newArrayList();
-		for (Quantifier q : p.getPrefix()) {
-			if (q.getType().equals(QuantifierType.THEREIS)) {
-				numThereis++;
-				thereisQuants.add(q);
-			}
-		}
-		if (numThereis < numOfForall) {
-			return p;
-		}
-
-		List<List<Quantifier>> allQuants = getPermutations(thereisQuants, numOfForall);
-		List<Quantifier> consPrefix = constructor.getPrefix();
-		System.out.println("all quants size: " + allQuants.size());
-		for (List<Quantifier> quants : allQuants) {
-			p = prodProps(p, constructor);
-			for (int i = 0, ii = quants.size(); i < ii; i++) {
-				Quantifier from = consPrefix.get(i);
-				Quantifier to = quants.get(i);
-				p.replace(from, to);
-			}
-			p = removeContradictions(p);
-		}
-
+		Prop product = prodProps(p, constructor);
 		return removeContradictions(p);
 
 	}
