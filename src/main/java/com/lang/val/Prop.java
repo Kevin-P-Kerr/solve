@@ -320,4 +320,21 @@ public class Prop extends Value {
 		}
 	}
 
+	public void removeQuantifier(Quantifier q) {
+		getPrefix().remove(q);
+		Hecceity h = q.getHecceity();
+		List<CompoundProp> removals = Lists.newArrayList();
+
+		for (CompoundProp cp : matrix) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (ap.getHecceities().indexOf(h) >= 0) {
+					removals.add(cp);
+				}
+			}
+		}
+		for (CompoundProp cp : removals) {
+			matrix.remove(cp);
+		}
+	}
+
 }

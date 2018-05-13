@@ -182,29 +182,11 @@ public class Interpreter {
 	}
 
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
-		List<List<Quantifier>> segment1 = getSegments(p1.getPrefix());
-		List<List<Quantifier>> segment2 = getSegments(p2.getPrefix());
-		for (int i = 0, ii = Math.max(segment1.size(), segment2.size()); i < ii; i++) {
-			if (i >= segment1.size()) {
-				List<Quantifier> quants2 = segment2.get(i);
-				p3.addAllQuants(quants2);
-				continue;
-			}
-			List<Quantifier> quants1 = segment1.get(i);
-			if (i >= segment2.size()) {
-				p3.addAllQuants(quants1);
-				continue;
-			}
-			List<Quantifier> quants2 = segment2.get(i);
-			if (quants1.get(0).getType().equals(QuantifierType.THEREIS)) {
-				p3.addAllQuants(quants1);
-				p3.addAllQuants(quants2);
-
-			} else {
-				p3.addAllQuants(quants2);
-				p3.addAllQuants(quants1);
-			}
-
+		if (p1.getPrefix().get(0).getType().equals(QuantifierType.FORALL)) {
+			p3.addAllQuants(p1.getPrefix());
+		} else {
+			p3.addAllQuants(p2.getPrefix());
+			p3.addAllQuants(p1.getPrefix());
 		}
 	}
 
@@ -264,18 +246,24 @@ public class Interpreter {
 				continue;
 			}
 			List<List<Quantifier>> perms = getPermutations(thereisQuants, quants.size());
+			List<Prop> altered = Lists.newArrayList();
 			for (List<Quantifier> perm : perms) {
 				Prop copy = product.copyWithHecceities();
 				for (int i = 0, ii = quants.size(); i < ii; i++) {
 					copy.replace(quants.get(i), perm.get(i));
 				}
-				multMatrix(product, copy, product);
-				product = removeContradictions(product);
-
+				altered.add(copy);
 			}
+			Prop base = altered.get(0);
+			for (int i = 1, ii = altered.size(); i < ii; i++) {
+				Prop holder = base.copyWithHecceities();
+				multMatrix(base, altered.get(i), holder);
+				base = holder;
+			}
+			product = base;
 		}
 
-		return removeContradictions(p);
+		return removeContradictions(product);
 
 	}
 
