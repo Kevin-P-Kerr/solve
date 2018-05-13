@@ -97,6 +97,38 @@ public class Prop extends Value {
 		public boolean getTruthValue() {
 			return truthValue;
 		}
+
+		@Override
+		public int hashCode() {
+			int seed = 31;
+			seed *= name.hashCode();
+			for (Hecceity h : hecceities) {
+				seed *= h.hashCode();
+			}
+			return seed * new Boolean(truthValue).hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof AtomicProp)) {
+				return false;
+			}
+			AtomicProp p = (AtomicProp) obj;
+			boolean f = p.getName().equals(getName());
+			if (!f) {
+				return false;
+			}
+			List<Hecceity> hecs = p.getHecceities();
+			if (hecceities.size() != hecs.size()) {
+				return false;
+			}
+			for (int i = 0, ii = hecceities.size(); i < ii; i++) {
+				if (hecceities.get(i) != hecs.get(i)) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	public class CompoundProp {
@@ -120,6 +152,29 @@ public class Prop extends Value {
 
 		public void addAtomicProp(AtomicProp atomicProp) {
 			this.atomicProps.add(atomicProp);
+		}
+
+		@Override
+		public int hashCode() {
+			int seed = 31;
+			for (AtomicProp ap : atomicProps) {
+				seed *= ap.hashCode();
+			}
+			return seed;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof CompoundProp)) {
+				return false;
+			}
+			CompoundProp cp = (CompoundProp) obj;
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (atomicProps.indexOf(ap) < 0) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 	}

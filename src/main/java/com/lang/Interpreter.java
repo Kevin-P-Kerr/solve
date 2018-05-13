@@ -4,8 +4,11 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -184,6 +187,7 @@ public class Interpreter {
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
 		if (p1.getPrefix().get(0).getType().equals(QuantifierType.FORALL)) {
 			p3.addAllQuants(p1.getPrefix());
+			p3.addAllQuants(p2.getPrefix());
 		} else {
 			p3.addAllQuants(p2.getPrefix());
 			p3.addAllQuants(p1.getPrefix());
@@ -240,31 +244,60 @@ public class Interpreter {
 		List<List<Quantifier>> segments = reverse(getSegments(prefix));
 
 		List<Quantifier> thereisQuants = Lists.newArrayList();
+		Prop intermediate = product;
 		for (List<Quantifier> quants : segments) {
 			if (quants.get(0).getType().equals(QuantifierType.THEREIS)) {
 				thereisQuants.addAll(quants);
+				continue;
+			} else if (thereisQuants.size() == 0) {
 				continue;
 			}
 			List<List<Quantifier>> perms = getPermutations(thereisQuants, quants.size());
 			List<Prop> altered = Lists.newArrayList();
 			for (List<Quantifier> perm : perms) {
-				Prop copy = product.copyWithHecceities();
+
+				Prop copy = intermediate.copyWithHecceities();
 				for (int i = 0, ii = quants.size(); i < ii; i++) {
 					copy.replace(quants.get(i), perm.get(i));
 				}
 				altered.add(copy);
+
 			}
 			Prop base = altered.get(0);
 			for (int i = 1, ii = altered.size(); i < ii; i++) {
-				Prop holder = base.copyWithHecceities();
-				multMatrix(base, altered.get(i), holder);
-				base = holder;
+				base = prodProps(base, altered.get(i));
 			}
-			product = base;
+			intermediate = base;
 		}
 
-		return removeContradictions(product);
+		return removeRedundant(removeContradictions(intermediate));
 
+	}
+
+	// we can assume that p has no contradictions
+	private static Prop removeRedundant(Prop p) {
+		Prop ret = new Prop();
+		for (Quantifier q : p.getPrefix()) {
+			ret.addQuantifierUnique(q);
+		}
+		Set<CompoundProp> compounds = Sets.newHashSet();
+		for (CompoundProp cp : p.getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			Set<AtomicProp> atoms = Sets.newHashSet();
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (atoms.contains(ap)) {
+					continue;
+				}
+				atoms.add(ap);
+				ncp.addAtomicProp(ap);
+			}
+			if (compounds.contains(ncp)) {
+				continue;
+			}
+			compounds.add(ncp);
+			ret.addCompoundProp(ncp);
+		}
+		return ret;
 	}
 
 	private static class PermMaker<T> {
@@ -311,7 +344,7 @@ public class Interpreter {
 		return ret;
 	}
 
-	private boolean contradiction(CompoundProp cp) {
+	private static boolean contradiction(CompoundProp cp) {
 		Map<String, Map<List<Hecceity>, Boolean>> boolMap = Maps.newHashMap();
 
 		for (AtomicProp ap : cp.getAtomicProps()) {
