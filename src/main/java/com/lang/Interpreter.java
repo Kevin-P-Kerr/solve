@@ -185,7 +185,7 @@ public class Interpreter {
 	}
 
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
-		if (p1.getPrefix().get(0).getType().equals(QuantifierType.FORALL)) {
+		if (p1.getPrefix().get(0).getType().equals(QuantifierType.THEREIS)) {
 			p3.addAllQuants(p1.getPrefix());
 			p3.addAllQuants(p2.getPrefix());
 		} else {
@@ -242,39 +242,11 @@ public class Interpreter {
 		return removeRedundant(removeContradictions(p));
 	}
 
-	private Prop apply(Prop p, Prop constructor) throws ParseException {
-		Prop product = prodProps(p, constructor);
-		List<Quantifier> prefix = product.getPrefix();
-		List<List<Quantifier>> segments = reverse(getSegments(prefix));
-
-		List<Quantifier> thereisQuants = Lists.newArrayList();
-		Prop intermediate = product;
-		for (List<Quantifier> quants : segments) {
-			if (quants.get(0).getType().equals(QuantifierType.THEREIS)) {
-				thereisQuants.addAll(quants);
-				continue;
-			} else if (thereisQuants.size() == 0) {
-				continue;
-			}
-			List<List<Quantifier>> perms = getPermutations(thereisQuants, quants.size());
-			List<Prop> altered = Lists.newArrayList();
-			for (List<Quantifier> perm : perms) {
-
-				Prop copy = intermediate.copyWithHecceities();
-				for (int i = 0, ii = quants.size(); i < ii; i++) {
-					copy.replace(quants.get(i), perm.get(i));
-				}
-				altered.add(removeDefects(copy));
-
-			}
-			Prop base = altered.get(0);
-			for (int i = 1, ii = altered.size(); i < ii; i++) {
-				base = prodProps(base, altered.get(i));
-			}
-			intermediate = removeDefects(base);
-		}
-
-		return removeRedundant(removeContradictions(intermediate));
+	private Prop apply(Prop p1, Prop p2) throws ParseException {
+		List<Quantifier> p1There = p1.getQuants(QuantifierType.THEREIS);
+		List<Quantifier> p2There = p2.getQuants(QuantifierType.THEREIS);
+		List<Quantifier> p1All = p1.getQuants(QuantifierType.FORALL);
+		List<Quantifier> p2All = p2.getQuants(QuantifierType.FORALL);
 
 	}
 

@@ -392,4 +392,14 @@ public class Prop extends Value {
 		}
 	}
 
+	public List<Quantifier> getQuants(QuantifierType type) {
+		List<Quantifier> ret = Lists.newArrayList();
+		for (Quantifier q : getPrefix()) {
+			if (q.getType().equals(type)) {
+				ret.add(q);
+			}
+		}
+		return ret;
+	}
+
 }
