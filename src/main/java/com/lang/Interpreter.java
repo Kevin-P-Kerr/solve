@@ -2,7 +2,6 @@ package com.lang;
 
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import com.google.common.collect.Lists;
@@ -287,50 +286,46 @@ public class Interpreter {
 
 	}
 
-	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
-		List<List<T>> ret = Lists.newArrayList();
-		if (n == l.size()) {
-			ret.add(l);
+	private static class PermMaker<T> {
+		private final int base;
+		private final List<T> elements;
+
+		public PermMaker(int base, List<T> l) {
+			this.base = base;
+			this.elements = l;
+		}
+
+		public long getMaxNDigit(int n) {
+			return (long) Math.pow(base, n);
+		}
+
+		public List<T> getNDigit(int digits, long value) {
+			List<T> ret = Lists.newArrayList();
+			long b = base;
+			while (value >= 0) {
+				long v = value % b;
+				int vv = (int) v;
+				ret.add(elements.get(vv));
+				value -= b;
+				b = b * b;
+			}
+			int digitsFilled = ret.size();
+			if (digitsFilled < digits) {
+				for (int i = 0, ii = digits - digitsFilled; i < ii; i++) {
+					ret.add(elements.get(0));
+				}
+			}
 			return ret;
 		}
-		List<T> copy = Lists.newArrayList();
-		for (T t : l) {
-			copy.add(t);
-		}
-		int remaining = n - 1;
-		while (copy.size() >= n) {
-			T head = copy.get(0);
-			List<T> tuple = Lists.newArrayList();
-			copy.remove(0);
-			tuple.add(head);
-			if (tuple.size() == n) {
-				ret.add(tuple);
-				continue;
-			}
-			for (int i = 1, ii = copy.size(); i <= ii; i++) {
-				int endIndex = remaining + i;
-
-				if (endIndex > copy.size()) {
-					break;
-				}
-				for (int z = i; z < endIndex; z++) {
-					tuple.add(copy.get(z));
-				}
-				ret.add(tuple);
-
-			}
-		}
-		return ret;
-
 	}
 
-	// we already know that n >= l.length
 	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
-		List<List<T>> ntuples = getNtuples(l, n);
-
-		for (List<T> tuple : ntuples) {
-			ret.addAll(rearrange(tuple));
+		int base = l.size();
+		PermMaker<T> pm = new PermMaker<T>(base, l);
+		long limit = pm.getMaxNDigit(n);
+		for (long i = 0; i < limit; i++) {
+			ret.add(pm.getNDigit(n, i));
 		}
 		return ret;
 	}
