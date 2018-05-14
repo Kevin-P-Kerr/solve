@@ -19,9 +19,9 @@ public class Solve {
 		// lines.add("a = forall a : ~Man(a) + Mortal(a)");
 		lines.add("b = forall a thereis b : ~Man(a) + Man(b)*Mother(b a) ");
 		// lines.add("forall a forall b forall c : ~Mother(a b) + ~Mother(c b)");
-		lines.add("forall a: ~Man(a) + ~Mother(a a)");
+		// lines.add("forall a: ~Man(a) + ~Mother(a a)");
 		// lines.add("x = thereis a thereis b forall c :Man(a)*Mortal(a)*Man(b)*Mother(b a)*~Mother(c a)");
-		lines.add(" $ thereis a : Man(a)");
+		lines.add("$ $ thereis a : Man(a)");
 		// lines.add("* forall a thereis b: A(a) + ~B(a b) . thereis c: E(c)");
 		for (String s : lines) {
 			// while (scanner.hasNext()) {
