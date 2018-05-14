@@ -324,22 +324,22 @@ public class Interpreter {
 		}
 
 		public List<T> getNDigit(int digits, long value) {
-			List<T> ret = Lists.newArrayList();
 			long b = base;
+			int d = 1;
+			while (b < value) {
+				b = b * base;
+				d++;
+			}
+			b = (long) Math.pow(d, base);
+			List<T> ret = Lists.newArrayList();
 			while (value >= 0) {
-				long v = value % b;
-				int vv = (int) v;
-				ret.add(elements.get(vv));
-				value -= b;
-				b = b * b;
+				long index = value % b;
+				int i = (int) index;
+				ret.add(elements.get(i));
+				value = value - b;
+				b = b / base;
 			}
-			int digitsFilled = ret.size();
-			if (digitsFilled < digits) {
-				for (int i = 0, ii = digits - digitsFilled; i < ii; i++) {
-					ret.add(elements.get(0));
-				}
-			}
-			return ret;
+
 		}
 	}
 

@@ -362,6 +362,7 @@ public class Prop extends Value {
 		Hecceity th = to.getHecceity();
 		ReplaceOp<Hecceity> op = new ReplaceOp<Hecceity>(fh, th);
 		ReplaceOp<Quantifier> qop = new ReplaceOp<Quantifier>(from, to);
+		int index = pre.indexOf(to);
 		if (pre.indexOf(to) >= 0) {
 			pre.remove(from);
 		} else {
