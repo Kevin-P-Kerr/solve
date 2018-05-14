@@ -247,6 +247,40 @@ public class Interpreter {
 		List<Quantifier> p2There = p2.getQuants(QuantifierType.THEREIS);
 		List<Quantifier> p1All = p1.getQuants(QuantifierType.FORALL);
 		List<Quantifier> p2All = p2.getQuants(QuantifierType.FORALL);
+		p1 = p1.copyWithHecceities();
+		p2 = p2.copyWithHecceities();
+		List<List<Quantifier>> perms1 = getPermutations(p1There, p2All.size());
+		List<List<Quantifier>> perms2 = getPermutations(p2There, p1All.size());
+		List<Prop> factors = Lists.newArrayList();
+		if (p1All.size() == 0) {
+			factors.add(p1);
+		}
+		if (p2All.size() == 0) {
+			factors.add(p2);
+		}
+		for (List<Quantifier> ql : perms1) {
+			Prop copy = p2.copyWithHecceities();
+			for (int i = 0, ii = ql.size(); i < ii; i++) {
+				Quantifier from = p2All.get(i);
+				Quantifier to = ql.get(i);
+				copy.replace(from, to);
+			}
+			factors.add(copy);
+		}
+		for (List<Quantifier> ql : perms2) {
+			Prop copy = p1.copyWithHecceities();
+			for (int i = 0, ii = ql.size(); i < ii; i++) {
+				Quantifier from = p1All.get(i);
+				Quantifier to = ql.get(i);
+				copy.replace(from, to);
+			}
+			factors.add(copy);
+		}
+		Prop base = factors.get(0);
+		for (int i = 1, ii = factors.size(); i < ii; i++) {
+			base = prodProps(base, factors.get(i));
+		}
+		return removeDefects(base);
 
 	}
 
@@ -312,6 +346,9 @@ public class Interpreter {
 	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
 		int base = l.size();
+		if (n == 0 || base == 0) {
+			return ret;
+		}
 		PermMaker<T> pm = new PermMaker<T>(base, l);
 		long limit = pm.getMaxNDigit(n);
 		for (long i = 0; i < limit; i++) {

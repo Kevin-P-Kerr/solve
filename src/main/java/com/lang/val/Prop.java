@@ -334,18 +334,20 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	private static class ReplaceOp implements UnaryOperator<Hecceity> {
+	private static class ReplaceOp<T> implements UnaryOperator<T>
 
-		private final Hecceity from;
-		private final Hecceity to;
+	{
 
-		public ReplaceOp(Hecceity from, Hecceity to) {
+		private final T from;
+		private final T to;
+
+		public ReplaceOp(T from, T to) {
 			this.from = from;
 			this.to = to;
 		}
 
 		@Override
-		public Hecceity apply(Hecceity t) {
+		public T apply(T t) {
 			if (t == from) {
 				return to;
 			}
@@ -358,8 +360,16 @@ public class Prop extends Value {
 		List<Quantifier> pre = getPrefix();
 		Hecceity fh = from.getHecceity();
 		Hecceity th = to.getHecceity();
-		ReplaceOp op = new ReplaceOp(fh, th);
-		pre.remove(from);
+		ReplaceOp<Hecceity> op = new ReplaceOp<Hecceity>(fh, th);
+		ReplaceOp<Quantifier> qop = new ReplaceOp<Quantifier>(from, to);
+		if (pre.indexOf(to) >= 0) {
+			pre.remove(from);
+		} else {
+			String k = h2s.get(fh);
+			s2h.put(k, th);
+			h2s.put(th, k);
+			pre.replaceAll(qop);
+		}
 		List<CompoundProp> m = getMatrix();
 		for (CompoundProp cp : m) {
 			for (AtomicProp ap : cp.getAtomicProps()) {
