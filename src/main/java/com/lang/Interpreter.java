@@ -243,18 +243,21 @@ public class Interpreter {
 		return removeRedundant(removeContradictions(p));
 	}
 
-	private static List<Prop> collectProps(Prop p) {
+	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) {
 		List<Quantifier> pre = reverse(p.getPrefix());
 		List<Quantifier> realPre = p.getPrefix();
 		List<Prop> ret = Lists.newArrayList();
 		for (Quantifier q : pre) {
+			if (hecceties.indexOf(q.getHecceity()) >= 0) {
+				continue;
+			}
 			if (q.getType().equals(QuantifierType.FORALL)) {
 				for (int i = 0, ii = realPre.indexOf(q); i < ii; i++) {
 					Prop pp = p.copyWithHecceities().replace(q, realPre.get(i));
 					pp = removeDefects(pp);
 					if (pp.getMatrix().size() > 0) {
 						ret.add(pp);
-						ret.addAll(collectProps(pp));
+						ret.addAll(collectProps(pp, hecceties));
 					}
 
 				}
@@ -265,7 +268,7 @@ public class Interpreter {
 
 	private Prop apply(Prop p1, Prop p2) throws ParseException {
 		Prop product = prodProps(p1, p2);
-		List<Prop> all = collectProps(product);
+		List<Prop> all = collectProps(product, p1.getHecceties());
 		Prop base = all.get(0);
 		for (int i = 1, ii = all.size(); i < ii; i++) {
 			base = sumProps(base, all.get(i));
