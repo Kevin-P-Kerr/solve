@@ -20,17 +20,12 @@ public class Solve {
 		Scanner scanner = new Scanner(System.in);
 		Environment env = new Environment();
 		List<String> lines = Lists.newArrayList();
-		// lines.add("a = forall a : ~Man(a) + Mortal(a)");
-		// lines.add("b = forall a thereis b forall c: ~Man(a) + Man(b)*Mother(b a)*~Mother(c a) ");
-		// lines.add("forall a forall b forall c : ~Mother(a b) + ~Mother(c b)");
-		// lines.add("forall a: ~Man(a) + ~Mother(a a)");
-		// lines.add("x = thereis a thereis b forall c :Man(a)*Mortal(a)*Man(b)*Mother(b a)*~Mother(c a)");
-		// lines.add(" $ thereis a : Man(a)");
-		// lines.add("* forall a thereis b: A(a) + ~B(a b) . thereis c: E(c)");
-		// for (String s : lines) {
-		while (scanner.hasNext()) {
+		lines.add("forall a thereis b :~Man(a) + Man(b)*Mother(b a)");
+		lines.add(" $ thereis a thereis b: Man(a)*Man(b)");
+		for (String s : lines) {
+			// while (scanner.hasNext()) {
 			try {
-				String s = scanner.nextLine();
+				// String s = scanner.nextLine();
 				if (s.indexOf("write") == 0) {
 					String[] l = s.split(" ");
 					BufferedWriter writer = new BufferedWriter(new FileWriter(l[1]));
@@ -45,10 +40,11 @@ public class Solve {
 				}
 				if (s.indexOf("read") == 0) {
 					String[] l = s.split(" ");
-					BufferedReader br = new BufferedReader(new FileReader(l[0]));
+					BufferedReader br = new BufferedReader(new FileReader(l[1]));
 					String st;
 					while ((st = br.readLine()) != null) {
-						TokenStream tokens = Tokenizer.tokenize(s);
+						lines.add(st);
+						TokenStream tokens = Tokenizer.tokenize(st);
 						Interpreter i = new Interpreter(tokens);
 						Value p = i.eval(env);
 						System.out.println(p.toString());
@@ -56,7 +52,7 @@ public class Solve {
 					br.close();
 				}
 
-				lines.add(s);
+				// lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
 				Value p = i.eval(env);

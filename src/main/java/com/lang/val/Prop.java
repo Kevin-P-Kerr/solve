@@ -414,4 +414,32 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public List<Prop> factor() {
+		if (matrix.size() == 1) {
+			if (matrix.get(0).getAtomicProps().size() == 1) {
+				return Lists.newArrayList(this);
+			}
+			List<Prop> ret = Lists.newArrayList();
+			for (AtomicProp ap : matrix.get(0).getAtomicProps()) {
+				Prop p = new Prop();
+				for (Quantifier q : prefix) {
+					p.addQuantifierUnique(q);
+				}
+				CompoundProp cp = p.makeBlankCompoundProp();
+				cp.addAtomicProp(ap);
+				p.addCompoundProp(cp);
+				List<Quantifier> removals = Lists.newArrayList();
+				for (Quantifier q : p.getPrefix()) {
+					if (ap.getHecceities().indexOf(q.getHecceity()) < 0) {
+						removals.add(q);
+					}
+				}
+				p.getPrefix().removeAll(removals);
+				ret.add(p);
+			}
+			return ret;
+		}
+		return Lists.newArrayList(this);
+	}
+
 }

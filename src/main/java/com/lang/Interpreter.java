@@ -271,7 +271,7 @@ public class Interpreter {
 		List<Prop> all = collectProps(product, p1.getHecceties());
 		Prop base = all.get(0);
 		for (int i = 1, ii = all.size(); i < ii; i++) {
-			base = sumProps(base, all.get(i));
+			base = prodProps(base, all.get(i));
 		}
 		return removeDefects(base);
 	}
@@ -501,11 +501,28 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Prop p = (Prop) v;
+		List<Prop> facts = Lists.newArrayList();
+
 		for (Prop constructor : constructors) {
-			p = apply(p, constructor.copy());
+			List<Prop> factors = p.factor();
+			List<Prop> newFactors = Lists.newArrayList();
+			for (Prop f : factors) {
+				f = apply(f, constructor.copy());
+				newFactors.add(f);
+			}
+			Prop base = newFactors.get(0);
+			for (int i = 1, ii = newFactors.size(); i < ii; i++) {
+				base = prodProps(base, newFactors.get(i));
+			}
+			facts.add(base);
+
+		}
+		Prop base = facts.get(0);
+		for (int i = 1, ii = facts.size(); i < ii; i++) {
+			base = prodProps(base, facts.get(i));
 		}
 		checkForNativeVals(p);
-		return p;
+		return base;
 
 	}
 
