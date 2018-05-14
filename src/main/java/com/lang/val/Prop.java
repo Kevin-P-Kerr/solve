@@ -356,7 +356,7 @@ public class Prop extends Value {
 
 	}
 
-	public void replace(Quantifier from, Quantifier to) {
+	public Prop replace(Quantifier from, Quantifier to) {
 		List<Quantifier> pre = getPrefix();
 		Hecceity fh = from.getHecceity();
 		Hecceity th = to.getHecceity();
@@ -377,6 +377,7 @@ public class Prop extends Value {
 				ap.getHecceities().replaceAll(op);
 			}
 		}
+		return this;
 
 	}
 

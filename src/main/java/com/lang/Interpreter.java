@@ -2,6 +2,7 @@ package com.lang;
 
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -242,46 +243,34 @@ public class Interpreter {
 		return removeRedundant(removeContradictions(p));
 	}
 
+	private static List<Prop> collectProps(Prop p) {
+		List<Quantifier> pre = reverse(p.getPrefix());
+		List<Quantifier> realPre = p.getPrefix();
+		List<Prop> ret = Lists.newArrayList();
+		for (Quantifier q : pre) {
+			if (q.getType().equals(QuantifierType.FORALL)) {
+				for (int i = 0, ii = realPre.indexOf(q); i < ii; i++) {
+					Prop pp = p.copyWithHecceities().replace(q, realPre.get(i));
+					pp = removeDefects(pp);
+					if (pp.getMatrix().size() > 0) {
+						ret.add(pp);
+						ret.addAll(collectProps(pp));
+					}
+
+				}
+			}
+		}
+		return ret;
+	}
+
 	private Prop apply(Prop p1, Prop p2) throws ParseException {
-		List<Quantifier> p1There = p1.getQuants(QuantifierType.THEREIS);
-		List<Quantifier> p2There = p2.getQuants(QuantifierType.THEREIS);
-		List<Quantifier> p1All = p1.getQuants(QuantifierType.FORALL);
-		List<Quantifier> p2All = p2.getQuants(QuantifierType.FORALL);
-		p1 = p1.copyWithHecceities();
-		p2 = p2.copyWithHecceities();
-		List<List<Quantifier>> perms1 = getPermutations(p1There, p2All.size());
-		List<List<Quantifier>> perms2 = getPermutations(p2There, p1All.size());
-		List<Prop> factors = Lists.newArrayList();
-		if (p1All.size() == 0) {
-			factors.add(p1);
-		}
-		if (p2All.size() == 0) {
-			factors.add(p2);
-		}
-		for (List<Quantifier> ql : perms1) {
-			Prop copy = p2.copyWithHecceities();
-			for (int i = 0, ii = ql.size(); i < ii; i++) {
-				Quantifier from = p2All.get(i);
-				Quantifier to = ql.get(i);
-				copy.replace(from, to);
-			}
-			factors.add(copy);
-		}
-		for (List<Quantifier> ql : perms2) {
-			Prop copy = p1.copyWithHecceities();
-			for (int i = 0, ii = ql.size(); i < ii; i++) {
-				Quantifier from = p1All.get(i);
-				Quantifier to = ql.get(i);
-				copy.replace(from, to);
-			}
-			factors.add(copy);
-		}
-		Prop base = factors.get(0);
-		for (int i = 1, ii = factors.size(); i < ii; i++) {
-			base = prodProps(base, factors.get(i));
+		Prop product = prodProps(p1, p2);
+		List<Prop> all = collectProps(product);
+		Prop base = all.get(0);
+		for (int i = 1, ii = all.size(); i < ii; i++) {
+			base = sumProps(base, all.get(i));
 		}
 		return removeDefects(base);
-
 	}
 
 	// we can assume that p has no contradictions
@@ -310,16 +299,85 @@ public class Interpreter {
 		return ret;
 	}
 
-	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
+	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
-		int base = l.size();
-		if (n == 0 || base == 0) {
+		if (n == l.size()) {
+			ret.add(l);
 			return ret;
 		}
-		PermMaker<T> pm = new PermMaker<T>(base, l);
-		long limit = pm.getMaxNDigit(n);
-		for (long i = 0; i < limit; i++) {
-			ret.add(pm.getNDigit(n, i));
+		List<T> copy = Lists.newArrayList();
+		for (T t : l) {
+			copy.add(t);
+		}
+		int remaining = n - 1;
+		while (copy.size() >= n) {
+			T head = copy.get(0);
+			List<T> tuple = Lists.newArrayList();
+			copy.remove(0);
+			tuple.add(head);
+			if (tuple.size() == n) {
+				ret.add(tuple);
+				continue;
+			}
+			for (int i = 1, ii = copy.size(); i <= ii; i++) {
+				int endIndex = remaining + i;
+
+				if (endIndex > copy.size()) {
+					break;
+				}
+				for (int z = i; z < endIndex; z++) {
+					tuple.add(copy.get(z));
+				}
+				ret.add(tuple);
+
+			}
+		}
+		return ret;
+
+	}
+
+	private static <T> List<List<T>> rearrange(List<T> tuple) {
+		List<List<T>> ret = Lists.newArrayList();
+		if (tuple.size() == 1) {
+			ret.add(tuple);
+			return ret;
+		}
+		if (tuple.size() == 2) {
+			List<T> a = Lists.newArrayList(tuple.get(0), tuple.get(1));
+			List<T> b = Lists.newArrayList(tuple.get(1), tuple.get(0));
+			ret.add(a);
+			ret.add(b);
+			return ret;
+		}
+		for (int i = 0, ii = tuple.size(); i < ii; i++) {
+			T t = tuple.get(i);
+			List<T> subTuple = Lists.newArrayList();
+			for (int n = 0, nn = tuple.size(); n < nn; n++) {
+				if (n == i) {
+					continue;
+				}
+				subTuple.add(tuple.get(n));
+			}
+			List<List<T>> subPerms = rearrange(subTuple);
+			for (List<T> sub : subPerms) {
+				List<T> l = new ArrayList<T>();
+				l.add(t);
+				for (T tt : sub) {
+					l.add(tt);
+				}
+				ret.add(l);
+			}
+		}
+		return ret;
+	}
+
+	// we already know that n >= l.length
+	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
+		List<List<T>> ret = Lists.newArrayList();
+		List<List<T>> ntuples = getNtuples(l, n);
+
+		for (List<T> tuple : ntuples) {
+			ret.addAll(rearrange(tuple));
 		}
 		return ret;
 	}
@@ -441,7 +499,7 @@ public class Interpreter {
 		}
 		Prop p = (Prop) v;
 		for (Prop constructor : constructors) {
-			p = apply(p, constructor);
+			p = apply(p, constructor.copy());
 		}
 		checkForNativeVals(p);
 		return p;
