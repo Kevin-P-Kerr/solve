@@ -310,39 +310,6 @@ public class Interpreter {
 		return ret;
 	}
 
-	private static class PermMaker<T> {
-		private final int base;
-		private final List<T> elements;
-
-		public PermMaker(int base, List<T> l) {
-			this.base = base;
-			this.elements = l;
-		}
-
-		public long getMaxNDigit(int n) {
-			return (long) Math.pow(base, n);
-		}
-
-		public List<T> getNDigit(int digits, long value) {
-			long b = base;
-			int d = 1;
-			while (b < value) {
-				b = b * base;
-				d++;
-			}
-			b = (long) Math.pow(d, base);
-			List<T> ret = Lists.newArrayList();
-			while (value >= 0) {
-				long index = value % b;
-				int i = (int) index;
-				ret.add(elements.get(i));
-				value = value - b;
-				b = b / base;
-			}
-
-		}
-	}
-
 	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
 		List<List<T>> ret = Lists.newArrayList();
 		int base = l.size();
