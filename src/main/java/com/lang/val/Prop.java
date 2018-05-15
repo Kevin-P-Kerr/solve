@@ -414,6 +414,28 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public List<Prop> getIndividualFacts() {
+		List<Quantifier> marked = Lists.newArrayList();
+		List<Prop> ret = Lists.newArrayList();
+		for (Quantifier q : getPrefix()) {
+			Prop p = new Prop();
+			if (marked.indexOf(q) >= 0) {
+				continue;
+			}
+			List<Quantifier> related = getRelatedQuantifiers(q);
+			for (Quantifier r : related) {
+				p.addQuantifierUnique(r);
+				marked.add(r);
+			}
+			for (CompoundProp cp : getMatrix()) {
+				CompoundProp compound = p.makeBlankCompoundProp();
+
+			}
+
+		}
+	}
+
+	@Deprecated
 	public List<Prop> factor() {
 		if (matrix.size() == 1) {
 			if (matrix.get(0).getAtomicProps().size() == 1) {
