@@ -429,14 +429,48 @@ public class Prop extends Value {
 			}
 			for (CompoundProp cp : getMatrix()) {
 				CompoundProp compound = p.makeBlankCompoundProp();
+				List<AtomicProp> atoms = cp.getAtomicProps();
+				for (AtomicProp ap : atoms) {
+					for (Quantifier qq : related) {
+						if (ap.getHecceities().indexOf(qq.hecceity) >= 0) {
+							compound.addAtomicProp(ap);
+							break;
+						}
+					}
 
+				}
+				p.addCompoundProp(compound);
 			}
-
+			ret.add(p);
 		}
+		return ret;
+	}
+
+	private List<Quantifier> getRelatedQuantifiers(Quantifier q) {
+		List<Quantifier> ret = Lists.newArrayList(q);
+		Map<Hecceity, Quantifier> m = Maps.newHashMap();
+		for (Quantifier qq : getPrefix()) {
+			m.put(qq.hecceity, qq);
+		}
+		for (CompoundProp cp : getMatrix()) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				List<Hecceity> hecs = ap.getHecceities();
+				if (hecs.indexOf(q.getHecceity()) >= 0) {
+					for (Hecceity h : hecs) {
+						Quantifier quant = m.get(h);
+						if (ret.indexOf(quant) < 0) {
+							ret.add(quant);
+						}
+					}
+				}
+			}
+		}
+		return ret;
+
 	}
 
 	@Deprecated
-	public List<Prop> factor() {
+	private List<Prop> factor() {
 		if (matrix.size() == 1) {
 			if (matrix.get(0).getAtomicProps().size() == 1) {
 				return Lists.newArrayList(this);

@@ -504,7 +504,7 @@ public class Interpreter {
 		List<Prop> facts = Lists.newArrayList();
 
 		for (Prop constructor : constructors) {
-			List<Prop> factors = p.factor();
+			List<Prop> factors = p.getIndividualFacts();
 			List<Prop> newFactors = Lists.newArrayList();
 			for (Prop f : factors) {
 				f = apply(f, constructor.copy());
