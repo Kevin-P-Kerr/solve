@@ -271,7 +271,7 @@ public class Interpreter {
 		List<Prop> all = collectProps(product, p1.getHecceties());
 		Prop base = all.get(0);
 		for (int i = 1, ii = all.size(); i < ii; i++) {
-			base = prodProps(base, all.get(i));
+			base = removeDefects(prodProps(base, all.get(i)));
 		}
 		return removeDefects(base);
 	}
@@ -522,7 +522,7 @@ public class Interpreter {
 			base = prodProps(base, facts.get(i));
 		}
 		checkForNativeVals(p);
-		return base;
+		return removeDefects(base);
 
 	}
 

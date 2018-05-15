@@ -20,8 +20,14 @@ public class Solve {
 		Scanner scanner = new Scanner(System.in);
 		Environment env = new Environment();
 		List<String> lines = Lists.newArrayList();
-		lines.add("forall a thereis b :~Man(a) + Man(b)*Mother(b a)");
-		lines.add("$ $ thereis a thereis b: Man(a)*Man(b)");
+		// lines.add("forall a thereis b :~Man(a) + Man(b)*Mother(b a)");
+		// lines.add("forall a forall b forall c : ~Mother(b a) + ~Mother(c a)");
+		// lines.add("forall a forall b : ~Man(a) + ~Mother(b a) + Man(b)");
+		lines.add("forall a: ~Man(a) + Mortal(a)");
+		lines.add("forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Friends(a b) + Likes(a c)*Likes(b c)");
+
+		lines.add(" $ thereis a: Man(a)");
+		lines.add("$ thereis a thereis b: Man(a)*Man(b)*Friends(a b)*Friends(b a)");
 		for (String s : lines) {
 			// while (scanner.hasNext()) {
 			try {
