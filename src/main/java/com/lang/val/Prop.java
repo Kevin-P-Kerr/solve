@@ -362,7 +362,6 @@ public class Prop extends Value {
 		Hecceity th = to.getHecceity();
 		ReplaceOp<Hecceity> op = new ReplaceOp<Hecceity>(fh, th);
 		ReplaceOp<Quantifier> qop = new ReplaceOp<Quantifier>(from, to);
-		int index = pre.indexOf(to);
 		if (pre.indexOf(to) >= 0) {
 			pre.remove(from);
 		} else {
@@ -412,6 +411,31 @@ public class Prop extends Value {
 			}
 		}
 		return ret;
+	}
+
+	public Prop copySpecificProp(int i) {
+		Prop p = new Prop();
+		CompoundProp cp = getMatrix().get(i);
+		List<Quantifier> quants = Lists.newArrayList();
+		List<Hecceity> hecs = Lists.newArrayList();
+		for (AtomicProp ap : cp.getAtomicProps()) {
+			hecs.addAll(ap.getHecceities());
+		}
+		for (Quantifier q : getPrefix()) {
+			if (hecs.indexOf(q.getHecceity()) >= 0) {
+				quants.add(q);
+			}
+		}
+		for (Quantifier q : quants) {
+			p.addQuantifierUnique(q);
+		}
+		CompoundProp ncp = p.makeBlankCompoundProp();
+		for (AtomicProp ap : cp.getAtomicProps()) {
+			ncp.addAtomicProp(ap);
+		}
+		p.addCompoundProp(ncp);
+		return p.copy();
+
 	}
 
 	public List<Prop> getIndividualFacts() {

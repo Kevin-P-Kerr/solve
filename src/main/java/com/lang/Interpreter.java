@@ -528,6 +528,14 @@ public class Interpreter {
 
 	public Value eval(Environment env) throws ParseException {
 		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_COLON)) {
+			tokens.getNext();
+			int i = Integer.parseInt(tokens.getNext().getLit());
+			Value v = eval(env);
+			Prop p = (Prop) v;
+			return p.copySpecificProp(i);
+
+		}
 		if (t.getType().equals(TokenType.TT_PLUS)) {
 			// move forward
 			tokens.getNext();
