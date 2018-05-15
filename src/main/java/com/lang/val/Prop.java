@@ -439,7 +439,61 @@ public class Prop extends Value {
 			}
 			return ret;
 		}
-		return Lists.newArrayList(this);
+		List<AtomicProp> common = Lists.newArrayList();
+		CompoundProp first = matrix.get(0);
+		for (AtomicProp ap : first.getAtomicProps()) {
+			common.add(ap);
+		}
+		for (int i = 1, ii = matrix.size(); i < ii; i++) {
+			CompoundProp cp = matrix.get(i);
+			List<AtomicProp> atoms = cp.getAtomicProps();
+			List<AtomicProp> removals = Lists.newArrayList();
+			for (AtomicProp ap : common) {
+				if (atoms.indexOf(ap) < 0) {
+					removals.add(ap);
+				}
+			}
+			common.removeAll(removals);
+		}
+		if (common.size() == 0) {
+			return Lists.newArrayList(this);
+		}
+		Prop factor1 = copyWithHecceities();
+		Prop factor2 = copyWithHecceities();
+		CompoundProp cp = factor1.makeBlankCompoundProp();
+		for (AtomicProp ap : common) {
+			cp.addAtomicProp(ap);
+		}
+		factor1.matrix = Lists.newArrayList(cp);
+		List<Quantifier> removals = Lists.newArrayList();
+		for (Quantifier q : factor1.getPrefix()) {
+			for (AtomicProp ap : common) {
+				if (ap.getHecceities().indexOf(q.hecceity) >= 0) {
+					break;
+				}
+			}
+			removals.add(q);
+		}
+		factor1.getPrefix().removeAll(removals);
+		for (CompoundProp compound : factor2.getMatrix()) {
+			compound.getAtomicProps().removeAll(common);
+		}
+		removals = Lists.newArrayList();
+		for (Quantifier q : factor2.getPrefix()) {
+			for (CompoundProp comp : factor2.getMatrix()) {
+				for (AtomicProp atomic : comp.getAtomicProps()) {
+					if (atomic.getHecceities().indexOf(q.hecceity) >= 0) {
+						break;
+					}
+				}
+			}
+			removals.add(q);
+		}
+		factor2.getPrefix().removeAll(removals);
+		List<Prop> ret = Lists.newArrayList();
+		ret.add(factor1);
+		ret.add(factor2);
+		return ret;
 	}
 
 }
