@@ -270,7 +270,7 @@ public class Interpreter {
 		List<Prop> ret = Lists.newArrayList();
 		for (Quantifier q : pre) {
 			if (hecceties.indexOf(q.getHecceity()) >= 0) {
-				continue;
+				// continue;
 			}
 			if (q.getType().equals(QuantifierType.FORALL)) {
 				for (int i = 0, ii = realPre.indexOf(q); i < ii; i++) {
