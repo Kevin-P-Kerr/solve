@@ -314,7 +314,9 @@ public class Interpreter {
 		for (Quantifier q : prefix) {
 			AtomicProp ap = q.getConstraint();
 			if (ap != null) {
-				Quantifier nq = p.addQuantifier(q.getType());
+				QuantifierType qt = q.getType().equals(QuantifierType.FORALL) ? QuantifierType.THEREIS
+						: QuantifierType.FORALL;
+				Quantifier nq = p.addQuantifier(qt);
 				List<Hecceity> arg = Lists.newArrayList(nq.getHecceity());
 				AtomicProp atom = new AtomicProp(ap.getName(), arg, false);
 				cp.addAtomicProp(atom);
