@@ -308,33 +308,41 @@ public class Interpreter {
 		return ret;
 	}
 
+	private Prop negateConstraints(List<Quantifier> prefix, Prop p1) throws ParseException {
+		Prop p = new Prop();
+		CompoundProp cp = p.makeBlankCompoundProp();
+		for (Quantifier q : prefix) {
+			AtomicProp ap = q.getConstraint();
+			if (ap != null) {
+				Quantifier nq = p.addQuantifier(q.getType());
+				List<Hecceity> arg = Lists.newArrayList(nq.getHecceity());
+				AtomicProp atom = new AtomicProp(ap.getName(), arg, false);
+				cp.addAtomicProp(atom);
+			}
+		}
+		p.addCompoundProp(cp);
+		if (p.getPrefix().size() > 0) {
+			return apply(p1, p);
+		} else {
+			return p1;
+		}
+	}
+
 	private Prop apply(Prop p1, Prop p2) throws ParseException {
 		Prop product = prodProps(p1, p2);
 		List<Prop> all = collectProps(product, p1.getHecceties());
 		if (all.size() == 0) {
-			Prop p = new Prop();
-			CompoundProp cp = p.makeBlankCompoundProp();
-			for (Quantifier q : p2.getPrefix()) {
-				AtomicProp ap = q.getConstraint();
-				if (ap != null) {
-					Quantifier nq = p.addQuantifier(q.getType());
-					List<Hecceity> arg = Lists.newArrayList(nq.getHecceity());
-					AtomicProp atom = new AtomicProp(ap.getName(), arg, false);
-					cp.addAtomicProp(atom);
-				}
-			}
-			p.addCompoundProp(cp);
-			if (p.getPrefix().size() > 0) {
-				all = collectProps(prodProps(p1, p), p1.getHecceties());
-			} else {
-				return p;
-			}
+			return negateConstraints(p2.getPrefix(), p1);
 		}
 		Prop base = all.get(0);
 		for (int i = 1, ii = all.size(); i < ii; i++) {
 			base = removeDefects(prodProps(base, all.get(i)));
 		}
-		return removeDefects(base);
+		Prop check = removeDefects(base);
+		if (check.getMatrix().size() == 0) {
+			return negateConstraints(p2.getPrefix(), p1);
+		}
+		return check;
 	}
 
 	// we can assume that p has no contradictions
