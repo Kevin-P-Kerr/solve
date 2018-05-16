@@ -8,7 +8,7 @@ import com.lang.parse.Tokenizer.Token.TokenType;
 public class Tokenizer {
 	public static class Token {
 		public enum TokenType {
-			TT_PLUS, TT_LPAREN, TT_RPAREN, TT_COLON, TT_ASTER, TT_VAR, TT_PERIOD, TT_EQUALS, TT_FORALL, TT_THEREIS, TT_DOLLAR, TT_AT, TT_TILDE, TT_IN;
+			TT_PLUS, TT_LPAREN, TT_RPAREN, TT_COLON, TT_ASTER, TT_VAR, TT_PERIOD, TT_EQUALS, TT_FORALL, TT_THEREIS, TT_DOLLAR, TT_AT, TT_TILDE, TT_IN, TT_PERCENT;
 		}
 
 		private final TokenType type;
@@ -65,6 +65,8 @@ public class Tokenizer {
 				type = TokenType.TT_DOLLAR;
 			} else if (c == '~') {
 				type = TokenType.TT_TILDE;
+			} else if (c == '%') {
+				type = TokenType.TT_PERCENT;
 			} else if (c == '@') {
 				type = TokenType.TT_AT;
 			} else {
@@ -93,6 +95,7 @@ public class Tokenizer {
 
 		}
 		return new TokenStream(tokens);
+
 	}
 
 	private static boolean isReserved(char c) {

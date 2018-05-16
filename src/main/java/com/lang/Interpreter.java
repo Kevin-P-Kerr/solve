@@ -607,6 +607,13 @@ public class Interpreter {
 			return p.copySpecificProp(i);
 
 		}
+		if (t.getType().equals(TokenType.TT_PERCENT)) {
+			tokens.getNext();
+			t = tokens.getNext();
+			int i = Integer.parseInt(t.getLit());
+			Prop p1 = (Prop) eval(env);
+			return removeDefects(p1.extractPropFromQuant(i));
+		}
 		if (t.getType().equals(TokenType.TT_PLUS)) {
 			// move forward
 			tokens.getNext();

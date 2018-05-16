@@ -608,4 +608,22 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public Prop extractPropFromQuant(int i) {
+		Quantifier q = getPrefix().get(i);
+		Prop p = new Prop();
+		p.addQuantifierUnique(q);
+		for (CompoundProp cp : getMatrix()) {
+			CompoundProp ncp = p.makeBlankCompoundProp();
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (ap.getHecceities().size() == 1) {
+					if (ap.getHecceities().get(0).equals(q.getHecceity())) {
+						ncp.addAtomicProp(ap);
+					}
+				}
+			}
+			p.addCompoundProp(ncp);
+		}
+		return p;
+	}
+
 }
