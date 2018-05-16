@@ -303,9 +303,10 @@ public class Prop extends Value {
 		q.addConstraint(ap);
 	}
 
-	public void addQuantifier(QuantifierType qt) {
+	public Quantifier addQuantifier(QuantifierType qt) {
 		String name = uniqueString.getString();
-		addQuantifier(qt, name);
+		Quantifier q = addQuantifier(qt, name);
+		return q;
 	}
 
 	public CompoundProp makeBlankCompoundProp() {
@@ -343,7 +344,13 @@ public class Prop extends Value {
 	public Prop copy() {
 		Prop ret = new Prop();
 		for (Quantifier q : getPrefix()) {
-			ret.addQuantifier(q.getType());
+			Quantifier nq = ret.addQuantifier(q.getType());
+			AtomicProp constraint = q.getConstraint();
+			if (constraint != null) {
+				List<Hecceity> arg = Lists.newArrayList(nq.getHecceity());
+				AtomicProp nc = new AtomicProp(constraint.getName(), arg, true);
+				nq.addConstraint(nc);
+			}
 		}
 		for (CompoundProp cp : getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();

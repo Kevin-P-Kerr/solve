@@ -155,6 +155,18 @@ public class Interpreter {
 				for (AtomicProp ap : mc.getAtomicProps()) {
 					np.addAtomicProp(ap);
 				}
+				for (Quantifier q : p1.getPrefix()) {
+					AtomicProp ap = q.getConstraint();
+					if (ap != null) {
+						np.addAtomicProp(ap);
+					}
+				}
+				for (Quantifier q : p2.getPrefix()) {
+					AtomicProp ap = q.getConstraint();
+					if (ap != null) {
+						np.addAtomicProp(ap);
+					}
+				}
 				p3.addCompoundProp(np);
 			}
 		}
