@@ -206,13 +206,34 @@ public class Interpreter {
 		return ret;
 	}
 
+	private static <T> T tryToGet(List<T> l, int i) {
+		try {
+			return l.get(i);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
-		if (p1.getPrefix().get(0).getType().equals(QuantifierType.THEREIS)) {
-			p3.addAllQuants(p1.getPrefix());
-			p3.addAllQuants(p2.getPrefix());
-		} else {
-			p3.addAllQuants(p2.getPrefix());
-			p3.addAllQuants(p1.getPrefix());
+		List<Quantifier> prefix1 = p1.getPrefix();
+		List<Quantifier> prefix2 = p2.getPrefix();
+		for (int i = 0, ii = Math.max(prefix1.size(), prefix2.size()); i < ii; i++) {
+			Quantifier q1 = tryToGet(prefix1, i);
+			Quantifier q2 = tryToGet(prefix2, i);
+			if (q1 == null) {
+				p3.addQuantifierUnique(q2);
+			} else if (q2 == null) {
+				p3.addQuantifierUnique(q1);
+			} else {
+				if (q2.getType().equals(QuantifierType.THEREIS)) {
+					p3.addQuantifierUnique(q2);
+					p3.addQuantifierUnique(q1);
+				} else {
+					p3.addQuantifierUnique(q1);
+					p3.addQuantifierUnique(q2);
+				}
+
+			}
 		}
 	}
 
