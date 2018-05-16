@@ -45,7 +45,16 @@ public class Interpreter {
 					: QuantifierType.THEREIS;
 
 			t = tokens.getNext();
-			p.addQuantifier(qt, t.getLit());
+			String lit = t.getLit();
+			t = tokens.peek();
+			if (t.getType().equals(TokenType.TT_IN)) {
+				tokens.getNext();
+				t = tokens.getNext();
+				p.addQuantifier(qt, lit, t.getLit());
+
+			} else {
+				p.addQuantifier(qt, lit);
+			}
 		}
 	}
 

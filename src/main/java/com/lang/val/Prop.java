@@ -58,6 +58,7 @@ public class Prop extends Value {
 	public static class Quantifier {
 		private final QuantifierType type;
 		private final Hecceity hecceity;
+		private AtomicProp constraint;
 
 		public Quantifier(QuantifierType type, Hecceity hecceity) {
 			this.type = type;
@@ -70,6 +71,14 @@ public class Prop extends Value {
 
 		public Hecceity getHecceity() {
 			return hecceity;
+		}
+
+		public void addConstraint(AtomicProp ap) {
+			this.constraint = ap;
+		}
+
+		public AtomicProp getConstraint() {
+			return constraint;
 		}
 
 	}
@@ -204,7 +213,14 @@ public class Prop extends Value {
 			}
 			Hecceity h = q.getHecceity();
 			sb.append(h2s.get(h));
+
+			AtomicProp constraint = q.getConstraint();
+			if (constraint != null) {
+				sb.append(" in ");
+				sb.append(constraint.getName());
+			}
 			sb.append(" ");
+
 		}
 		sb.append(":");
 		boolean firstCP = true;
@@ -268,14 +284,23 @@ public class Prop extends Value {
 		this.matrix.add(p);
 	}
 
-	public void addQuantifier(QuantifierType qt, String lit) {
+	public Quantifier addQuantifier(QuantifierType qt, String lit) {
 		Hecceity h = s2h.get(lit);
 		if (h == null) {
 			h = new Hecceity();
 			h2s.put(h, lit);
 			s2h.put(lit, h);
 		}
-		addQuantifier(new Quantifier(qt, h));
+		Quantifier q = new Quantifier(qt, h);
+		addQuantifier(q);
+		return q;
+	}
+
+	public void addQuantifier(QuantifierType qt, String lit, String constraint) {
+		Quantifier q = addQuantifier(qt, lit);
+		List<Hecceity> arg = Lists.newArrayList(q.getHecceity());
+		AtomicProp ap = new AtomicProp(constraint, arg, true);
+		q.addConstraint(ap);
 	}
 
 	public void addQuantifier(QuantifierType qt) {
