@@ -106,19 +106,28 @@ public class Prop extends Value {
 		public boolean getTruthValue() {
 			return truthValue;
 		}
+		
+		private Integer hashCode = null;
 
 		@Override
 		public int hashCode() {
+			if (hashCode != null) {
+				return hashCode;
+			}
 			int seed = 31;
 			seed *= name.hashCode();
 			for (Hecceity h : hecceities) {
 				seed *= h.hashCode();
 			}
-			return seed * new Boolean(truthValue).hashCode();
+			hashCode =  seed * new Boolean(truthValue).hashCode();
+			return hashCode;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
 			if (!(obj instanceof AtomicProp)) {
 				return false;
 			}
@@ -163,29 +172,70 @@ public class Prop extends Value {
 			this.atomicProps.add(atomicProp);
 		}
 
+		private Integer hashCode = null;
 		@Override
 		public int hashCode() {
+			if (hashCode != null) {
+				return hashCode;
+			}
 			int seed = 31;
 			for (AtomicProp ap : atomicProps) {
 				seed *= ap.hashCode();
 			}
-			return seed;
+			hashCode = seed;
+			return hashCode;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
 			if (!(obj instanceof CompoundProp)) {
 				return false;
 			}
-			CompoundProp cp = (CompoundProp) obj;
-			for (AtomicProp ap : cp.getAtomicProps()) {
+			CompoundProp cp  = (CompoundProp) obj;
+			if (cp.getAtomicProps().size() != getAtomicProps().size()) {
+				return false;
+			}
+			for (AtomicProp ap :cp.getAtomicProps()) {
 				if (atomicProps.indexOf(ap) < 0) {
 					return false;
 				}
 			}
 			return true;
+			
 		}
 
+		public List<AtomicPropInfo> getAtomicPropInfo() {
+			List<AtomicPropInfo> ret = Lists.newArrayList();
+			for (AtomicProp ap: atomicProps) {
+				String str = ap.getName() + "(";
+				for (Hecceity h : ap.getHecceities()) {
+					str += h2s.get(h);
+				}
+				str += ")";
+				ret.add(new AtomicPropInfo(str, ap.getTruthValue()));
+			}
+			return ret;
+			
+		}
+
+		public void addAllAtomicProp(List<AtomicProp> atomicProps2) {
+			this.atomicProps.addAll(atomicProps2);
+		}
+
+	}
+	
+	public static class AtomicPropInfo  {
+		private final String str;
+		private final boolean tv;
+		public AtomicPropInfo (String str,boolean tv) {
+			this.str = str;
+			this.tv = tv;
+		}
+		public String getString ( ) { return str; }
+		public boolean getTruthValue ( ) { return tv; }
 	}
 
 	private final List<Quantifier> prefix = Lists.newArrayList();

@@ -52,16 +52,17 @@ public class Solve {
 					BufferedReader br = new BufferedReader(new FileReader(l[1]));
 					String st;
 					while ((st = br.readLine()) != null) {
-						lines.add(st);
+			//			lines.add(st);
 						TokenStream tokens = Tokenizer.tokenize(st);
 						Interpreter i = new Interpreter(tokens);
 						Value p = i.eval(env);
 						System.out.println(p.toString());
 					}
 					br.close();
+					continue;
 				}
 
-				lines.add(s);
+				//lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
 				Value p = i.eval(env);

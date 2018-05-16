@@ -15,6 +15,7 @@ import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
 import com.lang.val.Prop.AtomicProp;
+import com.lang.val.Prop.AtomicPropInfo;
 import com.lang.val.Prop.CompoundProp;
 import com.lang.val.Prop.Hecceity;
 import com.lang.val.Prop.Quantifier;
@@ -330,6 +331,7 @@ public class Interpreter {
 		}
 	}
 
+
 	private Prop apply(Prop p1, Prop p2) throws ParseException {
 		Prop product = prodProps(p1, p2);
 		List<Prop> all = collectProps(product, p1.getHecceties());
@@ -338,7 +340,7 @@ public class Interpreter {
 		}
 		Prop base = all.get(0);
 		for (int i = 1, ii = all.size(); i < ii; i++) {
-			base = removeDefects(prodProps(base, all.get(i)));
+			base = (prodProps(base, all.get(i)));
 		}
 		Prop check = removeDefects(base);
 		if (check.getMatrix().size() == 0) {
@@ -353,7 +355,7 @@ public class Interpreter {
 		for (Quantifier q : p.getPrefix()) {
 			ret.addQuantifierUnique(q);
 		}
-		Set<CompoundProp> compounds = Sets.newHashSet();
+		List<CompoundProp> compounds =  Lists.newArrayList();
 		for (CompoundProp cp : p.getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			Set<AtomicProp> atoms = Sets.newHashSet();
@@ -457,19 +459,13 @@ public class Interpreter {
 	}
 
 	private static boolean contradiction(CompoundProp cp) {
-		Map<String, Map<List<Hecceity>, Boolean>> boolMap = Maps.newHashMap();
+		Map<String, Boolean> boolMap = Maps.newHashMap();
 
-		for (AtomicProp ap : cp.getAtomicProps()) {
-			String name = ap.getName();
-			Map<List<Hecceity>, Boolean> m = boolMap.get(name);
-			if (m == null) {
-				m = Maps.newHashMap();
-				boolMap.put(name, m);
-			}
-			Boolean b = m.get(ap.getHecceities());
-
+		for (AtomicPropInfo ap : cp.getAtomicPropInfo()) {
+			Boolean b = boolMap.get(ap.getString());
 			if (b == null) {
-				m.put(ap.getHecceities(), ap.getTruthValue());
+				b = ap.getTruthValue();
+				boolMap.put(ap.getString(), b);
 				continue;
 			}
 			if (b != ap.getTruthValue()) {
@@ -477,6 +473,7 @@ public class Interpreter {
 			}
 		}
 		return false;
+			
 	}
 
 	private static Prop removeContradictions(Prop p) {
@@ -487,9 +484,8 @@ public class Interpreter {
 		for (CompoundProp cp : p.getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			if (!contradiction(cp)) {
-				for (AtomicProp ap : cp.getAtomicProps()) {
-					ncp.addAtomicProp(ap);
-				}
+				ncp.addAllAtomicProp(cp.getAtomicProps());
+				
 				ret.addCompoundProp(ncp);
 			}
 		}
@@ -631,6 +627,13 @@ public class Interpreter {
 			tokens.getNext();
 			Value v = eval(env);
 			return doInference(v);
+		}
+		//TODO: this should return a value
+		if (t.getType().equals(TokenType.TT_AT)) {
+			tokens.getNext();
+			Value v1 = eval(env);
+			Value v2 = eval(env);
+			return apply((Prop) v1, (Prop) v2);
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
