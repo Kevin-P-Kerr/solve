@@ -29,12 +29,12 @@ public class Solve {
 		 * lines.add(" $ thereis a: Man(a)");
 		 * lines.add("$ thereis a thereis b: Man(a)*Man(b)*Friends(a b)*Friends(b a)");
 		 */
-		lines.add("forall a in Man: Mortal(a)");
-		lines.add("$ thereis a : ~Mortal(a)");
-		for (String s : lines) {
-			// while (scanner.hasNext()) {
+		// lines.add("forall a in Man: Mortal(a)");
+		// lines.add("$ thereis a : ~Mortal(a)");
+		// for (String s : lines) {
+		while (scanner.hasNext()) {
 			try {
-				// String s = scanner.nextLine();
+				String s = scanner.nextLine();
 				if (s.indexOf("write") == 0) {
 					String[] l = s.split(" ");
 					BufferedWriter writer = new BufferedWriter(new FileWriter(l[1]));
@@ -52,7 +52,7 @@ public class Solve {
 					BufferedReader br = new BufferedReader(new FileReader(l[1]));
 					String st;
 					while ((st = br.readLine()) != null) {
-						// lines.add(st);
+						lines.add(st);
 						TokenStream tokens = Tokenizer.tokenize(st);
 						Interpreter i = new Interpreter(tokens);
 						Value p = i.eval(env);
@@ -61,7 +61,7 @@ public class Solve {
 					br.close();
 				}
 
-				// lines.add(s);
+				lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
 				Value p = i.eval(env);
