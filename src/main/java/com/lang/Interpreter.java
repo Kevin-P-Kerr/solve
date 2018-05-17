@@ -469,8 +469,6 @@ public class Interpreter {
 				continue;
 			}
 			if (b != ap.getTruthValue()) {
-				System.out.println("contradiction");
-				System.out.print(ap.getString());
 				return true;
 			}
 		}

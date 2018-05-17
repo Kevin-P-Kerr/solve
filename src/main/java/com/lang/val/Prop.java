@@ -132,6 +132,9 @@ public class Prop extends Value {
 				return false;
 			}
 			AtomicProp p = (AtomicProp) obj;
+			if (p.getTruthValue() != truthValue) {
+				return false;
+			}
 			boolean f = p.getName().equals(getName());
 			if (!f) {
 				return false;
