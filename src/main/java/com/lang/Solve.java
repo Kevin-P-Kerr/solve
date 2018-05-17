@@ -62,7 +62,7 @@ public class Solve {
 					continue;
 				}
 
-				//lines.add(s);
+				lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
 				Value p = i.eval(env);
