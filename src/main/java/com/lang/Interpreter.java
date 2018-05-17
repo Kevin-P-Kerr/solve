@@ -628,6 +628,17 @@ public class Interpreter {
 			Value v = eval(env);
 			return doInference(v);
 		}
+		if (t.getType().equals(TokenType.TT_HASH)) {
+			tokens.getNext();
+			t = tokens.getNext();
+			int i = Integer.parseInt(t.getLit());
+			t = tokens.getNext();
+			int ii = Integer.parseInt(t.getLit());
+			Prop p = (Prop)eval(env);
+			p = p.copyWithHecceities();
+			List<Quantifier> quants = p.getPrefix();
+			return removeDefects(p.replace(quants.get(i), quants.get(ii)));
+		}
 		//TODO: this should return a value
 		if (t.getType().equals(TokenType.TT_AT)) {
 			tokens.getNext();

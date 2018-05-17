@@ -61,7 +61,6 @@ public class Solve {
 					br.close();
 					continue;
 				}
-
 				lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
@@ -75,6 +74,9 @@ public class Solve {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			catch (IndexOutOfBoundsException e) {
+				System.out.println("error");
 			}
 		}
 		scanner.close();
