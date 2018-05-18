@@ -18,6 +18,7 @@ import com.lang.val.Prop.AtomicProp;
 import com.lang.val.Prop.AtomicPropInfo;
 import com.lang.val.Prop.CompoundProp;
 import com.lang.val.Prop.Hecceity;
+import com.lang.val.Prop.LogicException;
 import com.lang.val.Prop.Quantifier;
 import com.lang.val.Prop.QuantifierType;
 import com.lang.val.Undefined;
@@ -286,7 +287,7 @@ public class Interpreter {
 		return removeRedundant(removeContradictions(p));
 	}
 
-	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) {
+	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) throws LogicException {
 		List<Quantifier> pre = reverse(p.getPrefix());
 		List<Quantifier> realPre = p.getPrefix();
 		List<Prop> ret = Lists.newArrayList();
@@ -309,7 +310,7 @@ public class Interpreter {
 		return ret;
 	}
 
-	private Prop negateConstraints(List<Quantifier> prefix, Prop p1) throws ParseException {
+	private Prop negateConstraints(List<Quantifier> prefix, Prop p1) throws ParseException, LogicException {
 		Prop p = new Prop();
 		CompoundProp cp = p.makeBlankCompoundProp();
 		for (Quantifier q : prefix) {
@@ -331,8 +332,7 @@ public class Interpreter {
 		}
 	}
 
-
-	private Prop apply(Prop p1, Prop p2) throws ParseException {
+	private Prop apply(Prop p1, Prop p2) throws ParseException, LogicException {
 		Prop product = prodProps(p1, p2);
 		List<Prop> all = collectProps(product, p1.getHecceties());
 		if (all.size() == 0) {
@@ -355,7 +355,7 @@ public class Interpreter {
 		for (Quantifier q : p.getPrefix()) {
 			ret.addQuantifierUnique(q);
 		}
-		List<CompoundProp> compounds =  Lists.newArrayList();
+		List<CompoundProp> compounds = Lists.newArrayList();
 		for (CompoundProp cp : p.getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			Set<AtomicProp> atoms = Sets.newHashSet();
@@ -473,7 +473,7 @@ public class Interpreter {
 			}
 		}
 		return false;
-			
+
 	}
 
 	private static Prop removeContradictions(Prop p) {
@@ -485,7 +485,7 @@ public class Interpreter {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			if (!contradiction(cp)) {
 				ncp.addAllAtomicProp(cp.getAtomicProps());
-				
+
 				ret.addCompoundProp(ncp);
 			}
 		}
@@ -563,7 +563,7 @@ public class Interpreter {
 		}
 	}
 
-	private Value doInference(Value v) throws ParseException {
+	private Value doInference(Value v) throws ParseException, LogicException {
 		if (!(v instanceof Prop)) {
 			return Undefined.undefined;
 		}
@@ -593,7 +593,7 @@ public class Interpreter {
 
 	}
 
-	public Value eval(Environment env) throws ParseException {
+	public Value eval(Environment env) throws ParseException, LogicException {
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
@@ -634,12 +634,12 @@ public class Interpreter {
 			int i = Integer.parseInt(t.getLit());
 			t = tokens.getNext();
 			int ii = Integer.parseInt(t.getLit());
-			Prop p = (Prop)eval(env);
+			Prop p = (Prop) eval(env);
 			p = p.copyWithHecceities();
 			List<Quantifier> quants = p.getPrefix();
 			return removeDefects(p.replace(quants.get(i), quants.get(ii)));
 		}
-		//TODO: this should return a value
+		// TODO: this should return a value
 		if (t.getType().equals(TokenType.TT_AT)) {
 			tokens.getNext();
 			Value v1 = eval(env);

@@ -106,7 +106,7 @@ public class Prop extends Value {
 		public boolean getTruthValue() {
 			return truthValue;
 		}
-		
+
 		private Integer hashCode = null;
 
 		@Override
@@ -119,7 +119,7 @@ public class Prop extends Value {
 			for (Hecceity h : hecceities) {
 				seed *= h.hashCode();
 			}
-			hashCode =  seed * new Boolean(truthValue).hashCode();
+			hashCode = seed * new Boolean(truthValue).hashCode();
 			return hashCode;
 		}
 
@@ -176,6 +176,7 @@ public class Prop extends Value {
 		}
 
 		private Integer hashCode = null;
+
 		@Override
 		public int hashCode() {
 			if (hashCode != null) {
@@ -197,22 +198,22 @@ public class Prop extends Value {
 			if (!(obj instanceof CompoundProp)) {
 				return false;
 			}
-			CompoundProp cp  = (CompoundProp) obj;
+			CompoundProp cp = (CompoundProp) obj;
 			if (cp.getAtomicProps().size() != getAtomicProps().size()) {
 				return false;
 			}
-			for (AtomicProp ap :cp.getAtomicProps()) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
 				if (atomicProps.indexOf(ap) < 0) {
 					return false;
 				}
 			}
 			return true;
-			
+
 		}
 
 		public List<AtomicPropInfo> getAtomicPropInfo() {
 			List<AtomicPropInfo> ret = Lists.newArrayList();
-			for (AtomicProp ap: atomicProps) {
+			for (AtomicProp ap : atomicProps) {
 				String str = ap.getName() + "(";
 				for (Hecceity h : ap.getHecceities()) {
 					str += h2s.get(h);
@@ -221,7 +222,7 @@ public class Prop extends Value {
 				ret.add(new AtomicPropInfo(str, ap.getTruthValue()));
 			}
 			return ret;
-			
+
 		}
 
 		public void addAllAtomicProp(List<AtomicProp> atomicProps2) {
@@ -229,16 +230,23 @@ public class Prop extends Value {
 		}
 
 	}
-	
-	public static class AtomicPropInfo  {
+
+	public static class AtomicPropInfo {
 		private final String str;
 		private final boolean tv;
-		public AtomicPropInfo (String str,boolean tv) {
+
+		public AtomicPropInfo(String str, boolean tv) {
 			this.str = str;
 			this.tv = tv;
 		}
-		public String getString ( ) { return str; }
-		public boolean getTruthValue ( ) { return tv; }
+
+		public String getString() {
+			return str;
+		}
+
+		public boolean getTruthValue() {
+			return tv;
+		}
 	}
 
 	private final List<Quantifier> prefix = Lists.newArrayList();
@@ -441,7 +449,16 @@ public class Prop extends Value {
 
 	}
 
-	public Prop replace(Quantifier from, Quantifier to) {
+	public static class LogicException extends Exception {
+		public LogicException() {
+			super();
+		}
+	}
+
+	public Prop replace(Quantifier from, Quantifier to) throws LogicException {
+		if (!from.getType().equals(QuantifierType.FORALL)) {
+			throw new LogicException();
+		}
 		List<Quantifier> pre = getPrefix();
 		Hecceity fh = from.getHecceity();
 		Hecceity th = to.getHecceity();

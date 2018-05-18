@@ -11,6 +11,7 @@ import java.util.Scanner;
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer;
 import com.lang.parse.Tokenizer.TokenStream;
+import com.lang.val.Prop.LogicException;
 import com.lang.val.Value;
 
 public class Solve {
@@ -52,7 +53,7 @@ public class Solve {
 					BufferedReader br = new BufferedReader(new FileReader(l[1]));
 					String st;
 					while ((st = br.readLine()) != null) {
-					lines.add(st);
+						lines.add(st);
 						TokenStream tokens = Tokenizer.tokenize(st);
 						Interpreter i = new Interpreter(tokens);
 						Value p = i.eval(env);
@@ -74,9 +75,10 @@ public class Solve {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			catch (IndexOutOfBoundsException e) {
+			} catch (IndexOutOfBoundsException e) {
 				System.out.println("error");
+			} catch (LogicException e) {
+				System.out.println(e);
 			}
 		}
 		scanner.close();
