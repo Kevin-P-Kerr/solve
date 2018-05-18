@@ -608,7 +608,7 @@ public class Interpreter {
 			t = tokens.getNext();
 			int i = Integer.parseInt(t.getLit());
 			Prop p1 = (Prop) eval(env);
-			return removeDefects(p1.extractPropFromQuant(i));
+			return removeDefects(p1.getIndividualFacts().get(i));
 		}
 		if (t.getType().equals(TokenType.TT_PLUS)) {
 			// move forward
