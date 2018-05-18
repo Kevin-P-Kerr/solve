@@ -595,8 +595,7 @@ public class Prop extends Value {
 
 	}
 
-	@Deprecated
-	private List<Prop> factor() {
+	public List<Prop> factor() {
 		if (matrix.size() == 1) {
 			if (matrix.get(0).getAtomicProps().size() == 1) {
 				return Lists.newArrayList(this);

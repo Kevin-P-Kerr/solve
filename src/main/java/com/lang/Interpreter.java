@@ -639,6 +639,15 @@ public class Interpreter {
 			List<Quantifier> quants = p.getPrefix();
 			return removeDefects(p.replace(quants.get(i), quants.get(ii)));
 		}
+		if (t.getType().equals(TokenType.TT_SLASH)) {
+			tokens.getNext();
+			t = tokens.getNext();
+			int i = Integer.parseInt(t.getLit());
+			Prop p = (Prop) eval(env);
+			p = p.copyWithHecceities();
+			List<Prop> factors = p.factor();
+			return factors.get(i);
+		}
 		// TODO: this should return a value
 		if (t.getType().equals(TokenType.TT_AT)) {
 			tokens.getNext();
