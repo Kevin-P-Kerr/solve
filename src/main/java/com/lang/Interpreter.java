@@ -215,28 +215,43 @@ public class Interpreter {
 			return null;
 		}
 	}
+	
+	private static int count4All (List<Quantifier> quants) {
+		int ret = 0;
+		for (Quantifier q : quants) {
+			if (q.getType().equals(QuantifierType.FORALL)) {
+				ret++;
+			}
+		}
+		return ret;
+	}
 
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
 		List<Quantifier> prefix1 = p1.getPrefix();
 		List<Quantifier> prefix2 = p2.getPrefix();
-		for (int i = 0, ii = Math.max(prefix1.size(), prefix2.size()); i < ii; i++) {
-			Quantifier q1 = tryToGet(prefix1, i);
-			Quantifier q2 = tryToGet(prefix2, i);
-			if (q1 == null) {
-				p3.addQuantifierUnique(q2);
-			} else if (q2 == null) {
-				p3.addQuantifierUnique(q1);
-			} else {
-				if (q2.getType().equals(QuantifierType.THEREIS)) {
-					p3.addQuantifierUnique(q2);
-					p3.addQuantifierUnique(q1);
-				} else {
-					p3.addQuantifierUnique(q1);
-					p3.addQuantifierUnique(q2);
-				}
-
+		List<Quantifier> greater;
+		List<Quantifier> lesser;
+		int num1 = count4All(prefix1);
+		int num2 = count4All(prefix2);
+		if (num1 > num2) {
+			greater =  prefix1;
+			lesser = prefix2;
+		}
+		else {
+			greater = prefix2;
+			lesser = prefix1;
+		}
+		boolean flag = false;
+		for (Quantifier q: lesser) {
+			if (q.getType().equals(QuantifierType.FORALL) && !flag) {
+				flag = true;
+				p3.addAllQuants(greater);
+			}
+			else {
+				p3.addQuantifierUnique(q);
 			}
 		}
+		
 	}
 	
 	
