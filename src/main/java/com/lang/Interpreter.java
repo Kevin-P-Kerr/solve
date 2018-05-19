@@ -246,10 +246,10 @@ public class Interpreter {
 			if (q.getType().equals(QuantifierType.FORALL) && !flag) {
 				flag = true;
 				p3.addAllQuants(greater);
+				
 			}
-			else {
-				p3.addQuantifierUnique(q);
-			}
+			p3.addQuantifierUnique(q);
+			
 		}
 		
 	}

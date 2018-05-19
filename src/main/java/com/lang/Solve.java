@@ -78,7 +78,7 @@ public class Solve {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IndexOutOfBoundsException e) {
-				System.out.println("error");
+				System.out.println(e);
 			} catch (LogicException e) {
 				System.out.println(e);
 			}
