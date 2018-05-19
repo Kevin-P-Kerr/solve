@@ -443,6 +443,9 @@ public class Prop extends Value {
 			}
 			ret.addCompoundProp(ncp);
 		}
+		for (List<Quantifier> quants: quantifierContraints) {
+			ret.addQuantifierConstraint(quants);
+		}
 		return ret;
 	}
 
