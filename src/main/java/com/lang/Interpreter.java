@@ -239,28 +239,7 @@ public class Interpreter {
 		}
 	}
 	
-	private static boolean checkPrefMutl(List<Quantifier> ret, List<Quantifier> quants1, List<Quantifier> quants2) {
-		if (ret.size() != (quants1.size()+quants2.size())) {
-			return false;
-		}
-		
-	}
 	
-	private static void multPrefix(Prop p1, Prop p2, Prop p3, List<Integer> ind1, List<Integer> ind2 ) {
-		List<Quantifier> quants = Lists.newArrayList();
-		for (int i  = 0,ii=p1.getPrefix().size();i<ii;i++) {
-			Integer dex = ind1.get(i);
-			quants.add(dex, p1.getPrefix().get(i));
-		}
-		for (int i  = 0,ii=p2.getPrefix().size();i<ii;i++) {
-			Integer dex = ind2.get(i);
-			quants.add(dex, p2.getPrefix().get(i));
-		}
-		if (!checkPrefMult(quants,p1.getPrefix(),p2.getPrefix()) {
-			throw new LogicException();
-		}
-		p3.addAllQuants(quants);
-	}
 
 	private Prop prodProps(Prop p1, Prop p2) {
 		Prop prop3 = new Prop();
