@@ -258,8 +258,6 @@ public class Interpreter {
 		}
 		
 	}
-	
-	
 
 	private Prop prodProps(Prop p1, Prop p2) {
 		Prop prop3 = new Prop();
@@ -620,6 +618,15 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_RBRAK)) {
+			tokens.getNext();
+			int from = Integer.parseInt(t.getLit());
+			t = tokens.getNext();
+			int to = Integer.parseInt(t.getLit());
+			Prop p = (Prop) eval(env);
+			p = p.copyWithHecceities();
+			return p.swapQuantifiers(from, to);
+		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
 			int i = Integer.parseInt(tokens.getNext().getLit());
