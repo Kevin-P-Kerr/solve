@@ -231,6 +231,8 @@ public class Interpreter {
 		List<Quantifier> prefix2 = p2.getPrefix();
 		List<Quantifier> greater;
 		List<Quantifier> lesser;
+		List<Quantifier> order1 = Lists.newArrayList();
+		List<Quantifier> order2 = Lists.newArrayList();
 		int num1 = count4All(prefix1);
 		int num2 = count4All(prefix2);
 		if (num1 > num2) {
@@ -245,14 +247,14 @@ public class Interpreter {
 		for (Quantifier q: lesser) {
 			if (q.getType().equals(QuantifierType.FORALL) && !flag) {
 				flag = true;
-				p3.addAllQuants(greater);
+				order1.addAll(p3.addAllQuants(greater));
 				
 			}
-			p3.addQuantifierUnique(q);
+			order2.add(p3.addQuantifierUnique(q));
 			
 		}
 		if (!flag) {
-			p3.addAllQuants(greater);
+			order1.addAll(p3.addAllQuants(greater));
 		}
 		
 	}

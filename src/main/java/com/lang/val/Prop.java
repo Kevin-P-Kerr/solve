@@ -250,10 +250,52 @@ public class Prop extends Value {
 	}
 
 	private final List<Quantifier> prefix = Lists.newArrayList();
+	private final List<List<Quantifier>> quantifierContraints = Lists.newArrayList();
 	private List<CompoundProp> matrix = Lists.newArrayList();
 	private Map<Hecceity, String> h2s = Maps.newHashMap();
 	private Map<String, Hecceity> s2h = Maps.newHashMap();
 
+	public void addQuantifierConstraint(List<Quantifier> quants) {
+		this.quantifierContraints.add(quants);
+	}
+	
+	private static class SwapOp <T> implements UnaryOperator <T> {
+
+		private final T from;
+		private final T to;
+		
+		public SwapOp(T from, T to) {
+			this.from = from;
+			this.to= to;
+		}
+		@Override
+		public T apply(T t) {
+			if (t == from) {
+				return to;
+			}
+			if (t == to) {
+				return from;
+			}
+			return t;
+		}
+		
+	}
+	
+	public Prop swapQuantifiers (int from, int to) throws LogicException {
+		Quantifier fromQ = prefix.get(from);
+		Quantifier toQ = prefix.get(to);
+		if (quantifierContraints.size() == 0) {
+			throw new LogicException();
+		}
+		for (List<Quantifier> quants:quantifierContraints) {
+			if (quants.indexOf(from) >= 0 && quants.indexOf(to) >= 0) {
+				throw new LogicException();
+			}
+		}
+		prefix.replaceAll(new SwapOp<Quantifier>(fromQ,toQ));
+		return this;
+	}
+	
 	public List<Quantifier> getPrefix() {
 		return prefix;
 	}
@@ -327,11 +369,12 @@ public class Prop extends Value {
 
 	/**
 	 * add quantifier with unique hecceties
+	 * @return 
 	 */
-	public void addQuantifierUnique(Quantifier q) {
+	public Quantifier addQuantifierUnique(Quantifier q) {
 		// don't add duplicate quantifiers
 		if (getHecceties().indexOf(q.getHecceity()) >= 0) {
-			return;
+			return null;
 		}
 		if (!h2s.containsKey(q.hecceity)) {
 			String s = uniqueString.getString();
@@ -339,6 +382,7 @@ public class Prop extends Value {
 			s2h.put(s, q.hecceity);
 		}
 		addQuantifier(q);
+		return q;
 	}
 
 	public void addCompoundProp(CompoundProp p) {
@@ -450,6 +494,11 @@ public class Prop extends Value {
 	}
 
 	public static class LogicException extends Exception {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public LogicException() {
 			super();
 		}
@@ -482,10 +531,15 @@ public class Prop extends Value {
 
 	}
 
-	public void addAllQuants(List<Quantifier> quants) {
+	public List<Quantifier> addAllQuants(List<Quantifier> quants) {
+		List<Quantifier> ret = Lists.newArrayList();
 		for (Quantifier q : quants) {
-			addQuantifierUnique(q);
+			Quantifier  r = (addQuantifierUnique(q));
+			if (r != null) {
+				ret.add(r);
+			}
 		}
+		return ret;
 	}
 
 	public void removeQuantifier(Quantifier q) {
