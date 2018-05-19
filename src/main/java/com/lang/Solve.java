@@ -53,6 +53,7 @@ public class Solve {
 					BufferedReader br = new BufferedReader(new FileReader(l[1]));
 					String st;
 					while ((st = br.readLine()) != null) {
+						System.out.println(st);
 						lines.add(st);
 						TokenStream tokens = Tokenizer.tokenize(st);
 						Interpreter i = new Interpreter(tokens);
@@ -60,6 +61,7 @@ public class Solve {
 						System.out.println(p.toString());
 					}
 					br.close();
+					System.out.print(" > ");
 					continue;
 				}
 				lines.add(s);
