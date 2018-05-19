@@ -219,9 +219,6 @@ public class Interpreter {
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
 		List<Quantifier> prefix1 = p1.getPrefix();
 		List<Quantifier> prefix2 = p2.getPrefix();
-		List<Quantifier> waiting1 = Lists.newArrayList();
-		List<Quantifier> waiting2 = Lists.newArrayList();
-
 		for (int i = 0, ii = Math.max(prefix1.size(), prefix2.size()); i < ii; i++) {
 			Quantifier q1 = tryToGet(prefix1, i);
 			Quantifier q2 = tryToGet(prefix2, i);
@@ -230,33 +227,16 @@ public class Interpreter {
 			} else if (q2 == null) {
 				p3.addQuantifierUnique(q1);
 			} else {
-				if (q2.getType().equals(QuantifierType.THEREIS)) {	
+				if (q2.getType().equals(QuantifierType.THEREIS)) {
 					p3.addQuantifierUnique(q2);
-					if (q1.getType().equals(QuantifierType.FORALL)) {
-						waiting1.add(q1);
-					}
-					else {
-						p3.addAllQuants(waiting1);
-						waiting1 = Lists.newArrayList();
-						p3.addQuantifierUnique(q1);
-					}
-				}
-				else {
 					p3.addQuantifierUnique(q1);
-					if (q2.getType().equals(QuantifierType.FORALL)) {
-						waiting2.add(q2);
-					}
-					else {
-						p3.addAllQuants(waiting2);
-						waiting2 = Lists.newArrayList();
-						p3.addQuantifierUnique(q2);
-					}
+				} else {
+					p3.addQuantifierUnique(q1);
+					p3.addQuantifierUnique(q2);
 				}
 
 			}
 		}
-		p3.addAllQuants(waiting1);
-		p3.addAllQuants(waiting2);
 	}
 
 	private Prop prodProps(Prop p1, Prop p2) {
@@ -614,9 +594,6 @@ public class Interpreter {
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
-		if (!tokens.hasToken()) {
-			return Undefined.undefined;
-		}
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
