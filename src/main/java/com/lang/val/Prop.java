@@ -288,7 +288,7 @@ public class Prop extends Value {
 			throw new LogicException();
 		}
 		for (List<Quantifier> quants:quantifierContraints) {
-			if (quants.indexOf(from) >= 0 && quants.indexOf(to) >= 0) {
+			if (quants.indexOf(fromQ) >= 0 && quants.indexOf(toQ) >= 0) {
 				throw new LogicException();
 			}
 		}
