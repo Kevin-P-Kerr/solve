@@ -256,6 +256,8 @@ public class Interpreter {
 		if (!flag) {
 			order1.addAll(p3.addAllQuants(greater));
 		}
+		p3.addQuantifierConstraint(order1);
+		p3.addQuantifierConstraint(order2);
 		
 	}
 
@@ -620,11 +622,11 @@ public class Interpreter {
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
+			t = tokens.getNext();
 			int from = Integer.parseInt(t.getLit());
 			t = tokens.getNext();
 			int to = Integer.parseInt(t.getLit());
 			Prop p = (Prop) eval(env);
-			p = p.copyWithHecceities();
 			return p.swapQuantifiers(from, to);
 		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
