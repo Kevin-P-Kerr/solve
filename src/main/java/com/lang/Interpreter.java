@@ -627,6 +627,7 @@ public class Interpreter {
 			t = tokens.getNext();
 			int to = Integer.parseInt(t.getLit());
 			Prop p = (Prop) eval(env);
+			p = p.copyWithHecceities();
 			return p.swapQuantifiers(from, to);
 		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
