@@ -611,6 +611,9 @@ public class Interpreter {
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
+		if (!tokens.hasToken()) {
+			return Undefined.undefined;
+		}
 		Token t = tokens.peek();
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
