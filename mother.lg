@@ -1,4 +1,19 @@
 axiom = forall a in Man thereis b in Man forall c in Man : Mother(b a)*~Mother(c a)
-axiom = # 2 0 axiom
-/ 0 axiom
-axiom = / 1 axiom
+hypo = forall a in Man: ~Mother(a a)
+step = # 2 0 axiom
+step = / 1 axiom
+
+
+hypo = forall a in Man thereis b in Man thereis c in Man : Mother(b a)*Mother(c b)
+hypo
+axiom
+step = * axiom axiom
+% 0 step
+% 1 step
+% 2 step
+a
+/ 1 step
+/ 2 step
+/ 0 step
+step = * / 2 step / 0 step
+step
