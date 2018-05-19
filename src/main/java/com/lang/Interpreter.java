@@ -251,6 +251,9 @@ public class Interpreter {
 			p3.addQuantifierUnique(q);
 			
 		}
+		if (!flag) {
+			p3.addAllQuants(greater);
+		}
 		
 	}
 	
