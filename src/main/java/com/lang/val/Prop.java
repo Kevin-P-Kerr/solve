@@ -307,7 +307,7 @@ public class Prop extends Value {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-
+		List<AtomicProp> constraints = Lists.newArrayList();
 		for (Quantifier q : prefix) {
 			if (q.getType() == QuantifierType.FORALL) {
 				sb.append("forall ");
@@ -319,6 +319,7 @@ public class Prop extends Value {
 
 			AtomicProp constraint = q.getConstraint();
 			if (constraint != null) {
+				constraints.add(constraint);
 				sb.append(" in ");
 				sb.append(constraint.getName());
 			}
@@ -335,6 +336,9 @@ public class Prop extends Value {
 			}
 			boolean firstAtomicProp = true;
 			for (AtomicProp prop : cp.getAtomicProps()) {
+				if (constraints.indexOf(prop) >= 0) {
+					continue;
+				}
 				if (!firstAtomicProp) {
 					sb.append("*");
 				} else {
@@ -635,23 +639,36 @@ public class Prop extends Value {
 		for (Quantifier qq : getPrefix()) {
 			m.put(qq.hecceity, qq);
 		}
-		for (CompoundProp cp : getMatrix()) {
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				List<Hecceity> hecs = ap.getHecceities();
-				if (hecs.indexOf(q.getHecceity()) >= 0) {
-					for (Hecceity h : hecs) {
-						Quantifier quant = m.get(h);
-						if (ret.indexOf(quant) < 0) {
-							ret.add(quant);
+		int s = ret.size();
+		boolean first = true;
+		while (s != ret.size() || first) {
+			first = false;
+			s = ret.size();
+			for (CompoundProp cp : getMatrix()) {
+				for (AtomicProp ap : cp.getAtomicProps()) {
+					List<Hecceity> hecs = ap.getHecceities();
+					List<Quantifier> additions = Lists.newArrayList();
+					for (Quantifier qq: ret) {
+						if (hecs.indexOf(qq.getHecceity()) >= 0) {
+							for (Hecceity h : hecs) {
+								Quantifier quant = m.get(h);
+								additions.add(quant);
+							}
+						}
+					}
+					for (Quantifier qq:additions) {
+						if (ret.indexOf(qq) < 0) {
+							ret.add(qq);
 						}
 					}
 				}
-			}
+			}	
 		}
 		return ret;
 
 	}
 
+	@Deprecated
 	public List<Prop> factor() {
 		if (matrix.size() == 1) {
 			if (matrix.get(0).getAtomicProps().size() == 1) {
@@ -704,13 +721,20 @@ public class Prop extends Value {
 		}
 		factor1.matrix = Lists.newArrayList(cp);
 		List<Quantifier> removals = Lists.newArrayList();
+		boolean removalFlag= true;
 		for (Quantifier q : factor1.getPrefix()) {
 			for (AtomicProp ap : common) {
 				if (ap.getHecceities().indexOf(q.hecceity) >= 0) {
+					removalFlag = false;
 					break;
 				}
 			}
-			removals.add(q);
+			if (removalFlag) {
+				removals.add(q);
+			}
+			else {
+				removalFlag = true;
+			}
 		}
 		factor1.getPrefix().removeAll(removals);
 		for (CompoundProp compound : factor2.getMatrix()) {
