@@ -805,4 +805,25 @@ public class Prop extends Value {
 		return p;
 	}
 
+	public Value swapQuantifiers(String from, String to) throws LogicException {
+		Hecceity fh = s2h.get(from);
+		Hecceity th = s2h.get(to);
+		int f= -1;
+		int t = -1;
+		for (int i =0,ii=prefix.size();i<ii;i++) {
+			Quantifier q = prefix.get(i);
+			if (q.getHecceity() == fh) {
+				f = i;
+			}
+			if (q.getHecceity() == th) {
+				t = i;
+			}
+			if (f >= 0 && t >= 0) {
+				break;
+			}
+			
+		}
+		return swapQuantifiers(f,t);
+	}
+
 }

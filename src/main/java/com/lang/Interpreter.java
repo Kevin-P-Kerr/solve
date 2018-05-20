@@ -623,9 +623,9 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
 			t = tokens.getNext();
-			int from = Integer.parseInt(t.getLit());
+			String from =t.getLit();
 			t = tokens.getNext();
-			int to = Integer.parseInt(t.getLit());
+			String to = t.getLit();
 			Prop p = (Prop) eval(env);
 			p = p.copyWithHecceities();
 			return p.swapQuantifiers(from, to);
