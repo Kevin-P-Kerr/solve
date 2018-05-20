@@ -282,6 +282,14 @@ public class Prop extends Value {
 	}
 	
 	public Prop swapQuantifiers (int from, int to) throws LogicException {
+		int n = to;
+		if (from == to) {
+			throw new LogicException();
+		}
+		if (from > to) {
+			to = from;
+			from = n;
+		}
 		Quantifier fromQ = prefix.get(from);
 		Quantifier toQ = prefix.get(to);
 		if (quantifierContraints.size() == 0) {
@@ -291,6 +299,27 @@ public class Prop extends Value {
 			if (quants.indexOf(fromQ) >= 0 && quants.indexOf(toQ) >= 0) {
 				throw new LogicException();
 			}
+			if (quants.indexOf(fromQ) >= 0) {
+				int dex = quants.indexOf(fromQ);
+				if (dex == quants.size()-1) {
+					continue;
+				}
+				int next = prefix.indexOf(quants.get(dex+1));
+				if (next <= to) {
+					throw new LogicException();
+				}
+			}
+			if (quants.indexOf(toQ) >= 0) {
+				int dex = quants.indexOf(toQ);
+				if (dex == 0) {
+					continue;
+				}
+				int next = prefix.indexOf(quants.get(dex-1));
+				if (next >= from) {
+					throw new LogicException();
+				}
+			}
+			
 		}
 		prefix.replaceAll(new SwapOp<Quantifier>(fromQ,toQ));
 		return this;
