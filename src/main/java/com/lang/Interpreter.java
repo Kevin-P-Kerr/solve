@@ -4,10 +4,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -303,7 +300,7 @@ public class Interpreter {
 
 	// TODO: fold these into Prop
 	private static Prop removeDefects(Prop p) {
-		return removeRedundant(p.removeContradictions());
+		return p.removeContradictions().removeRedundant();
 	}
 
 	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) throws LogicException {
@@ -366,32 +363,6 @@ public class Interpreter {
 			return negateConstraints(p2.getPrefix(), p1);
 		}
 		return check;
-	}
-
-	// we can assume that p has no contradictions
-	private static Prop removeRedundant(Prop p) {
-		Prop ret = new Prop();
-		for (Quantifier q : p.getPrefix()) {
-			ret.addQuantifierUnique(q);
-		}
-		List<CompoundProp> compounds = Lists.newArrayList();
-		for (CompoundProp cp : p.getMatrix()) {
-			CompoundProp ncp = ret.makeBlankCompoundProp();
-			Set<AtomicProp> atoms = Sets.newHashSet();
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				if (atoms.contains(ap)) {
-					continue;
-				}
-				atoms.add(ap);
-				ncp.addAtomicProp(ap);
-			}
-			if (compounds.contains(ncp)) {
-				continue;
-			}
-			compounds.add(ncp);
-			ret.addCompoundProp(ncp);
-		}
-		return ret;
 	}
 
 	private static <T> List<List<T>> getNtuples(List<T> l, int n) {

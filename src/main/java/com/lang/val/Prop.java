@@ -2,10 +2,12 @@ package com.lang.val;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class Prop extends Value {
 
@@ -913,6 +915,35 @@ public class Prop extends Value {
 		}
 		return ret;
 
+	}
+
+	// we can assume that p has no contradictions
+	public Prop removeRedundant() {
+		Prop ret = new Prop();
+		for (Quantifier q : getPrefix()) {
+			ret.addQuantifierUnique(q);
+		}
+		List<CompoundProp> compounds = Lists.newArrayList();
+		for (CompoundProp cp : getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			Set<AtomicProp> atoms = Sets.newHashSet();
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (atoms.contains(ap)) {
+					continue;
+				}
+				atoms.add(ap);
+				ncp.addAtomicProp(ap);
+			}
+			if (compounds.contains(ncp)) {
+				continue;
+			}
+			compounds.add(ncp);
+			ret.addCompoundProp(ncp);
+		}
+		for (List<Quantifier> quants : quantifierContraints) {
+			ret.addQuantifierConstraint(quants);
+		}
+		return ret;
 	}
 
 }
