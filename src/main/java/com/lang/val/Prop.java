@@ -258,16 +258,17 @@ public class Prop extends Value {
 	public void addQuantifierConstraint(List<Quantifier> quants) {
 		this.quantifierContraints.add(quants);
 	}
-	
-	private static class SwapOp <T> implements UnaryOperator <T> {
+
+	private static class SwapOp<T> implements UnaryOperator<T> {
 
 		private final T from;
 		private final T to;
-		
+
 		public SwapOp(T from, T to) {
 			this.from = from;
-			this.to= to;
+			this.to = to;
 		}
+
 		@Override
 		public T apply(T t) {
 			if (t == from) {
@@ -278,10 +279,10 @@ public class Prop extends Value {
 			}
 			return t;
 		}
-		
+
 	}
-	
-	public Prop swapQuantifiers (int from, int to) throws LogicException {
+
+	public Prop swapQuantifiers(int from, int to) throws LogicException {
 		int n = to;
 		if (from == to) {
 			throw new LogicException();
@@ -295,16 +296,16 @@ public class Prop extends Value {
 		if (quantifierContraints.size() == 0) {
 			throw new LogicException();
 		}
-		for (List<Quantifier> quants:quantifierContraints) {
+		for (List<Quantifier> quants : quantifierContraints) {
 			if (quants.indexOf(fromQ) >= 0 && quants.indexOf(toQ) >= 0) {
 				throw new LogicException();
 			}
 			if (quants.indexOf(fromQ) >= 0) {
 				int dex = quants.indexOf(fromQ);
-				if (dex == quants.size()-1) {
+				if (dex == quants.size() - 1) {
 					continue;
 				}
-				int next = prefix.indexOf(quants.get(dex+1));
+				int next = prefix.indexOf(quants.get(dex + 1));
 				if (next <= to) {
 					throw new LogicException();
 				}
@@ -314,17 +315,17 @@ public class Prop extends Value {
 				if (dex == 0) {
 					continue;
 				}
-				int next = prefix.indexOf(quants.get(dex-1));
+				int next = prefix.indexOf(quants.get(dex - 1));
 				if (next >= from) {
 					throw new LogicException();
 				}
 			}
-			
+
 		}
-		prefix.replaceAll(new SwapOp<Quantifier>(fromQ,toQ));
+		prefix.replaceAll(new SwapOp<Quantifier>(fromQ, toQ));
 		return this;
 	}
-	
+
 	public List<Quantifier> getPrefix() {
 		return prefix;
 	}
@@ -402,7 +403,8 @@ public class Prop extends Value {
 
 	/**
 	 * add quantifier with unique hecceties
-	 * @return 
+	 *
+	 * @return
 	 */
 	public Quantifier addQuantifierUnique(Quantifier q) {
 		// don't add duplicate quantifiers
@@ -476,7 +478,7 @@ public class Prop extends Value {
 			}
 			ret.addCompoundProp(ncp);
 		}
-		for (List<Quantifier> quants: quantifierContraints) {
+		for (List<Quantifier> quants : quantifierContraints) {
 			ret.addQuantifierConstraint(quants);
 		}
 		return ret;
@@ -531,7 +533,7 @@ public class Prop extends Value {
 
 	public static class LogicException extends Exception {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
@@ -570,7 +572,7 @@ public class Prop extends Value {
 	public List<Quantifier> addAllQuants(List<Quantifier> quants) {
 		List<Quantifier> ret = Lists.newArrayList();
 		for (Quantifier q : quants) {
-			Quantifier  r = (addQuantifierUnique(q));
+			Quantifier r = (addQuantifierUnique(q));
 			if (r != null) {
 				ret.add(r);
 			}
@@ -677,7 +679,7 @@ public class Prop extends Value {
 				for (AtomicProp ap : cp.getAtomicProps()) {
 					List<Hecceity> hecs = ap.getHecceities();
 					List<Quantifier> additions = Lists.newArrayList();
-					for (Quantifier qq: ret) {
+					for (Quantifier qq : ret) {
 						if (hecs.indexOf(qq.getHecceity()) >= 0) {
 							for (Hecceity h : hecs) {
 								Quantifier quant = m.get(h);
@@ -685,13 +687,13 @@ public class Prop extends Value {
 							}
 						}
 					}
-					for (Quantifier qq:additions) {
+					for (Quantifier qq : additions) {
 						if (ret.indexOf(qq) < 0) {
 							ret.add(qq);
 						}
 					}
 				}
-			}	
+			}
 		}
 		return ret;
 
@@ -750,7 +752,7 @@ public class Prop extends Value {
 		}
 		factor1.matrix = Lists.newArrayList(cp);
 		List<Quantifier> removals = Lists.newArrayList();
-		boolean removalFlag= true;
+		boolean removalFlag = true;
 		for (Quantifier q : factor1.getPrefix()) {
 			for (AtomicProp ap : common) {
 				if (ap.getHecceities().indexOf(q.hecceity) >= 0) {
@@ -760,8 +762,7 @@ public class Prop extends Value {
 			}
 			if (removalFlag) {
 				removals.add(q);
-			}
-			else {
+			} else {
 				removalFlag = true;
 			}
 		}
@@ -808,9 +809,9 @@ public class Prop extends Value {
 	public Value swapQuantifiers(String from, String to) throws LogicException {
 		Hecceity fh = s2h.get(from);
 		Hecceity th = s2h.get(to);
-		int f= -1;
+		int f = -1;
 		int t = -1;
-		for (int i =0,ii=prefix.size();i<ii;i++) {
+		for (int i = 0, ii = prefix.size(); i < ii; i++) {
 			Quantifier q = prefix.get(i);
 			if (q.getHecceity() == fh) {
 				f = i;
@@ -821,9 +822,30 @@ public class Prop extends Value {
 			if (f >= 0 && t >= 0) {
 				break;
 			}
-			
+
 		}
-		return swapQuantifiers(f,t);
+		return swapQuantifiers(f, t);
+	}
+
+	public Prop replace(String to, String from) throws LogicException {
+		Hecceity fh = s2h.get(from);
+		Hecceity th = s2h.get(to);
+		Quantifier f = null;
+		Quantifier t = null;
+		for (int i = 0, ii = prefix.size(); i < ii; i++) {
+			Quantifier q = prefix.get(i);
+			if (q.getHecceity() == fh) {
+				f = q;
+			}
+			if (q.getHecceity() == th) {
+				t = q;
+			}
+			if (f != null && f != null) {
+				break;
+			}
+
+		}
+		return replace(f, t);
 	}
 
 }

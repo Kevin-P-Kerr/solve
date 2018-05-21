@@ -215,8 +215,8 @@ public class Interpreter {
 			return null;
 		}
 	}
-	
-	private static int count4All (List<Quantifier> quants) {
+
+	private static int count4All(List<Quantifier> quants) {
 		int ret = 0;
 		for (Quantifier q : quants) {
 			if (q.getType().equals(QuantifierType.FORALL)) {
@@ -236,29 +236,28 @@ public class Interpreter {
 		int num1 = count4All(prefix1);
 		int num2 = count4All(prefix2);
 		if (num1 > num2) {
-			greater =  prefix1;
+			greater = prefix1;
 			lesser = prefix2;
-		}
-		else {
+		} else {
 			greater = prefix2;
 			lesser = prefix1;
 		}
 		boolean flag = false;
-		for (Quantifier q: lesser) {
+		for (Quantifier q : lesser) {
 			if (q.getType().equals(QuantifierType.FORALL) && !flag) {
 				flag = true;
 				order1.addAll(p3.addAllQuants(greater));
-				
+
 			}
 			order2.add(p3.addQuantifierUnique(q));
-			
+
 		}
 		if (!flag) {
 			order1.addAll(p3.addAllQuants(greater));
 		}
 		p3.addQuantifierConstraint(order1);
 		p3.addQuantifierConstraint(order2);
-		
+
 	}
 
 	private Prop prodProps(Prop p1, Prop p2) {
@@ -623,7 +622,7 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
 			t = tokens.getNext();
-			String from =t.getLit();
+			String from = t.getLit();
 			t = tokens.getNext();
 			String to = t.getLit();
 			Prop p = (Prop) eval(env);
@@ -666,13 +665,13 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_HASH)) {
 			tokens.getNext();
 			t = tokens.getNext();
-			int i = Integer.parseInt(t.getLit());
+			String i = t.getLit();
 			t = tokens.getNext();
-			int ii = Integer.parseInt(t.getLit());
+			String ii = t.getLit();
 			Prop p = (Prop) eval(env);
 			p = p.copyWithHecceities();
 			List<Quantifier> quants = p.getPrefix();
-			return removeDefects(p.replace(quants.get(i), quants.get(ii)));
+			return removeDefects(p.replace(i, ii));
 		}
 		if (t.getType().equals(TokenType.TT_SLASH)) {
 			tokens.getNext();
