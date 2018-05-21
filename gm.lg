@@ -9,3 +9,38 @@ base = ] d a base
 base = ] e c base
 base = ] e b base
 base = ] e a base
+base = # c e base
+base = # b d base
+axiom1
+hypo
+base = * base axiom1
+hypo
+% 0 base
+% 1 base
+base = % 1 base
+axiom1
+axiom2
+base = * axiom2 base
+base = ] d c base
+d = ] b d base
+base = ] d a base
+a
+a
+axiom1
+axiom2
+hypo
+person = thereis a: Man(a)
+base = person
+base = * person axiom2
+base
+base = ] b a base
+base = ] a b base
+base = # b a base
+base = * base axiom2
+base = # b a base
+a
+base
+base = # d b base
+a
+base = # c b base
+base = * base axiom1
