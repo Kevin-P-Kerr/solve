@@ -294,33 +294,46 @@ public class Prop extends Value {
 		Quantifier fromQ = prefix.get(from);
 		Quantifier toQ = prefix.get(to);
 		if (quantifierContraints.size() == 0) {
-			throw new LogicException();
+			throw new LogicException("no quantifier constraints ");
 		}
-		for (List<Quantifier> quants : quantifierContraints) {
-			if (quants.indexOf(fromQ) >= 0 && quants.indexOf(toQ) >= 0) {
-				throw new LogicException();
-			}
-			if (quants.indexOf(fromQ) >= 0) {
-				int dex = quants.indexOf(fromQ);
-				if (dex == quants.size() - 1) {
-					continue;
-				}
-				int next = prefix.indexOf(quants.get(dex + 1));
-				if (next <= to) {
+		try {
+			for (List<Quantifier> quants : quantifierContraints) {
+				if (quants.indexOf(fromQ) >= 0 && quants.indexOf(toQ) >= 0) {
 					throw new LogicException();
 				}
-			}
-			if (quants.indexOf(toQ) >= 0) {
-				int dex = quants.indexOf(toQ);
-				if (dex == 0) {
-					continue;
+				if (quants.indexOf(fromQ) >= 0) {
+					int dex = quants.indexOf(fromQ);
+					if (dex == quants.size() - 1) {
+						continue;
+					}
+					int next = prefix.indexOf(quants.get(dex + 1));
+					if (next <= to) {
+						throw new LogicException();
+					}
 				}
-				int next = prefix.indexOf(quants.get(dex - 1));
-				if (next >= from) {
-					throw new LogicException();
+				if (quants.indexOf(toQ) >= 0) {
+					int dex = quants.indexOf(toQ);
+					if (dex == 0) {
+						continue;
+					}
+					int next = prefix.indexOf(quants.get(dex - 1));
+					if (next >= from) {
+						throw new LogicException();
+					}
 				}
-			}
 
+			}
+		} catch (LogicException e) {
+			StringBuilder s = new StringBuilder();
+			for (List<Quantifier> quants : quantifierContraints) {
+				for (Quantifier q : quants) {
+					Hecceity h = q.getHecceity();
+					String hn = h2s.get(h);
+					s.append(hn).append(" ");
+				}
+				s.append("\n");
+			}
+			throw new LogicException(s.toString());
 		}
 		prefix.replaceAll(new SwapOp<Quantifier>(fromQ, toQ));
 		return this;
@@ -536,10 +549,20 @@ public class Prop extends Value {
 		/**
 		 *
 		 */
+		private String message;
 		private static final long serialVersionUID = 1L;
 
 		public LogicException() {
 			super();
+		}
+
+		public LogicException(String string) {
+			this.message = string;
+		}
+
+		@Override
+		public String toString() {
+			return message == null ? "" : message;
 		}
 	}
 
@@ -852,6 +875,44 @@ public class Prop extends Value {
 			throw new LogicException();
 		}
 		return replace(f, t);
+	}
+
+	private static boolean contradiction(CompoundProp cp) {
+		Map<String, Boolean> boolMap = Maps.newHashMap();
+
+		for (AtomicPropInfo ap : cp.getAtomicPropInfo()) {
+			Boolean b = boolMap.get(ap.getString());
+			if (b == null) {
+				b = ap.getTruthValue();
+				boolMap.put(ap.getString(), b);
+				continue;
+			}
+			if (b != ap.getTruthValue()) {
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	public Prop removeContradictions() {
+		Prop ret = new Prop();
+		for (Quantifier q : getPrefix()) {
+			ret.addQuantifierUnique(q);
+		}
+		for (CompoundProp cp : getMatrix()) {
+			CompoundProp ncp = ret.makeBlankCompoundProp();
+			if (!contradiction(cp)) {
+				ncp.addAllAtomicProp(cp.getAtomicProps());
+
+				ret.addCompoundProp(ncp);
+			}
+		}
+		for (List<Quantifier> quants : quantifierContraints) {
+			ret.addQuantifierConstraint(quants);
+		}
+		return ret;
+
 	}
 
 }

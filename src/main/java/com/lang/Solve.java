@@ -1,3 +1,4 @@
+
 package com.lang;
 
 import java.io.BufferedReader;
@@ -36,6 +37,9 @@ public class Solve {
 		while (scanner.hasNext()) {
 			try {
 				String s = scanner.nextLine();
+				if (s.indexOf("exit") == 0) {
+					break;
+				}
 				if (s.indexOf("write") == 0) {
 					String[] l = s.split(" ");
 					BufferedWriter writer = new BufferedWriter(new FileWriter(l[1]));

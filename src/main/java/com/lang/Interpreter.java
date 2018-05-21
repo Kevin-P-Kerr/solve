@@ -4,18 +4,15 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.Prop;
 import com.lang.val.Prop.AtomicProp;
-import com.lang.val.Prop.AtomicPropInfo;
 import com.lang.val.Prop.CompoundProp;
 import com.lang.val.Prop.Hecceity;
 import com.lang.val.Prop.LogicException;
@@ -304,8 +301,9 @@ public class Interpreter {
 		return ret;
 	}
 
+	// TODO: fold these into Prop
 	private static Prop removeDefects(Prop p) {
-		return removeRedundant(removeContradictions(p));
+		return removeRedundant(p.removeContradictions());
 	}
 
 	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) throws LogicException {
@@ -475,40 +473,6 @@ public class Interpreter {
 
 		for (List<T> tuple : ntuples) {
 			ret.addAll(rearrange(tuple));
-		}
-		return ret;
-	}
-
-	private static boolean contradiction(CompoundProp cp) {
-		Map<String, Boolean> boolMap = Maps.newHashMap();
-
-		for (AtomicPropInfo ap : cp.getAtomicPropInfo()) {
-			Boolean b = boolMap.get(ap.getString());
-			if (b == null) {
-				b = ap.getTruthValue();
-				boolMap.put(ap.getString(), b);
-				continue;
-			}
-			if (b != ap.getTruthValue()) {
-				return true;
-			}
-		}
-		return false;
-
-	}
-
-	private static Prop removeContradictions(Prop p) {
-		Prop ret = new Prop();
-		for (Quantifier q : p.getPrefix()) {
-			ret.addQuantifierUnique(q);
-		}
-		for (CompoundProp cp : p.getMatrix()) {
-			CompoundProp ncp = ret.makeBlankCompoundProp();
-			if (!contradiction(cp)) {
-				ncp.addAllAtomicProp(cp.getAtomicProps());
-
-				ret.addCompoundProp(ncp);
-			}
 		}
 		return ret;
 	}
