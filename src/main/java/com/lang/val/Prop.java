@@ -827,7 +827,7 @@ public class Prop extends Value {
 		return swapQuantifiers(f, t);
 	}
 
-	public Prop replace(String to, String from) throws LogicException {
+	public Prop replace(String from, String to) throws LogicException {
 		Hecceity fh = s2h.get(from);
 		Hecceity th = s2h.get(to);
 		Quantifier f = null;
@@ -840,10 +840,15 @@ public class Prop extends Value {
 			if (q.getHecceity() == th) {
 				t = q;
 			}
-			if (f != null && f != null) {
+			if (f != null && t != null) {
 				break;
 			}
 
+		}
+		int ii = prefix.indexOf(f);
+		int i = prefix.indexOf(t);
+		if (ii < i) {
+			throw new LogicException();
 		}
 		return replace(f, t);
 	}

@@ -665,13 +665,12 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_HASH)) {
 			tokens.getNext();
 			t = tokens.getNext();
-			String i = t.getLit();
+			String from = t.getLit();
 			t = tokens.getNext();
-			String ii = t.getLit();
+			String to = t.getLit();
 			Prop p = (Prop) eval(env);
 			p = p.copyWithHecceities();
-			List<Quantifier> quants = p.getPrefix();
-			return removeDefects(p.replace(i, ii));
+			return removeDefects(p.replace(from, to));
 		}
 		if (t.getType().equals(TokenType.TT_SLASH)) {
 			tokens.getNext();
