@@ -467,6 +467,7 @@ public class Prop extends Value {
 		for (Quantifier q : getPrefix()) {
 			ret.addQuantifierUnique(q);
 		}
+		ret.s2h = Maps.newHashMap(s2h);
 		for (CompoundProp cp : getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			for (AtomicProp ap : cp.getAtomicProps()) {
