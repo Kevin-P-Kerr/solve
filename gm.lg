@@ -1,0 +1,11 @@
+hypo = forall a in Man thereis b in Man : Grandmother(b a)
+axiom1 = forall a in Man forall b in Man forall c in Man: ~Mother(b a) + ~Mother(c b) + Grandmother(c a)
+axiom2 = forall a in Man thereis b in Man : Mother(b a)
+base = * axiom1 axiom2
+base = ] d c base
+] d b base
+base = ] d b base
+base = ] d a base
+base = ] e c base
+base = ] e b base
+base = ] e a base

@@ -482,7 +482,8 @@ public class Prop extends Value {
 		for (Quantifier q : getPrefix()) {
 			ret.addQuantifierUnique(q);
 		}
-		ret.s2h = Maps.newHashMap(s2h);
+		ret.h2s = h2s;
+		ret.s2h = s2h;
 		for (CompoundProp cp : getMatrix()) {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			for (AtomicProp ap : cp.getAtomicProps()) {
@@ -584,6 +585,9 @@ public class Prop extends Value {
 			s2h.put(k, th);
 			h2s.put(th, k);
 			pre.replaceAll(qop);
+		}
+		for (List<Quantifier> quants : quantifierContraints) {
+			quants.replaceAll(qop);
 		}
 		List<CompoundProp> m = getMatrix();
 		for (CompoundProp cp : m) {
