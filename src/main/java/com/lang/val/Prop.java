@@ -917,6 +917,8 @@ public class Prop extends Value {
 		for (List<Quantifier> quants : quantifierContraints) {
 			ret.addQuantifierConstraint(quants);
 		}
+		ret.h2s = h2s;
+		ret.s2h = s2h;
 		return ret;
 
 	}
@@ -947,6 +949,8 @@ public class Prop extends Value {
 		for (List<Quantifier> quants : quantifierContraints) {
 			ret.addQuantifierConstraint(quants);
 		}
+		ret.h2s = h2s;
+		ret.s2h = s2h;
 		return ret;
 	}
 
