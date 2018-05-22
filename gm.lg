@@ -18,3 +18,16 @@ axiom3 = hypo
 hypo = forall a in Man forall b in Man thereis c in Man : ~Cousins(a b) + Grandmother(c a)*Grandmother(c b)
 axiom4 = forall a in Man forall b in Man forall c in Man : ~Mother(c a) + ~Mother(c b) + Siblings(a b)
 axiom5 = forall a in Man forall b in Man forall c in Man forall d in Man: ~Siblings(c d) + ~Mother(c a) + ~Mother(d b) + Cousins(a b)
+base = * axiom4 axiom5
+base = # e d base
+base = # f c base
+/ 0 base
+/ 1 base
+base
+% 0 base
+% 1 base
+a
+base
+hypo
+axiom2
+axiom1
