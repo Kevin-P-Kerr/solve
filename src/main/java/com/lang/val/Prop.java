@@ -569,8 +569,22 @@ public class Prop extends Value {
 		}
 	}
 
+	public boolean allowedForReplacement(Quantifier from) throws LogicException {
+		if (from.getType().equals(QuantifierType.FORALL)) {
+			return true;
+		}
+		for (List<Quantifier> quants : quantifierContraints) {
+			for (Quantifier q : quants) {
+				if (q == from || q.getHecceity() == from.getHecceity()) {
+					return quants.size() == 1;
+				}
+			}
+		}
+		return false;
+	}
+
 	public Prop replace(Quantifier from, Quantifier to) throws LogicException {
-		if (!from.getType().equals(QuantifierType.FORALL)) {
+		if (!allowedForReplacement(from)) {
 			throw new LogicException();
 		}
 		List<Quantifier> pre = getPrefix();

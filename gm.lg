@@ -11,6 +11,7 @@ base = # c f base
 base = # d a base
 base = ] e b base
 base = # b e base
+stash = base
 base = /  2  base
 axiom3 = base
 hypo = forall a in Man forall b in Man thereis c in Man : ~Cousins(a b) + Grandmother(c a)*Grandmother(c b)
@@ -19,3 +20,37 @@ axiom5 = forall a in Man forall b in Man forall c in Man forall d in Man: ~Sibli
 base = * axiom4 axiom5
 base = # e d base
 base = # f c base
+stash
+base
+base
+axiom3
+axiom4
+axiom5
+axiom2
+axiom1
+base = * axiom4 axiom2
+base = ] d c base
+base = ] d b base
+base = ] d a base
+base = ] c e base
+base = ] b e base
+base = ] a e base
+base = # c e base
+base = # a d base
+base = * base axiom2
+axiom2
+base = # d c base
+axiom6
+axiom5
+base = forall d in Man thereis e in Man forall b in Man :~Mother(e b)*Mother(e d) + Siblings(d b)*Mother(e d)
+base
+axiom5
+base = * base axiom5
+base = # e c base
+base = # g d base
+hypo
+axiom1
+base = * base axiom1
+base = # h e base
+base = # f a base
+base = # g c base
