@@ -729,16 +729,20 @@ public class Prop extends Value {
 
 	}
 
-	@Deprecated
 	public List<Prop> factor() {
 		if (matrix.size() == 1) {
 			if (matrix.get(0).getAtomicProps().size() == 1) {
 				return Lists.newArrayList(this);
 			}
 			List<Prop> ret = Lists.newArrayList();
-			for (AtomicProp ap : matrix.get(0).getAtomicProps()) {
+			label1: for (AtomicProp ap : matrix.get(0).getAtomicProps()) {
 				Prop p = new Prop();
 				for (Quantifier q : prefix) {
+					AtomicProp constraint = q.getConstraint();
+					if (constraint != null && ap.getHecceities().size() == 1
+							&& ap.getHecceities().get(0) == constraint.getHecceities().get(0)) {
+						continue label1;
+					}
 					p.addQuantifierUnique(q);
 				}
 				CompoundProp cp = p.makeBlankCompoundProp();
