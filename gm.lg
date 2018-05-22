@@ -24,9 +24,14 @@ base = # f d base
 base = * base axiom3
 base = % 0 base
 base = * base axiom1
-base = base # h e base
+base = # h e base
 base = # f a base
-base = * base axiom1
-base = # j g base
-base = # h b base
+base = # g c base
+axiom1
+axiom2
 base = * base axiom2
+base = # f c base
+axiom5
+axiom6
+axiom6 = forall a in Man forall b in Man forall c in Man : ~Mother(a c) + ~Mother(b c)
+base = * base axiom6
