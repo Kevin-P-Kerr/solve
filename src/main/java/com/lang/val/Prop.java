@@ -759,10 +759,25 @@ public class Prop extends Value {
 			}
 			return ret;
 		}
+		// TODO: fix all this
 		List<AtomicProp> common = Lists.newArrayList();
 		CompoundProp first = matrix.get(0);
-		for (AtomicProp ap : first.getAtomicProps()) {
-			common.add(ap);
+		List<AtomicProp> constraints = Lists.newArrayList();
+		for (Quantifier q : getPrefix()) {
+			AtomicProp cons = q.getConstraint();
+			if (cons != null) {
+				constraints.add(cons);
+			}
+		}
+		label2: for (AtomicProp ap : first.getAtomicProps()) {
+			if (ap.getHecceities().size() == 1 && ap.getTruthValue()) {
+				for (AtomicProp con : constraints) {
+					if (con.getHecceities().get(0) == ap.getHecceities().get(0) && con.getName() == ap.getName()) {
+						continue label2;
+					}
+				}
+				common.add(ap);
+			}
 		}
 		for (int i = 1, ii = matrix.size(); i < ii; i++) {
 			CompoundProp cp = matrix.get(i);
@@ -771,6 +786,9 @@ public class Prop extends Value {
 			for (AtomicProp ap : common) {
 				if (atoms.indexOf(ap) < 0) {
 					removals.add(ap);
+				}
+				if (ap.truthValue && ap.getHecceities().size() == 1) {
+
 				}
 			}
 			common.removeAll(removals);
