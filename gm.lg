@@ -54,3 +54,8 @@ base = * base axiom1
 base = # h e base
 base = # f a base
 base = # g c base
+axiom2
+base = * base axiom2
+base = # f d base
+base = # g e base
+base
