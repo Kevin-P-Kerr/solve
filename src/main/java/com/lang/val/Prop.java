@@ -1056,7 +1056,24 @@ public class Prop extends Value {
 				preconditions.add(cp);
 			}
 		}
+		preconditions = negate(preconditions);
+		postconditions = negate(postconditions);
 
+	}
+
+	private static List<CompoundProp> negate(CompoundProp cp) {
+		List<AtomicProp> atoms = cp.getAtomicProps();
+		if (atoms.size() == 1) {
+			AtomicProp ap = atoms.get(0);
+			AtomicProp cpy = new AtomicProp(ap.name, ap.hecceities, ap.truthValue);
+			return Lists.newArrayList(cpy);
+		}
+	}
+
+	private static List<CompoundProp> negate(List<CompoundProp> matrix) {
+		if (matrix.size() == 1) {
+			return negate(matrix.get(0));
+		}
 	}
 
 }
