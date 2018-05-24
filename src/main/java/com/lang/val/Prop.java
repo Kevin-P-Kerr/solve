@@ -990,8 +990,38 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private static boolean containsHecceity(CompoundProp cp, Hecceity h) {
+		for (AtomicProp ap : cp.getAtomicProps()) {
+			if (ap.getHecceities().contains(h)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean containsAnyHecceity(List<Quantifier> quants, CompoundProp cp) throws LogicException {
+		List<Hecceity> hecs = Lists.newArrayList();
+		for (Quantifier q : quants) {
+			hecs.add(q.getHecceity());
+		}
+		for (AtomicProp ap : cp.getAtomicProps()) {
+			boolean in = false;
+			for (Hecceity h : ap.getHecceities()) {
+				if (!hecs.contains(h) && in) {
+					throw new LogicException("too much entanglement");
+				} else if (in) {
+					continue;
+				} else if (hecs.contains(h)) {
+					in = true;
+				}
+
+			}
+		}
+	}
+
 	public Prop invertQuantifier(String from) throws LogicException {
 		Quantifier q = null;
+		List<Quantifier> preconditionedQuantifiers = Lists.newArrayList();
 		Hecceity h = s2h.get(from);
 		if (h == null) {
 			throw new LogicException("unknown hecceity " + from);
@@ -1004,9 +1034,20 @@ public class Prop extends Value {
 			if (quant.getType() != QuantifierType.FORALL) {
 				throw new LogicException("inversion not allowed");
 			}
+			preconditionedQuantifiers.add(quant);
 		}
 		if (q == null || getPrefix().indexOf(q) == 0) {
 			throw new LogicException("bad quantifier for inversion");
+		}
+		List<CompoundProp> preconditions = Lists.newArrayList();
+		List<CompoundProp> postConditions = Lists.newArrayList();
+		for (CompoundProp cp : getMatrix()) {
+			if (containsHecceity(cp, h)) {
+				postConditions.add(cp);
+			}
+			if (containsAnyHecceity(preconditionedQuantifiers, cp)) {
+				preconditions.add(cp);
+			}
 		}
 
 	}
