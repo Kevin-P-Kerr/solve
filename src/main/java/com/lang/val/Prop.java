@@ -708,6 +708,29 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private Prop getIndividualFact(Quantifier q) {
+		Prop p = new Prop();
+		List<Quantifier> related = getRelatedQuantifiers(q);
+		for (Quantifier r : related) {
+			p.addQuantifierUnique(r);
+		}
+		for (CompoundProp cp : getMatrix()) {
+			CompoundProp compound = p.makeBlankCompoundProp();
+			List<AtomicProp> atoms = cp.getAtomicProps();
+			for (AtomicProp ap : atoms) {
+				for (Quantifier qq : related) {
+					if (ap.getHecceities().indexOf(qq.hecceity) >= 0) {
+						compound.addAtomicProp(ap);
+						break;
+					}
+				}
+
+			}
+			p.addCompoundProp(compound);
+		}
+		return p;
+	}
+
 	private List<Quantifier> getRelatedQuantifiers(Quantifier q) {
 		List<Quantifier> ret = Lists.newArrayList(q);
 		Map<Hecceity, Quantifier> m = Maps.newHashMap();
@@ -991,7 +1014,7 @@ public class Prop extends Value {
 	}
 
 	public Prop invertQuantifier(String from) throws LogicException {
-
+		Prop p = getIndividualFacts();
 	}
 
 }
