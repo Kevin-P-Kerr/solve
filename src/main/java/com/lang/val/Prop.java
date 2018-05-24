@@ -990,7 +990,7 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	private static boolean containsHecceity(CompoundProp cp, Hecceity h) {
+	private static boolean containsHecceity(CompoundProp cp, Hecceity h) throws LogicExeption {
 		for (AtomicProp ap : cp.getAtomicProps()) {
 			if (ap.getHecceities().contains(h)) {
 				return true;
