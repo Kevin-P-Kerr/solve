@@ -231,6 +231,17 @@ public class Prop extends Value {
 			this.atomicProps.addAll(atomicProps2);
 		}
 
+		public boolean containsHecceity(Hecceity h) {
+			for (AtomicProp ap : getAtomicProps()) {
+				for (Hecceity comp : ap.getHecceities()) {
+					if (comp == h) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1028,7 +1039,7 @@ public class Prop extends Value {
 		if (q == null) {
 			throw new LogicException("no quantifier");
 		}
-		Prop fromer = getIndividualFact(q);
+		Prop former = getIndividualFact(q);
 		// check preconditions
 		QuantifierType type = q.getType();
 		for (Quantifier quant : former.getPrefix()) {
@@ -1038,6 +1049,13 @@ public class Prop extends Value {
 		}
 		List<CompoundProp> preconditions = Lists.newArrayList();
 		List<CompoundProp> postconditions = Lists.newArrayList();
+		for (CompoundProp cp : former.getMatrix()) {
+			if (cp.containsHecceity(h)) {
+				postconditions.add(cp);
+			} else {
+				preconditions.add(cp);
+			}
+		}
 
 	}
 
