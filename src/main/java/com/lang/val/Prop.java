@@ -242,6 +242,13 @@ public class Prop extends Value {
 			return false;
 		}
 
+		public CompoundProp copy(CompoundProp cpy) {
+			for (AtomicProp ap : getAtomicProps()) {
+				cpy.addAtomicProp(new AtomicProp(ap.getName(), ap.getHecceities(), ap.getTruthValue()));
+			}
+			return cpy;
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1058,7 +1065,14 @@ public class Prop extends Value {
 		}
 		preconditions = negate(preconditions, former);
 		postconditions = negate(postconditions, former);
-
+		Prop ret = new Prop();
+		ret.prefix.addAll(former.prefix);
+		ret.s2h = former.s2h;
+		ret.h2s = former.h2s;
+		ret.quantifierContraints.addAll(former.quantifierContraints);
+		ret.matrix.addAll(preconditions);
+		ret.matrix.addAll(postconditions);
+		return ret;
 	}
 
 	private static List<CompoundProp> negate(CompoundProp cp, Prop p) {
@@ -1072,10 +1086,27 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private static List<CompoundProp> combine(List<CompoundProp> m1, List<CompoundProp> m2, Prop p) {
+		List<CompoundProp> ret = Lists.newArrayList();
+		for (CompoundProp base : m1) {
+			for (CompoundProp cp : m2) {
+				base = base.copy(p.makeBlankCompoundProp());
+				base.addAllAtomicProp(cp.getAtomicProps());
+				ret.add(base);
+			}
+		}
+		return ret;
+	}
+
 	private static List<CompoundProp> negate(List<CompoundProp> matrix, Prop p) {
 		if (matrix.size() == 1) {
 			return negate(matrix.get(0), p);
 		}
+		List<CompoundProp> base = negate(matrix.get(0), p);
+		for (int i = 1; i < matrix.size(); i++) {
+			base = combine(base, negate(matrix.get(i), p), p);
+		}
+		return base;
 	}
 
 }
