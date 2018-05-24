@@ -1014,7 +1014,31 @@ public class Prop extends Value {
 	}
 
 	public Prop invertQuantifier(String from) throws LogicException {
-		Prop p = getIndividualFacts();
+		Hecceity h = s2h.get(from);
+		if (h == null) {
+			throw new LogicException("no hecceity");
+		}
+		Quantifier q = null;
+		for (Quantifier qq : getPrefix()) {
+			if (qq.getHecceity() == h) {
+				q = qq;
+				break;
+			}
+		}
+		if (q == null) {
+			throw new LogicException("no quantifier");
+		}
+		Prop fromer = getIndividualFact(q);
+		// check preconditions
+		QuantifierType type = q.getType();
+		for (Quantifier quant : former.getPrefix()) {
+			if (quant != q && quant.type == type) {
+				throw new LogicException("invalid precondition for inversion");
+			}
+		}
+		List<CompoundProp> preconditions = Lists.newArrayList();
+		List<CompoundProp> postconditions = Lists.newArrayList();
+
 	}
 
 }
