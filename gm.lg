@@ -1,61 +1,34 @@
+axiom1 = forall a in Man forall b in Man: ~Mother(b a) + child(a b)
+axiom2 = forall a in Man forall b in Man forall c in Man : ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
 hypo = forall a in Man thereis b in Man : Grandmother(b a)
-axiom1 = forall a in Man forall b in Man forall c in Man: ~Mother(b a) + ~Mother(c b) + Grandmother(c a)
-axiom2 = forall a in Man thereis b in Man : Mother(b a)
-base = * axiom2 axiom2
+axiom3 = forall a in Man thereis b in Man: Mother(b a)
+base = * axiom3 axiom3
 base = # c b base
-base = * base axiom1
-base = ] d c base
-base = ] e c base
-base =  ] f c base
-base = # c f base
-base = # d a base
-base = ] e b base
-base = # b e base
-stash = base
-base = /  2  base
-axiom3 = base
-hypo = forall a in Man forall b in Man thereis c in Man : ~Cousins(a b) + Grandmother(c a)*Grandmother(c b)
-axiom4 = forall a in Man forall b in Man forall c in Man : ~Mother(c a) + ~Mother(c b) + Siblings(a b)
-axiom5 = forall a in Man forall b in Man forall c in Man forall d in Man: ~Siblings(c d) + ~Mother(c a) + ~Mother(d b) + Cousins(a b)
-base = * axiom4 axiom5
-base = # e d base
+wrute take2.lg
+a
+base
+base = * base axiom2
 base = # f c base
-stash
+base = # d a base
+base = forall a in Man thereis b in Man thereis c in Man forall d in Man forall e in Man forall f in Man :Mother(c b)*Mother(b a)*~Mother(d e) + Mother(c b)*Mother(b a)*~Mother(e f) + Mother(c b)*Mother(b a)*Grandmother(d f)
 base
+base = # f a base
+base = # d c base
+base = # e b base
+hypo
+/ 0 base
+/ 1 base
+/ 2 base
+base = / 2 base
 base
+hypo
 axiom3
 axiom4
-axiom5
-axiom2
-axiom1
-base = * axiom4 axiom2
-base = ] d c base
-base = ] d b base
-base = ] d a base
-base = ] c e base
-base = ] b e base
-base = ] a e base
-base = # c e base
-base = # a d base
-base = * base axiom2
-axiom2
-base = # d c base
-axiom6
-axiom5
-base = forall d in Man thereis e in Man forall b in Man :~Mother(e b)*Mother(e d) + Siblings(d b)*Mother(e d)
-base
-axiom5
-base = * base axiom5
-base = # e c base
-base = # g d base
+axiom4 = base
+hypo = forall a in Man forall b in Man thereis c in Man : ~Cousins(a b) + Grandmother(c a)*Grandmother(c b)
+axiom4 
+axiom5 = forall a in Man forall b in Man thereis c in Man: ~Siblings(a b) + Mother(c a)*Mother(c b)
+axiom5 = forall a in Man forall b in Man forall c in Man : ~Mother(c a) + ~Mother(c b) + Siblings(a b)
+axiom6 = forall a in Man forall b in Man forall c in Man forall d in Man: ~Siblings(c d) + ~Mother(c a) + ~Mother(d b) + Cousins(a b)
 hypo
-axiom1
-base = * base axiom1
-base = # h e base
-base = # f a base
-base = # g c base
-axiom2
-base = * base axiom2
-base = # f d base
-base = # g e base
-base
+% 0 axiom6

@@ -210,10 +210,10 @@ public class Interpreter {
 		}
 	}
 
-	private static int count4All(List<Quantifier> quants) {
+	private static int countThereis(List<Quantifier> quants) {
 		int ret = 0;
 		for (Quantifier q : quants) {
-			if (q.getType().equals(QuantifierType.FORALL)) {
+			if (q.getType().equals(QuantifierType.THEREIS)) {
 				ret++;
 			}
 		}
@@ -227,8 +227,8 @@ public class Interpreter {
 		List<Quantifier> lesser;
 		List<Quantifier> order1 = Lists.newArrayList();
 		List<Quantifier> order2 = Lists.newArrayList();
-		int num1 = count4All(prefix1);
-		int num2 = count4All(prefix2);
+		int num1 = countThereis(prefix1);
+		int num2 = countThereis(prefix2);
 		if (num1 > num2) {
 			greater = prefix1;
 			lesser = prefix2;
@@ -236,19 +236,8 @@ public class Interpreter {
 			greater = prefix2;
 			lesser = prefix1;
 		}
-		boolean flag = false;
-		for (Quantifier q : lesser) {
-			if (q.getType().equals(QuantifierType.FORALL) && !flag) {
-				flag = true;
-				order1.addAll(p3.addAllQuants(greater));
-
-			}
-			order2.add(p3.addQuantifierUnique(q));
-
-		}
-		if (!flag) {
-			order1.addAll(p3.addAllQuants(greater));
-		}
+		p3.addAllQuants(greater);
+		p3.addAllQuants(lesser);
 		p3.addQuantifierConstraint(order1);
 		p3.addQuantifierConstraint(order2);
 
@@ -563,6 +552,14 @@ public class Interpreter {
 			Prop p = (Prop) eval(env);
 			p = p.copyWithHecceities();
 			return p.swapQuantifiers(from, to);
+		}
+		if (t.getType().equals(TokenType.TT_LBRAK)) {
+			tokens.getNext();
+			t = tokens.getNext();
+			String from = t.getLit();
+			Prop p = (Prop) eval(env);
+			p = p.copyWithHecceities();
+			return p.invertQuantifier(from);
 		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();

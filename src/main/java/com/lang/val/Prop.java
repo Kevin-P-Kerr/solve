@@ -990,4 +990,25 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public Prop invertQuantifier(String from) throws LogicException {
+		Quantifier q = null;
+		Hecceity h = s2h.get(from);
+		if (h == null) {
+			throw new LogicException("unknown hecceity " + from);
+		}
+		for (Quantifier quant : getPrefix()) {
+			if (quant.getHecceity() == h) {
+				q = quant;
+				break;
+			}
+			if (quant.getType() != QuantifierType.FORALL) {
+				throw new LogicException("inversion not allowed");
+			}
+		}
+		if (q == null || getPrefix().indexOf(q) == 0) {
+			throw new LogicException("bad quantifier for inversion");
+		}
+
+	}
+
 }
