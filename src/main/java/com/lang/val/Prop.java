@@ -1096,12 +1096,11 @@ public class Prop extends Value {
 		ret.h2s = former.h2s;
 		ret.quantifierContraints.addAll(former.quantifierContraints);
 		/*
-		 * consider some boolean predicates a b c d. such that a + b + c +d. now, if ~a~b~c then d. this corresponds to
-		 * existence. forall thereis : ~a~b~c + d then, forall : ~d -> ~(~a~b~c) == d +
+		 * forall thereis : a + b + c + d == forall ~d -> ~(abc) == forall ~ d -> ~a+~b+~c == d +~a+~b+~c
 		 */
 		if (type == QuantifierType.THEREIS) {
 			preconditions = negate(preconditions, former);
-			postconditions = negate(postconditions, former);
+			// postconditions = negate(postconditions, former);
 
 		} else {
 			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
