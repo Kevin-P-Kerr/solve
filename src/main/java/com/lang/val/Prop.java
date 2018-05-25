@@ -1100,7 +1100,8 @@ public class Prop extends Value {
 		 * existence. forall thereis : ~a~b~c + d then, forall : ~d -> ~(~a~b~c) == d +
 		 */
 		if (type == QuantifierType.THEREIS) {
-			postconditions = negate(preconditions, former);
+			preconditions = negate(preconditions, former);
+			postconditions = negate(postconditions, former);
 
 		} else {
 			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
