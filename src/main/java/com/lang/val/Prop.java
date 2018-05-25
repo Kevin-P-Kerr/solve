@@ -155,6 +155,39 @@ public class Prop extends Value {
 	}
 
 	public class CompoundProp {
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			boolean firstAtomicProp = true;
+			for (AtomicProp prop : getAtomicProps()) {
+
+				if (!firstAtomicProp) {
+					sb.append("*");
+				} else {
+					firstAtomicProp = false;
+				}
+				String name = prop.getName();
+				if (!prop.getTruthValue()) {
+					name = "~" + name;
+				}
+				sb.append(name + "(");
+				boolean first = true;
+				for (Hecceity h : prop.getHecceities()) {
+					if (!first) {
+						sb.append(" ");
+					} else {
+						first = false;
+					}
+					String c = h2s.get(h);
+					sb.append(c);
+				}
+				sb.append(")");
+
+			}
+			return sb.toString();
+
+		}
+
 		private final List<AtomicProp> atomicProps;
 
 		private CompoundProp() {
@@ -397,34 +430,7 @@ public class Prop extends Value {
 			} else {
 				firstCP = false;
 			}
-			boolean firstAtomicProp = true;
-			for (AtomicProp prop : cp.getAtomicProps()) {
-				if (constraints.indexOf(prop) >= 0 && cp.getAtomicProps().size() > 1) {
-					continue;
-				}
-				if (!firstAtomicProp) {
-					sb.append("*");
-				} else {
-					firstAtomicProp = false;
-				}
-				String name = prop.getName();
-				if (!prop.getTruthValue()) {
-					name = "~" + name;
-				}
-				sb.append(name + "(");
-				boolean first = true;
-				for (Hecceity h : prop.getHecceities()) {
-					if (!first) {
-						sb.append(" ");
-					} else {
-						first = false;
-					}
-					String c = h2s.get(h);
-					sb.append(c);
-				}
-				sb.append(")");
-
-			}
+			sb.append(cp.toString());
 
 		}
 		return sb.toString();
@@ -1078,8 +1084,6 @@ public class Prop extends Value {
 				preconditions.add(cp);
 			}
 		}
-		preconditions = negate(preconditions, former);
-		postconditions = negate(postconditions, former);
 		Prop ret = new Prop();
 		Quantifier nq = new Quantifier(type == QuantifierType.FORALL ? QuantifierType.THEREIS : QuantifierType.FORALL,
 				q.getHecceity());
@@ -1091,6 +1095,19 @@ public class Prop extends Value {
 		ret.s2h = former.s2h;
 		ret.h2s = former.h2s;
 		ret.quantifierContraints.addAll(former.quantifierContraints);
+		/*
+		 * consider some boolean predicates a b c d. such that a + b + c +d. now, if ~a~b~c then d. this corresponds to
+		 * existence. forall thereis : ~a~b~c + d then, forall : ~d -> ~(~a~b~c) == d +
+		 */
+		if (type == QuantifierType.THEREIS) {
+			postconditions = negate(preconditions, former);
+
+		} else {
+			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
+			postconditions = negate(postconditions, former);
+			preconditions = negate(preconditions, former);
+		}
+
 		// doesn't really matter but looks nice
 		if (type == QuantifierType.FORALL) {
 			ret.matrix.addAll(preconditions);
