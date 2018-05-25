@@ -780,6 +780,8 @@ public class Prop extends Value {
 				}
 			}
 		}
+		SwapOp<Quantifier> swap = new SwapOp<Prop.Quantifier>(ret.get(0), ret.get(ret.size() - 1));
+		ret.replaceAll(swap);
 		return ret;
 
 	}
