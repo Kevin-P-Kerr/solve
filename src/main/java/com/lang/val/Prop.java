@@ -1051,11 +1051,24 @@ public class Prop extends Value {
 		Prop former = getIndividualFact(q);
 		// check preconditions
 		QuantifierType type = q.getType();
-		for (Quantifier quant : former.getPrefix()) {
-			if (quant != q && quant.type == type) {
-				throw new LogicException("invalid precondition for inversion");
+		if (type == QuantifierType.FORALL) {
+			for (Quantifier quant : former.getPrefix()) {
+				if (quant.type == QuantifierType.THEREIS) {
+					throw new LogicException("invalid precondition for inversion");
+				}
+			}
+		} else {
+			List<Quantifier> formerPrefix = former.getPrefix();
+			if (formerPrefix.indexOf(q) != formerPrefix.size() - 1) {
+				throw new LogicException("invalid position for inversion");
+			}
+			for (Quantifier qq : formerPrefix) {
+				if (q != qq && qq.getType() == QuantifierType.THEREIS) {
+					throw new LogicException("invalid precondition for inversion");
+				}
 			}
 		}
+
 		List<CompoundProp> preconditions = Lists.newArrayList();
 		List<CompoundProp> postconditions = Lists.newArrayList();
 		for (CompoundProp cp : former.getMatrix()) {
@@ -1068,12 +1081,23 @@ public class Prop extends Value {
 		preconditions = negate(preconditions, former);
 		postconditions = negate(postconditions, former);
 		Prop ret = new Prop();
+		Quantifier nq = new Quantifier(type == QuantifierType.FORALL ? QuantifierType.THEREIS : QuantifierType.FORALL,
+				q.getHecceity());
+		SwapOp<Quantifier> swap = new SwapOp<Prop.Quantifier>(q, nq);
 		ret.prefix.addAll(former.prefix);
+		ret.prefix.replaceAll(swap);
+
 		ret.s2h = former.s2h;
 		ret.h2s = former.h2s;
 		ret.quantifierContraints.addAll(former.quantifierContraints);
-		ret.matrix.addAll(preconditions);
-		ret.matrix.addAll(postconditions);
+		// doesn't really matter but looks nice
+		if (type == QuantifierType.FORALL) {
+			ret.matrix.addAll(preconditions);
+			ret.matrix.addAll(postconditions);
+		} else {
+			ret.matrix.addAll(preconditions);
+			ret.matrix.addAll(postconditions);
+		}
 		return ret;
 	}
 
