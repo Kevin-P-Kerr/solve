@@ -1095,8 +1095,8 @@ public class Prop extends Value {
 			ret.matrix.addAll(preconditions);
 			ret.matrix.addAll(postconditions);
 		} else {
-			ret.matrix.addAll(preconditions);
 			ret.matrix.addAll(postconditions);
+			ret.matrix.addAll(preconditions);
 		}
 		return ret;
 	}
