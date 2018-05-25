@@ -399,7 +399,7 @@ public class Prop extends Value {
 			}
 			boolean firstAtomicProp = true;
 			for (AtomicProp prop : cp.getAtomicProps()) {
-				if (constraints.indexOf(prop) >= 0) {
+				if (constraints.indexOf(prop) >= 0 && cp.getAtomicProps().size() > 1) {
 					continue;
 				}
 				if (!firstAtomicProp) {
@@ -1083,6 +1083,7 @@ public class Prop extends Value {
 		Prop ret = new Prop();
 		Quantifier nq = new Quantifier(type == QuantifierType.FORALL ? QuantifierType.THEREIS : QuantifierType.FORALL,
 				q.getHecceity());
+		nq.constraint = q.constraint;
 		SwapOp<Quantifier> swap = new SwapOp<Prop.Quantifier>(q, nq);
 		ret.prefix.addAll(former.prefix);
 		ret.prefix.replaceAll(swap);
