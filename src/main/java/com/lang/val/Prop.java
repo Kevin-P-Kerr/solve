@@ -1072,7 +1072,7 @@ public class Prop extends Value {
 		List<CompoundProp> preconditions = Lists.newArrayList();
 		List<CompoundProp> postconditions = Lists.newArrayList();
 		for (CompoundProp cp : former.getMatrix()) {
-			if (cp.containsHecceity(h)) {
+			if (cp.containsHecceity(h) && postconditions.size() <= 0) {
 				postconditions.add(cp);
 			} else {
 				preconditions.add(cp);
