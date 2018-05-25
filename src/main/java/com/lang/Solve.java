@@ -31,12 +31,12 @@ public class Solve {
 		 * lines.add(" $ thereis a: Man(a)");
 		 * lines.add("$ thereis a thereis b: Man(a)*Man(b)*Friends(a b)*Friends(b a)");
 		 */
-		lines.add("z = forall a in Man thereis b in Man: ~Man(a) + Mother(b a)");
-		lines.add("[ b z");
-		for (String s : lines) {
-			// while (scanner.hasNext()) {
+		// lines.add("z = forall a in Man thereis b in Man: ~Man(a) + Mother(b a)");
+		// lines.add("[ b z");
+		// for (String s : lines) {
+		while (scanner.hasNext()) {
 			try {
-				// String s = scanner.nextLine();
+				String s = scanner.nextLine();
 				if (s.indexOf("exit") == 0) {
 					break;
 				}
