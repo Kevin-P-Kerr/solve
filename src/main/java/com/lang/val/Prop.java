@@ -282,6 +282,45 @@ public class Prop extends Value {
 			return cpy;
 		}
 
+		public String toString(List<AtomicProp> constraints) {
+			List<String> names = Lists.newArrayList();
+			for (AtomicProp ap : constraints) {
+				names.add(ap.getName());
+			}
+			StringBuilder sb = new StringBuilder();
+			boolean firstAtomicProp = true;
+			for (AtomicProp prop : getAtomicProps()) {
+				String name = prop.getName();
+				if (names.contains(name)) {
+					continue;
+				}
+				if (!firstAtomicProp) {
+					sb.append("*");
+				} else {
+					firstAtomicProp = false;
+				}
+
+				if (!prop.getTruthValue()) {
+					name = "~" + name;
+				}
+				sb.append(name + "(");
+				boolean first = true;
+				for (Hecceity h : prop.getHecceities()) {
+					if (!first) {
+						sb.append(" ");
+					} else {
+						first = false;
+					}
+					String c = h2s.get(h);
+					sb.append(c);
+				}
+				sb.append(")");
+
+			}
+			return sb.toString();
+
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -430,7 +469,7 @@ public class Prop extends Value {
 			} else {
 				firstCP = false;
 			}
-			sb.append(cp.toString());
+			sb.append(cp.toString(constraints));
 
 		}
 		return sb.toString();
