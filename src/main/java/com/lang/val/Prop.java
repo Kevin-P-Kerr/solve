@@ -289,10 +289,11 @@ public class Prop extends Value {
 			}
 			StringBuilder sb = new StringBuilder();
 			boolean firstAtomicProp = true;
-			int size = getAtomicProps().size();
+
 			for (AtomicProp prop : getAtomicProps()) {
+				int printed = 0;
 				String name = prop.getName();
-				if (names.contains(name) && size > 1) {
+				if (names.contains(name) && printed >= 1) {
 					continue;
 				}
 				if (!firstAtomicProp) {
@@ -316,8 +317,9 @@ public class Prop extends Value {
 					sb.append(c);
 				}
 				sb.append(")");
-
+				printed++;
 			}
+
 			return sb.toString();
 
 		}
