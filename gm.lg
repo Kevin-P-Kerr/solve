@@ -10,3 +10,12 @@ base = * [ b axiom1 axiom2
 base
 base = # c b base
 base = # d a base
+base = * base axiom1
+base = # e a base
+base = # d c base
+base = ] c b base
+[ b base
+
+base
+base = thereis a : Man(a)
+base = * base axiom1

@@ -289,9 +289,10 @@ public class Prop extends Value {
 			}
 			StringBuilder sb = new StringBuilder();
 			boolean firstAtomicProp = true;
+			int size = getAtomicProps().size();
 			for (AtomicProp prop : getAtomicProps()) {
 				String name = prop.getName();
-				if (names.contains(name)) {
+				if (names.contains(name) && size > 1) {
 					continue;
 				}
 				if (!firstAtomicProp) {
