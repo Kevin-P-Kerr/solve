@@ -33,10 +33,10 @@ public class Solve {
 		 */
 		lines.add("z = forall a in Man thereis b in Man: ~Man(a) + Mother(b a)");
 		lines.add("[ b z");
-		for (String s : lines) {
-			// while (scanner.hasNext()) {
+		//for (String s : lines) {
+			 while (scanner.hasNext()) {
 			try {
-				// String s = scanner.nextLine();
+				String s = scanner.nextLine();
 				if (s.indexOf("exit") == 0) {
 					break;
 				}
