@@ -1078,7 +1078,7 @@ public class Prop extends Value {
 		List<CompoundProp> preconditions = Lists.newArrayList();
 		List<CompoundProp> postconditions = Lists.newArrayList();
 		for (CompoundProp cp : former.getMatrix()) {
-			if (cp.containsHecceity(h) && postconditions.size() <= 0) {
+			if (cp.containsHecceity(h)) {
 				postconditions.add(cp);
 			} else {
 				preconditions.add(cp);
@@ -1095,12 +1095,22 @@ public class Prop extends Value {
 		ret.s2h = former.s2h;
 		ret.h2s = former.h2s;
 		ret.quantifierContraints.addAll(former.quantifierContraints);
-		/* TODO: this is busted
-		 * forall thereis : a + b + c + d == forall ~d -> ~(abc) == forall ~ d -> ~a+~b+~c == d +~a+~b+~c
+		/* @formatter:off
+		 * forall a thereis b : ~Man(a) + Man(b)*Mother(b a)
+		 * forall a thereis b: Man(a) -> Man(b)*Mother(b a)
+		 * forall a forall b : Man(b)*Mother(b a) -> Man(a)
+		 * forall a forall b : ~Man(b) + ~Mother(b a) + Man(a)
+		 * forall a forall b : ...
+		 *
+		 * forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
+		 * forall a forall b forall c : Mother(a b) -> ~Mother(b c) + Grandmother(a c)
+		 * forall a forall b thereis c: ~Mother(b c) + Grandmother(a c) -> Mother(a b)
+		 * forall a forall b thereis c: Mother(b c)*~Grandmother(a c) + Mother(a b)
+		 * @formatter:on
 		 */
 		if (type == QuantifierType.THEREIS) {
 			preconditions = negate(preconditions, former);
-			// postconditions = negate(postconditions, former);
+			postconditions = negate(postconditions, former);
 
 		} else {
 			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
