@@ -1,9 +1,4 @@
-axiom1 = [ b forall a thereis b: ~Man(a) + Man(b)*Mother(b a)
-axiom2 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
-hypo = forall a thereis  b: ~Man(a) + Man(b)*Grandmother(b a)
-base = * axiom1 axiom2
-base = # e a base
-base = # d b base
-% 0 base
-[ c base
-base
+axiom1 = forall a in Man thereis b in Man : ~Man(a) + Mother(b a)
+axiom1  = [ b axiom1
+axiom2 = forall a in Man forall b in Man thereis c in Man : ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
+axiom2 = [ c axiom2

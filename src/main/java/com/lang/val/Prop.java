@@ -1095,7 +1095,7 @@ public class Prop extends Value {
 		ret.s2h = former.s2h;
 		ret.h2s = former.h2s;
 		ret.quantifierContraints.addAll(former.quantifierContraints);
-		/*
+		/* TODO: this is busted
 		 * forall thereis : a + b + c + d == forall ~d -> ~(abc) == forall ~ d -> ~a+~b+~c == d +~a+~b+~c
 		 */
 		if (type == QuantifierType.THEREIS) {
