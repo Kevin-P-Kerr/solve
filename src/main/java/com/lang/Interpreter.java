@@ -572,7 +572,16 @@ public class Interpreter {
 		}
 
 		public Prop getNextEntity() {
-
+			int currentIndex = coveredQuants.size() == 0 ? 0
+					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
+			for (int ii = hypothesis.getPrefix().size(); currentIndex < ii; currentIndex++) {
+				Quantifier q = hypothesis.getPrefix().get(currentIndex);
+				if (q.getType().equals(QuantifierType.THEREIS)) {
+					break;
+				} else {
+					coveredQuants.add(q);
+				}
+			}
 		}
 	}
 
