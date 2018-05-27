@@ -582,6 +582,7 @@ public class Interpreter {
 					coveredQuants.add(q);
 				}
 			}
+			Prop p =
 		}
 	}
 

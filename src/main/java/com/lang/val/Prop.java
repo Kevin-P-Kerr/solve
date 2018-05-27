@@ -1177,6 +1177,12 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	public Prop negate() {
+		Prop ret = copyWithHecceities();
+		ret.matrix = negate(ret.matrix, ret);
+		return ret;
+	}
+
 	private static List<CompoundProp> negate(CompoundProp cp, Prop p) {
 		List<CompoundProp> ret = Lists.newArrayList();
 		for (AtomicProp ap : cp.getAtomicProps()) {
