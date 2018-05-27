@@ -63,8 +63,13 @@ public class Solve {
 							System.out.println(st);
 							lines.add(st);
 							TokenStream tokens = Tokenizer.tokenize(st);
+
 							Interpreter i = new Interpreter(tokens);
+							if (hypoContext != null) {
+								i.setHypothesisContext(hypoContext);
+							}
 							Value p = i.eval(env);
+							hypoContext = i.getHypothesisContext();
 							System.out.println(p.toString());
 						} catch (Exception e) {
 
@@ -92,7 +97,7 @@ public class Solve {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IndexOutOfBoundsException e) {
-				System.out.println(e);
+				e.printStackTrace();
 			} catch (LogicException e) {
 				System.out.println(e);
 			}

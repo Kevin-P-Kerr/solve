@@ -1,12 +1,15 @@
-axiom1 = forall a in Man thereis b in Man : Mother(b a)
-axiom2 = forall a in Man forall b in Man forall c in Man : ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
-hypo = forall a in Man thereis b in Man : Grandmother(b a)
-base = thereis a in Man : 
-base = * base axiom1
-base
-base = thereis a in Man : Man(a)
-base = * base axiom1
-base = ] b c base
-base = ] c a base
-base = # a c base
-base = * base axiom1
+axiom1 = forall a thereis b: ~Man(a) + Man(b)*Mother(b a)
+ axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
+: forall a thereis b: ~Man(a) + Grandmother(b a)*Man(b)
+:
+given = * given axiom1
+given = ] b a given
+given = ] c a given
+given = # a c given
+given = * given axiom1
+# c a given
+given = # c a given
+given = * given axiom2
+given = # d c given
+given = # f b given
+given = # e a given

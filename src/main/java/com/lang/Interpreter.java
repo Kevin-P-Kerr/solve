@@ -666,7 +666,22 @@ public class Interpreter {
 				return ret;
 			}
 			if (!tokens.hasToken()) {
-				return hypothesisContext.getNextHypothesis();
+				Prop prop = hypothesisContext.getNextHypothesis();
+				env.put("intermediate", prop);
+				return prop;
+			}
+			Prop p = (Prop) eval(env);
+			if (hypothesisContext.compare(p)) {
+				if (hypothesisContext.isProven()) {
+					System.out.println("it is proven");
+					return hypothesisContext.getHypothesis();
+				}
+				Prop ret = hypothesisContext.getNextEntity();
+				env.put("given", ret);
+				return ret;
+			} else {
+				System.out.println("proof not accepted");
+				return Undefined.undefined;
 			}
 
 		}
