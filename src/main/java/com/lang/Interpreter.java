@@ -4,7 +4,10 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -538,7 +541,17 @@ public class Interpreter {
 
 	}
 
-	private static class HypothesisContext {
+	private HypothesisContext hypothesisContext = null;
+
+	public HypothesisContext getHypothesisContext() {
+		return hypothesisContext;
+	}
+
+	public void setHypothesisContext(HypothesisContext context) {
+		this.hypothesisContext = context;
+	}
+
+	public static class HypothesisContext {
 		private final Prop hypothesis;
 		private Prop currentHypothesis;
 		private boolean proven = false;
@@ -564,7 +577,23 @@ public class Interpreter {
 			if (hypothesis.getPrefix().size() == coveredQuants.size()) {
 				proven = true;
 			}
-			return true;
+			if (p.getPrefix().size() != currentHypothesis.getPrefix().size()) {
+				return false;
+			}
+			if (p.getMatrix().size() != currentHypothesis.getMatrix().size()) {
+				return false;
+			}
+			Map<Quantifier, Quantifier> qmap = Maps.newHashMap();
+			for (int i = 0, ii = p.getPrefix().size(); i < ii; i++) {
+				Quantifier q = currentHypothesis.getPrefix().get(i);
+				Quantifier qq = p.getPrefix().get(i);
+				if (q.getType() != qq.getType()) {
+					return false;
+				}
+				qmap.put(q, qq);
+			}
+			// this is a little lazy
+			return p.toString() == currentHypothesis.toString();
 		}
 
 		public Prop getNextHypothesis() {
@@ -572,7 +601,7 @@ public class Interpreter {
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
 			currentIndex++;
 			coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
-			Prop p = currentHypothesis.getSubset(coveredQuants);
+			Prop p = hypothesis.getSubset(coveredQuants);
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
 				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
@@ -594,7 +623,7 @@ public class Interpreter {
 					coveredQuants.add(q);
 				}
 			}
-			Prop p = currentHypothesis.getSubset(coveredQuants).negate();
+			Prop p = hypothesis.getSubset(coveredQuants).negate();
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
 				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
@@ -630,10 +659,13 @@ public class Interpreter {
 		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
-			int i = Integer.parseInt(tokens.getNext().getLit());
-			Value v = eval(env);
-			Prop p = (Prop) v;
-			return p.copySpecificProp(i);
+			if (hypothesisContext == null) {
+				Prop hypo = (Prop) eval(env);
+				hypothesisContext = new HypothesisContext(hypo);
+				Prop ret = hypothesisContext.getNextEntity();
+				env.put("given", ret);
+				return ret;
+			}
 
 		}
 		if (t.getType().equals(TokenType.TT_PERCENT)) {

@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
 import com.google.common.collect.Lists;
+import com.lang.Interpreter.HypothesisContext;
 import com.lang.parse.Tokenizer;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.val.Prop.LogicException;
@@ -22,6 +23,7 @@ public class Solve {
 		Scanner scanner = new Scanner(System.in);
 		Environment env = new Environment();
 		List<String> lines = Lists.newArrayList();
+		HypothesisContext hypoContext = null;
 		/*
 		 * // lines.add("forall a thereis b :~Man(a) + Man(b)*Mother(b a)"); //
 		 * lines.add("forall a forall b forall c : ~Mother(b a) + ~Mother(c a)"); //
@@ -75,7 +77,11 @@ public class Solve {
 				lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
+				if (hypoContext != null) {
+					i.setHypothesisContext(hypoContext);
+				}
 				Value p = i.eval(env);
+				hypoContext = i.getHypothesisContext();
 				System.out.println(p.toString());
 				System.out.print(" > ");
 			} catch (ParseException e) {
