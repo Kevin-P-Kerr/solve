@@ -568,7 +568,18 @@ public class Interpreter {
 		}
 
 		public Prop getNextHypothesis() {
-
+			int currentIndex = coveredQuants.size() == 0 ? 0
+					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
+			currentIndex++;
+			coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
+			Prop p = currentHypothesis.getSubset(coveredQuants);
+			List<Quantifier> newPrefix = Lists.newArrayList();
+			for (Quantifier q : p.getPrefix()) {
+				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
+			}
+			p.getPrefix().clear();
+			p.getPrefix().addAll(newPrefix);
+			return p;
 		}
 
 		public Prop getNextEntity() {
