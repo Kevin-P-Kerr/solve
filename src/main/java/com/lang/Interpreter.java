@@ -559,7 +559,6 @@ public class Interpreter {
 
 		public HypothesisContext(Prop hy) {
 			this.hypothesis = hy;
-			List<Quantifier> prefix = hy.getPrefix();
 		}
 
 		public boolean isProven() {
@@ -665,6 +664,9 @@ public class Interpreter {
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);
 				return ret;
+			}
+			if (!tokens.hasToken()) {
+				return hypothesisContext.getNextHypothesis();
 			}
 
 		}
