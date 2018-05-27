@@ -538,6 +538,44 @@ public class Interpreter {
 
 	}
 
+	private static class HypothesisContext {
+		private final Prop hypothesis;
+		private Prop currentHypothesis;
+		private boolean proven = false;
+		private List<Quantifier> coveredQuants = Lists.newArrayList();
+
+		public HypothesisContext(Prop hy) {
+			this.hypothesis = hy;
+			List<Quantifier> prefix = hy.getPrefix();
+		}
+
+		public boolean isProven() {
+			return proven;
+		}
+
+		public Prop getHypothesis() {
+			return hypothesis;
+		}
+
+		public boolean compare(Prop p) {
+			if (currentHypothesis == null) {
+				return false;
+			}
+			if (hypothesis.getPrefix().size() == coveredQuants.size()) {
+				proven = true;
+			}
+			return true;
+		}
+
+		public Prop getNextHypothesis() {
+
+		}
+
+		public Prop getNextEntity() {
+
+		}
+	}
+
 	public Value eval(Environment env) throws ParseException, LogicException {
 		if (!tokens.hasToken()) {
 			return Undefined.undefined;

@@ -289,9 +289,9 @@ public class Prop extends Value {
 			}
 			StringBuilder sb = new StringBuilder();
 			boolean firstAtomicProp = true;
-
+			int printed = 0;
 			for (AtomicProp prop : getAtomicProps()) {
-				int printed = 0;
+
 				String name = prop.getName();
 				if (names.contains(name) && printed >= 1) {
 					continue;
@@ -1148,6 +1148,12 @@ public class Prop extends Value {
 		 * forall a forall b forall c : Mother(a b) -> ~Mother(b c) + Grandmother(a c)
 		 * forall a forall b thereis c: ~Mother(b c) + Grandmother(a c) -> Mother(a b)
 		 * forall a forall b thereis c: Mother(b c)*~Grandmother(a c) + Mother(a b)
+		 *
+		 * thereis a thereis b : Mother(b a)*Man(a)*Man(b)
+		 * forall a forall b : ~Man(a) + ~Mother(b a) + Man(b)
+		 *
+		 * thereis a thereis b : Couch(a)*Me(b)*Sitting(b a)
+		 *
 		 * @formatter:on
 		 */
 		if (type == QuantifierType.THEREIS) {
