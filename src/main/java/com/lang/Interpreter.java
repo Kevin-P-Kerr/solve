@@ -579,6 +579,7 @@ public class Interpreter {
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
+			currentHypothesis = p;
 			return p;
 		}
 
