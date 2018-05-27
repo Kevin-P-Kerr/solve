@@ -324,6 +324,17 @@ public class Prop extends Value {
 
 		}
 
+		public boolean containsOnly(List<Hecceity> hecs) {
+			for (AtomicProp ap : atomicProps) {
+				for (Hecceity h : ap.getHecceities()) {
+					if (hecs.indexOf(h) < 0) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1215,6 +1226,23 @@ public class Prop extends Value {
 			base = combine(base, negate(matrix.get(i), p), p);
 		}
 		return base;
+	}
+
+	public Prop getSubset(List<Quantifier> coveredQuants) {
+		List<Hecceity> hecs = Lists.newArrayList();
+		for (Quantifier q : coveredQuants) {
+			hecs.add(q.getHecceity());
+		}
+		Prop p = copyWithHecceities();
+		p.prefix.clear();
+		p.prefix.addAll(coveredQuants);
+		p.matrix.clear();
+		for (CompoundProp cp : getMatrix()) {
+			if (cp.containsOnly(hecs)) {
+				p.matrix.add(cp);
+			}
+		}
+		return p;
 	}
 
 }

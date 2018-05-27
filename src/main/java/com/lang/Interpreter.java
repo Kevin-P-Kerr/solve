@@ -582,7 +582,14 @@ public class Interpreter {
 					coveredQuants.add(q);
 				}
 			}
-			Prop p =
+			Prop p = currentHypothesis.getSubset(coveredQuants).negate();
+			List<Quantifier> newPrefix = Lists.newArrayList();
+			for (Quantifier q : p.getPrefix()) {
+				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
+			}
+			p.getPrefix().clear();
+			p.getPrefix().addAll(newPrefix);
+			return p;
 		}
 	}
 
