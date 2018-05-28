@@ -666,7 +666,9 @@ public class Interpreter {
 				if (hypothesisContext.isProven()) {
 					System.out.println(hypothesisContext.getName() + " is proven");
 					env.put(hypothesisContext.getName(), hypothesisContext.getHypothesis());
-					return hypothesisContext.getHypothesis();
+					Prop ret = hypothesisContext.getHypothesis();
+					hypothesisContext = null;
+					return ret;
 				}
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);

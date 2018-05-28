@@ -14,3 +14,11 @@ given = # e c given
 given = # f b given
 : given
 prop1
+axiom3 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(b) + ~Mother(a b) + ~Mother(a c) + Siblings(b c)
+axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man(d) + ~Siblings(a b) + ~Mother(a c) + ~Mother(b d) + Cousins(c d)
+: prop2 forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
+:
+given
+given = * given axiom4
+given = # e a given
+given = # f b given
