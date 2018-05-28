@@ -1228,6 +1228,16 @@ public class Prop extends Value {
 		return base;
 	}
 
+	private List<CompoundProp> getSubsetOfMatrix(List<Hecceity> covered) {
+		List<CompoundProp> ret = Lists.newArrayList();
+		for (CompoundProp cp : getMatrix()) {
+			if (cp.containsOnly(covered)) {
+				ret.add(cp);
+			}
+		}
+		return ret;
+	}
+
 	public Prop getSubset(List<Quantifier> coveredQuants) {
 		List<Hecceity> hecs = Lists.newArrayList();
 		for (Quantifier q : coveredQuants) {
@@ -1237,12 +1247,26 @@ public class Prop extends Value {
 		p.prefix.clear();
 		p.prefix.addAll(coveredQuants);
 		p.matrix.clear();
-		for (CompoundProp cp : getMatrix()) {
-			if (cp.containsOnly(hecs)) {
-				p.matrix.add(cp);
+		p.matrix.addAll(getSubsetOfMatrix(hecs));
+		return p;
+	}
+
+	public boolean evaluate(Prop p) {
+		List<Hecceity> covered = Lists.newArrayList();
+		for (Quantifier q : p.getPrefix()) {
+			Hecceity h = q.getHecceity();
+			covered.add(h);
+			List<CompoundProp> m1 = p.getSubsetOfMatrix(covered);
+			List<CompoundProp> m2 = this.getSubsetOfMatrix(covered);
+			for (CompoundProp cp : m1) {
+				for (CompoundProp ccp : m2) {
+					if (ccp.toString() == cp.toString()) {
+						return true;
+					}
+				}
 			}
 		}
-		return p;
+		return false;
 	}
 
 }
