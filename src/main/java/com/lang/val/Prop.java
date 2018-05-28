@@ -1280,4 +1280,16 @@ public class Prop extends Value {
 		return false;
 	}
 
+	public boolean usesQuantifier(Quantifier q) {
+		Hecceity h = q.getHecceity();
+		for (CompoundProp cp : getMatrix()) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				if (ap.getHecceities().indexOf(h) >= 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }

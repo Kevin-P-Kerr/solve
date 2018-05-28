@@ -585,6 +585,11 @@ public class Interpreter {
 			currentIndex++;
 			coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
 			Prop p = hypothesis.getSubset(coveredQuants);
+			for (Quantifier q : coveredQuants) {
+				if (!p.usesQuantifier(q)) {
+					return getNextEntity();
+				}
+			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
 				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
