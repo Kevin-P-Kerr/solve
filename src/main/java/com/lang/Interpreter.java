@@ -4,10 +4,8 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -553,11 +551,13 @@ public class Interpreter {
 
 	public static class HypothesisContext {
 		private final Prop hypothesis;
+		private final String name;
 		private Prop currentHypothesis;
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
 
-		public HypothesisContext(Prop hy) {
+		public HypothesisContext(Prop hy, String name) {
+			this.name = name;
 			this.hypothesis = hy;
 		}
 
@@ -615,6 +615,10 @@ public class Interpreter {
 			p.getPrefix().addAll(newPrefix);
 			return p;
 		}
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
@@ -643,8 +647,11 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
 			if (hypothesisContext == null) {
+				t = tokens.getNext();
+				String name = t.getLit();
+				tokens.getClass();
 				Prop hypo = (Prop) eval(env);
-				hypothesisContext = new HypothesisContext(hypo);
+				hypothesisContext = new HypothesisContext(hypo, name);
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);
 				return ret;
@@ -657,7 +664,8 @@ public class Interpreter {
 			Prop p = (Prop) eval(env);
 			if (hypothesisContext.compare(p)) {
 				if (hypothesisContext.isProven()) {
-					System.out.println("it is proven");
+					System.out.println(hypothesisContext.getName() + " is proven");
+					env.put(hypothesisContext.getName(), hypothesisContext.getHypothesis());
 					return hypothesisContext.getHypothesis();
 				}
 				Prop ret = hypothesisContext.getNextEntity();

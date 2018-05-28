@@ -1,18 +1,16 @@
-axiom1 = forall a thereis b: ~Man(a) + Man(b)*Mother(b a)
- axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
-: forall a thereis b: ~Man(a) + Grandmother(b a)*Man(b)
+axiom1 = forall a thereis b : ~Man(a) + Man(b)*Mother(b a)
+axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
+: prop1 forall a thereis b : ~Man(a) + Grandmother(b a)
 :
 given = * given axiom1
 given = ] b a given
 given = ] c a given
 given = # a c given
 given = * given axiom1
-# c a given
 given = # c a given
 given = * given axiom2
-given = # d c given
+given = # d a given
+given = # e c given
 given = # f b given
-given = # e a given
-intermediate
 : given
-given
+prop1
