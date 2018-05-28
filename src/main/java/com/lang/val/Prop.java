@@ -1255,18 +1255,18 @@ public class Prop extends Value {
 		for (CompoundProp cp : getMatrix()) {
 			for (CompoundProp ccp : p.getMatrix()) {
 				int status = 0;
-				for (AtomicProp ap : cp.getAtomicProps()) {
+				loop1: for (AtomicProp ap : cp.getAtomicProps()) {
 					if (status == -1) {
 						break;
 					}
 					for (AtomicProp aap : ccp.getAtomicProps()) {
-						if (aap.getName() == ap.getName()) {
+						if (aap.getName().equals(ap.getName())) {
 							if (ap.getTruthValue() == aap.getTruthValue()) {
 								status = 1;
 							} else {
 								status = -1;
 							}
-							break;
+							continue loop1;
 						}
 					}
 					status = -1;

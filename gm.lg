@@ -13,3 +13,6 @@ given = * given axiom2
 given = # d c given
 given = # f b given
 given = # e a given
+intermediate
+: given
+given
