@@ -1252,17 +1252,28 @@ public class Prop extends Value {
 	}
 
 	public boolean evaluate(Prop p) {
-		List<Hecceity> covered = Lists.newArrayList();
-		for (Quantifier q : p.getPrefix()) {
-			Hecceity h = q.getHecceity();
-			covered.add(h);
-			List<CompoundProp> m1 = p.getSubsetOfMatrix(covered);
-			List<CompoundProp> m2 = this.getSubsetOfMatrix(covered);
-			for (CompoundProp cp : m1) {
-				for (CompoundProp ccp : m2) {
-					if (ccp.toString() == cp.toString()) {
-						return true;
+		for (CompoundProp cp : getMatrix()) {
+			for (CompoundProp ccp : p.getMatrix()) {
+				int status = 0;
+				for (AtomicProp ap : cp.getAtomicProps()) {
+					if (status == -1) {
+						break;
 					}
+					for (AtomicProp aap : ccp.getAtomicProps()) {
+						if (aap.getName() == ap.getName()) {
+							if (ap.getTruthValue() == aap.getTruthValue()) {
+								status = 1;
+							} else {
+								status = -1;
+							}
+							break;
+						}
+					}
+					status = -1;
+					break;
+				}
+				if (status == 1) {
+					return true;
 				}
 			}
 		}
