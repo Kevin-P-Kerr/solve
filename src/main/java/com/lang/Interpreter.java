@@ -4,7 +4,10 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -567,7 +570,13 @@ public class Interpreter {
 		}
 
 		public boolean compare(Prop p) {
-
+			if (currentHypothesis.evaluate(p)) {
+				if (currentHypothesis.getPrefix().size() == hypothesis.getPrefix().size()) {
+					proven = true;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public Prop getNextHypothesis() {
