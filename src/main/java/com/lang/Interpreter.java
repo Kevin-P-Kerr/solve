@@ -186,31 +186,6 @@ public class Interpreter {
 		return sumProps(p1.copy(), p2.copy());
 	}
 
-	private static List<List<Quantifier>> getSegments(List<Quantifier> prefix) {
-		List<List<Quantifier>> ret = Lists.newArrayList();
-		QuantifierType qt = prefix.get(0).getType();
-		List<Quantifier> intermediate = Lists.newArrayList();
-		for (Quantifier q : prefix) {
-			if (q.getType().equals(qt)) {
-				intermediate.add(q);
-			} else {
-				ret.add(intermediate);
-				intermediate = Lists.newArrayList(q);
-				qt = q.getType();
-			}
-		}
-		ret.add(intermediate);
-		return ret;
-	}
-
-	private static <T> T tryToGet(List<T> l, int i) {
-		try {
-			return l.get(i);
-		} catch (IndexOutOfBoundsException e) {
-			return null;
-		}
-	}
-
 	private static int countThereis(List<Quantifier> quants) {
 		int ret = 0;
 		for (Quantifier q : quants) {

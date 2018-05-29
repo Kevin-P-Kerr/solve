@@ -335,6 +335,14 @@ public class Prop extends Value {
 			return true;
 		}
 
+		public List<Hecceity> getAllHecceities() {
+			List<Hecceity> ret = Lists.newArrayList();
+			for (AtomicProp ap : getAtomicProps()) {
+				ret.addAll(ap.getHecceities());
+			}
+			return ret;
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1092,7 +1100,35 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private Prop invertQuantifiers(int i) {
+		CompoundProp cp = matrix.get(i);
+		List<Hecceity> hecs = cp.getAllHecceities();
+		List<Quantifier> invertedQuantifiers = Lists.newArrayList();
+		for (Quantifier q : getPrefix()) {
+			if (hecs.indexOf(q.getHecceity()) >= 0) {
+				invertedQuantifiers.add(q);
+			}
+		}
+		Prop p = copyWithHecceities();
+		List<CompoundProp> antecedent = Lists.newArrayList(cp);
+
+		antecedent = negate(antecedent, p);
+		List<CompoundProp> consequent = Lists.newArrayList();
+		for (CompoundProp ccp: getMatrix()) {
+			if (ccp == cp) {
+				continue;
+			}
+			consequent.add(e)
+		}
+	}
+
 	public Prop invertQuantifier(String from) throws LogicException {
+		try {
+			int i = Integer.parseInt(from);
+			return invertQuantifiers(i);
+		} catch (NumberFormatException e) {
+
+		}
 		Hecceity h = s2h.get(from);
 		if (h == null) {
 			throw new LogicException("no hecceity");
