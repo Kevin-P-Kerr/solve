@@ -1114,12 +1114,27 @@ public class Prop extends Value {
 
 		antecedent = negate(antecedent, p);
 		List<CompoundProp> consequent = Lists.newArrayList();
-		for (CompoundProp ccp: getMatrix()) {
+		for (CompoundProp ccp : getMatrix()) {
 			if (ccp == cp) {
 				continue;
 			}
-			consequent.add(e)
+			consequent.add(ccp);
 		}
+		consequent = negate(consequent, p);
+		List<Quantifier> consPrefix = Lists.newArrayList();
+		for (Quantifier q : p.getPrefix()) {
+			if (invertedQuantifiers.indexOf(q) < 0) {
+				consPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
+			}
+
+		}
+		p.prefix.clear();
+		p.prefix.addAll(invertedQuantifiers);
+		p.prefix.addAll(consPrefix);
+		p.matrix.clear();
+		p.matrix.addAll(antecedent);
+		p.matrix.addAll(consequent);
+		return p;
 	}
 
 	public Prop invertQuantifier(String from) throws LogicException {
