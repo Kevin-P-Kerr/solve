@@ -1100,6 +1100,10 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private static QuantifierType reverseType(Quantifier q) {
+		return q.getType().equals(QuantifierType.FORALL) ? QuantifierType.THEREIS : QuantifierType.FORALL;
+	}
+
 	private Prop invertQuantifiers(int i) {
 		CompoundProp cp = matrix.get(i);
 		List<Hecceity> hecs = cp.getAllHecceities();
@@ -1124,7 +1128,7 @@ public class Prop extends Value {
 		List<Quantifier> consPrefix = Lists.newArrayList();
 		for (Quantifier q : p.getPrefix()) {
 			if (invertedQuantifiers.indexOf(q) < 0) {
-				consPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
+				consPrefix.add(new Quantifier(reverseType(q), q.getHecceity()));
 			}
 
 		}
