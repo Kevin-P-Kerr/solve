@@ -42,3 +42,11 @@ given = # e c given
 given = # f d given
 axiom2
 given = * given axiom2
+given = # f e given
+given = # h a given
+given = # g c given
+given = * given axiom2
+given = # f e given
+given = # h b given
+given = # g d given
+: given
