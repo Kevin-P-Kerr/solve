@@ -21,3 +21,9 @@ axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man
 :
 : given
 :
+intermediate
+given
+given = * given axiom1
+given = # c a given
+given = * axiom1 given
+given = # d b given
