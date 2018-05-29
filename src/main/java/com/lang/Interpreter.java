@@ -197,26 +197,17 @@ public class Interpreter {
 	}
 
 	private static void multPrefix(Prop p1, Prop p2, Prop p3) {
-		List<Quantifier> prefix1 = p1.getPrefix();
-		List<Quantifier> prefix2 = p2.getPrefix();
-		List<Quantifier> greater;
-		List<Quantifier> lesser;
-		List<Quantifier> order1 = Lists.newArrayList();
-		List<Quantifier> order2 = Lists.newArrayList();
-		int num1 = countThereis(prefix1);
-		int num2 = countThereis(prefix2);
-		if (num1 > num2) {
-			greater = prefix1;
-			lesser = prefix2;
-		} else {
-			greater = prefix2;
-			lesser = prefix1;
-		}
-		p3.addAllQuants(greater);
-		p3.addAllQuants(lesser);
-		p3.addQuantifierConstraint(order1);
-		p3.addQuantifierConstraint(order2);
-
+		// TODO: revisit this
+		/*
+		 * List<Quantifier> prefix1 = p1.getPrefix(); List<Quantifier> prefix2 = p2.getPrefix(); List<Quantifier>
+		 * greater; List<Quantifier> lesser; List<Quantifier> order1 = Lists.newArrayList(); List<Quantifier> order2 =
+		 * Lists.newArrayList(); int num1 = countThereis(prefix1); int num2 = countThereis(prefix2); if (num1 > num2) {
+		 * greater = prefix1; lesser = prefix2; } else { greater = prefix2; lesser = prefix1; }
+		 * p3.addAllQuants(greater); p3.addAllQuants(lesser); p3.addQuantifierConstraint(order1);
+		 * p3.addQuantifierConstraint(order2);
+		 */
+		p3.addAllQuants(p1.getPrefix());
+		p3.addAllQuants(p2.getPrefix());
 	}
 
 	private Prop prodProps(Prop p1, Prop p2) {
