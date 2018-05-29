@@ -4,3 +4,32 @@ axiom3 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(b) + ~Mother(a b)
 axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man(d) + ~Siblings(a b) + ~Mother(a c) + ~Mother(b d) + Cousins(c d)
 prop1 = forall a thereis b : ~Man(a) + Grandmother(b a)
 prop2 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
+: prop1 prop1
+:
+given = * given axiom1
+given = # b a given
+given = * given axiom1
+given = # c b given
+given = * given axiom2
+given = # d c given
+given = # f a given
+given = # e b given
+: given
+: prop2 prop2
+:
+given = * given [ 7 axiom4
+given = # c a given
+given = # d b given
+given = * given [ 5 axiom3
+given = # e c given
+given = # f d given
+given = * given axiom2
+given = # e f given
+given = # f e given
+given = # h a given
+given = # g c given
+given = * given axiom2
+given = # h b given
+given = # f e given
+given = # g d given
+: given
