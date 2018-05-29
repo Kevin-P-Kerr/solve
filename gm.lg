@@ -1,52 +1,6 @@
 axiom1 = forall a thereis b : ~Man(a) + Man(b)*Mother(b a)
 axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
-: prop1 forall a thereis b : ~Man(a) + Grandmother(b a)
-:
-given = * given axiom1
-given = ] b a given
-given = ] c a given
-given = # a c given
-given = * given axiom1
-given = # c a given
-given = * given axiom2
-given = # d a given
-given = # e c given
-given = # f b given
-: given
-prop1
-pro22 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
 axiom3 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(b) + ~Mother(a b) + ~Mother(a c) + Siblings(b c)
 axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man(d) + ~Siblings(a b) + ~Mother(a c) + ~Mother(b d) + Cousins(c d)
-prop2
-prop22
-pro22
-: prop2 pro22
-[ 7 axiom4
-:
-given
-given = * given [ 7 axiom4
-given = ] e d given
-given = ] e c given
-given = ] e b given
-given = ]  e a given
-given = ] f d given
-given = ] f c given
-given = ] f b given
-given = ] f a given
-given = # a e given
-given = # b f given
-intermediate
-[ 5 axiom3
-given = * given [ 5 axiom3
-given = # e c given
-given = # f d given
-axiom2
-given = * given axiom2
-given = # f e given
-given = # h a given
-given = # g c given
-given = * given axiom2
-given = # f e given
-given = # h b given
-given = # g d given
-: given
+prop1 = forall a thereis b : ~Man(a) + Grandmother(b a)
+prop2 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
