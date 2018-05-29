@@ -1260,6 +1260,16 @@ public class Prop extends Value {
 		return ret;
 	}
 
+	private static CompoundProp combine(List<CompoundProp> m1, Prop p) {
+		CompoundProp base = m1.get(0);
+		base = base.copy(p.makeBlankCompoundProp());
+		for (int i = 1, ii = m1.size(); i < ii; i++) {
+			CompoundProp cp = m1.get(i);
+			base.addAllAtomicProp(cp.getAtomicProps());
+		}
+		return base;
+	}
+
 	private static List<CompoundProp> combine(List<CompoundProp> m1, List<CompoundProp> m2, Prop p) {
 		List<CompoundProp> ret = Lists.newArrayList();
 		for (CompoundProp base : m1) {
