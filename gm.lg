@@ -14,16 +14,31 @@ given = # e c given
 given = # f b given
 : given
 prop1
-prop3 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
+pro22 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
 axiom3 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(b) + ~Mother(a b) + ~Mother(a c) + Siblings(b c)
 axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man(d) + ~Siblings(a b) + ~Mother(a c) + ~Mother(b d) + Cousins(c d)
-: prop2 forall a forall b thereis c thereis d : ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Man(d)*Siblings(c d)*Mother(c a)*Mother(d b)
+prop2
+prop22
+pro22
+: prop2 pro22
+[ 7 axiom4
 :
-: given
-:
-intermediate
 given
-given = * given axiom1
-given = # c a given
-given = * axiom1 given
-given = # d b given
+given = * given [ 7 axiom4
+given = ] e d given
+given = ] e c given
+given = ] e b given
+given = ]  e a given
+given = ] f d given
+given = ] f c given
+given = ] f b given
+given = ] f a given
+given = # a e given
+given = # b f given
+intermediate
+[ 5 axiom3
+given = * given [ 5 axiom3
+given = # e c given
+given = # f d given
+axiom2
+given = * given axiom2
