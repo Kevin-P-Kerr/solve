@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
@@ -518,13 +519,15 @@ public class Interpreter {
 	public static class HypothesisContext {
 		private final Prop hypothesis;
 		private final String name;
+		private final Environment env;
 		private Prop currentHypothesis;
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
 
-		public HypothesisContext(Prop hy, String name) {
+		public HypothesisContext(Prop hy, String name, Environment env) {
 			this.name = name;
 			this.hypothesis = hy;
+			this.env = env;
 		}
 
 		public boolean isProven() {
@@ -553,7 +556,11 @@ public class Interpreter {
 			Prop p = hypothesis.getSubset(coveredQuants);
 			for (Quantifier q : coveredQuants) {
 				if (!p.usesQuantifier(q)) {
-					return getNextEntity();
+					Prop given = getNextEntity();
+					this.env.put("given", given);
+					Prop h = getNextHypothesis();
+					this.currentHypothesis = h;
+					return h;
 				}
 			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
@@ -622,7 +629,7 @@ public class Interpreter {
 				String name = t.getLit();
 				tokens.getClass();
 				Prop hypo = (Prop) eval(env);
-				hypothesisContext = new HypothesisContext(hypo, name);
+				hypothesisContext = new HypothesisContext(hypo, name, env);
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);
 				return ret;

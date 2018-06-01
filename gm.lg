@@ -2,6 +2,7 @@ axiom1 = forall a thereis b : ~Man(a) + Man(b)*Mother(b a)
 axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
 axiom3 = forall a forall b forall c : ~Man(a) + ~Man(b) + ~Man(b) + ~Mother(a b) + ~Mother(a c) + Siblings(b c)
 axiom4 = forall a forall b forall c forall d: ~Man(a) + ~Man(b) + ~Man(c) + ~Man(d) + ~Siblings(a b) + ~Mother(a c) + ~Mother(b d) + Cousins(c d)
+axiom5 = forall a forall b : ~Man(a) + ~Man(b) + ~Mother(a b) + ~Mother(b a)
 prop1 = forall a thereis b : ~Man(a) + Grandmother(b a)
 prop2 = forall a forall b thereis c: ~Man(a) + ~Man(b) + ~Cousins(a b) + Man(c)*Grandmother(c a)*Grandmother(c b)
 : prop1 prop1
@@ -33,3 +34,10 @@ given = # h b given
 given = # f e given
 given = # g d given
 : given
+prop3 = forall a forall c thereis b: ~Man(a) + ~Man(c) +  Grandmother(b a)*~Grandmother(c a)
+: prop3 prop3
+:
+given
+given
+intermediate
+axiom5
