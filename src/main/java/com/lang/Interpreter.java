@@ -549,7 +549,9 @@ public class Interpreter {
 			int currentIndex = coveredQuants.size() == 0 ? 0
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
 			currentIndex++;
-			coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
+			if (coveredQuants.size() < hypothesis.getPrefix().size()) {
+				coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
+			}
 			Prop p = hypothesis.getSubset(coveredQuants);
 			for (Quantifier q : coveredQuants) {
 				if (!p.usesQuantifier(q)) {
@@ -569,15 +571,24 @@ public class Interpreter {
 		public Prop getNextEntity() {
 			int currentIndex = coveredQuants.size() == 0 ? 0
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
+			boolean hasThereis = false;
 			for (int ii = hypothesis.getPrefix().size(); currentIndex < ii; currentIndex++) {
 				Quantifier q = hypothesis.getPrefix().get(currentIndex);
 				if (q.getType().equals(QuantifierType.THEREIS)) {
+					hasThereis = true;
 					break;
 				} else {
 					coveredQuants.add(q);
 				}
 			}
-			Prop p = hypothesis.getSubset(coveredQuants).negate();
+			Prop p;
+			if (hasThereis) {
+				p = hypothesis.getSubset(coveredQuants).negate();
+			} else {
+				Prop coveredCompounds = hypothesis.getSubset(coveredQuants);
+				coveredCompounds.getMatrix().remove(coveredCompounds.getMatrix().size() - 1);
+				p = coveredCompounds.negate();
+			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
 				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));

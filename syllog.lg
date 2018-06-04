@@ -1,0 +1,17 @@
+Aab = forall a : ~B(a) + A(a)
+Eab = forall a : ~B(a) + ~A(a)
+Iab = thereis a:  A(a)*B(a)
+Oab = thereis b:  B(a)*~A(a)
+Abc = forall a : ~C(a) + B(a)
+Ebc = forall a : ~C(a) + ~B(a)
+Ibc = thereis a: B(a)*C(a)
+Obc = thereis a: ~B(a)*C(a)
+
+Celarent = forall a: ~C(a) + ~A(a)
+: celarent Celarent
+:
+given = * given Abc
+given = # b a given
+given = * given Eab
+given = # b a given
+: given
