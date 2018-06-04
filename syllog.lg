@@ -15,3 +15,12 @@ given = # b a given
 given = * given Eab
 given = # b a given
 : given
+
+Barbara = forall a: ~C(a) + A(a)
+: Barbara Barbara
+:
+given = * given Abc
+given = # b a given
+given = * given Aab
+given = # b a given
+:given
