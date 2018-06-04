@@ -1,0 +1,12 @@
+def1 = forall a thereis b: ~Assertion(a) + Contradiction(b a)
+def2 = forall a thereis b thereis c: ~Term(a) + Quantifier(b)*QuantOf(b a)*Assertion(c)*AssertOf(c a)
+def3 = forall a : ~Quantifier(a) + ~None(a) + ~Some(a) + ~All(a)
+def4 = forall a thereis b thereis c: ~Assertion(a) + Copula(b c)
+def5 = forall a thereis b thereis c thereis d thereis e therei
+def5 = forall a forall d forall e thereis b thereis c : ~NoneTerm(a d e) + Term(a)*Quantifier(b)*QuantOf(b a)*Assertion(c)*AssertionOf(c a)*None(b)*Copula(d e)
+def6 = forall a forall d forall e thereis b thereis c : ~SomeTerm(a d e) + Term(a)*Quantifier(b)*QuantOf(b a)*Assertion(c)*AssertionOf(c a)*Some(b)*Copula(d e)
+def7 = forall a forall d forall e thereis b thereis c : ~AllTerm(a d e) + Term(a)*Quantifier(b)*QuantOf(b a)*Assertion(c)*AssertionOf(c a)*All(b)*Copula(d e)
+convert1 = forall a forall b forall c thereis d: ~AllTerm(a b c) + SomeTerm(d c b)
+convert2 = forall a forall b forall c thereis d: ~SomeTerm(a b c) + SomeTerm(d c b)
+convert3= forall a forall b forall c thereis d: ~NoneTerm(a b c) + NoneTerm(d c b)
+barbara = forall a forall b forall c forall d forall e thereis f: ~AllTerm(a b c) + ~AllTerm(d c e) + AllTerm(f b e)
