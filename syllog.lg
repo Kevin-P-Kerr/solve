@@ -24,3 +24,13 @@ given = # b a given
 given = * given Aab
 given = # b a given
 :given
+
+Camestres = forall a : ~C(a) + ~B(a)
+: Camestres Camestres
+:
+Eac = forall a: ~C(a) + ~A(a)
+given = * given Eac
+given = # b a given
+given = * given Aab
+given = # b a given
+: given
