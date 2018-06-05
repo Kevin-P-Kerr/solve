@@ -707,6 +707,8 @@ public class Interpreter {
 					Prop ret = hypothesisContext.getHypothesis();
 					Tactic tactic = hypothesisContext.getTactic();
 					String name = hypothesisContext.getName();
+					env.put("given", Undefined.undefined);
+					env.put("intermediate", Undefined.undefined);
 					if (tactic != null) {
 						env.put(name, tactic);
 					}
