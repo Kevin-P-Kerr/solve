@@ -19,3 +19,7 @@ given = # b a given
 :given
 
 Barbara = forall a: ~C(a) + A(a)
+: Barbara Barbara
+:
+given = @ Celarent Aab Abc Barbara
+: given
