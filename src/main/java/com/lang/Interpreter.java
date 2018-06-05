@@ -515,6 +515,27 @@ public class Interpreter {
 		this.hypothesisContext = context;
 	}
 
+	private static class Tactic extends Value {
+		private final List<TokenStream> lines = Lists.newArrayList();
+		private final Environment env;
+
+		public Tactic(Environment env) {
+			this.env = env;
+		}
+
+		public Value eval() throws ParseException, LogicException {
+			HypothesisContext hcontext = null;
+			Value v = Undefined.undefined;
+			for (TokenStream ln : lines) {
+				Interpreter interp = new Interpreter(ln);
+				interp.setHypothesisContext(hcontext);
+				v = interp.eval(env);
+				hcontext = interp.getHypothesisContext();
+			}
+			return v;
+		}
+	}
+
 	public static class HypothesisContext {
 		private final Prop hypothesis;
 		private final String name;

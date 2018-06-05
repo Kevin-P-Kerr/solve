@@ -10,6 +10,16 @@ public class Environment {
 
 	private Map<String, Value> env = Maps.newHashMap();
 
+	private final Environment parent;
+
+	public Environment(Environment parent) {
+		this.parent = parent;
+	}
+
+	public Environment() {
+		this.parent = null;
+	}
+
 	public void put(String name, Value v) {
 		env.put(name, v);
 	}
@@ -17,7 +27,10 @@ public class Environment {
 	public Value lookUp(String name) {
 		Value v = env.get(name);
 		if (v == null) {
-			return Undefined.undefined;
+			if (parent == null) {
+				return Undefined.undefined;
+			}
+			return parent.lookUp(name);
 		}
 		return v;
 	}
