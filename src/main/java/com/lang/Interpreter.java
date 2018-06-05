@@ -525,7 +525,7 @@ public class Interpreter {
 			this.envNames = names;
 		}
 
-		public Value eval(List<Value> args) throws ParseException, LogicException {
+		public Value eval(List<Value> args) throws LogicException, ParseException {
 			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
 			args.remove(args.size() - 1);
 			Prop given = hcontext.getNextEntity();
@@ -544,7 +544,10 @@ public class Interpreter {
 				v = interp.eval(env);
 				hcontext = interp.getHypothesisContext();
 			}
-			return v;
+			if (!hcontext.isProven()) {
+				throw new LogicException("invalid argument!");
+			}
+			return hcontext.getHypothesis();
 		}
 
 		public void addLine(TokenStream tokens) {

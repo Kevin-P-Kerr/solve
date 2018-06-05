@@ -8,29 +8,14 @@ Ibc = thereis a: B(a)*C(a)
 Obc = thereis a: ~B(a)*C(a)
 
 Celarent = forall a: ~C(a) + ~A(a)
-: celarent Celarent
+tactic Celarent Eab Abc : Celarent
 :
+Eab
+given
 given = * given Abc
 given = # b a given
 given = * given Eab
 given = # b a given
-: given
-
-Barbara = forall a: ~C(a) + A(a)
-: Barbara Barbara
-:
-given = * given Abc
-given = # b a given
-given = * given Aab
-given = # b a given
 :given
 
-Camestres = forall a : ~C(a) + ~B(a)
-: Camestres Camestres
-:
-Eac = forall a: ~C(a) + ~A(a)
-given = * given Eac
-given = # b a given
-given = * given Aab
-given = # b a given
-: given
+Barbara = forall a: ~C(a) + A(a)
