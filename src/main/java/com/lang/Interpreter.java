@@ -667,7 +667,7 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_TILDE)) {
 			tokens.getNext();
 			Prop p = (Prop) eval(env);
-			p.negate();
+			return removeDefects(p.negateMatrix());
 		}
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
