@@ -762,9 +762,12 @@ public class Interpreter {
 		// TODO: this should return a value
 		if (t.getType().equals(TokenType.TT_AT)) {
 			tokens.getNext();
-			Value v1 = eval(env);
-			Value v2 = eval(env);
-			return apply((Prop) v1, (Prop) v2);
+			Tactic tactic = (Tactic) eval(env);
+			List<Value> args = Lists.newArrayList();
+			while (tokens.hasToken()) {
+				args.add(eval(env));
+			}
+			return tactic.eval(args);
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("tactic")) {
 			tokens.getNext();
