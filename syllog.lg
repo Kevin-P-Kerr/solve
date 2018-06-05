@@ -6,6 +6,8 @@ Abc = forall a : ~C(a) + B(a)
 Ebc = forall a : ~C(a) + ~B(a)
 Ibc = thereis a: B(a)*C(a)
 Obc = thereis a: ~B(a)*C(a)
+Aac = forall a : ~C(a) + A(a)
+
 
 Celarent = forall a: ~C(a) + ~A(a)
 tactic Celarent Eab Abc : Celarent
@@ -23,3 +25,7 @@ Barbara = forall a: ~C(a) + A(a)
 :
 given = @ Celarent Aab Abc Barbara
 : given
+
+Darapti = Iab
+
+
