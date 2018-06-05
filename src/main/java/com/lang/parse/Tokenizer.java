@@ -148,6 +148,10 @@ public class Tokenizer {
 		public boolean lookAhead(int i) {
 			return tokens.size() > (ptr + i);
 		}
+
+		public TokenStream copy() {
+			return new TokenStream(tokens);
+		}
 	}
 
 }

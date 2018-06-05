@@ -528,8 +528,7 @@ public class Interpreter {
 		public Value eval(List<Value> args) throws ParseException, LogicException {
 			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
 			args.remove(args.size() - 1);
-			env.put("given", hcontext.getNextEntity());
-			env.put("intermediate", hcontext.getNextHypothesis());
+
 			Value v = Undefined.undefined;
 			if (args.size() != envNames.size()) {
 				throw new LogicException("args and passed vals must agree");
@@ -828,7 +827,7 @@ public class Interpreter {
 
 	public Value enterEval(Environment env) throws ParseException, LogicException {
 		if (hypothesisContext != null) {
-			hypothesisContext.addLine(tokens);
+			hypothesisContext.addLine(tokens.copy());
 		}
 		return eval(env);
 	}
