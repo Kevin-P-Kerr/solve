@@ -68,7 +68,7 @@ public class Solve {
 							if (hypoContext != null) {
 								i.setHypothesisContext(hypoContext);
 							}
-							Value p = i.eval(env);
+							Value p = i.enterEval(env);
 							hypoContext = i.getHypothesisContext();
 							System.out.println(p.toString());
 						} catch (Exception e) {
@@ -85,7 +85,7 @@ public class Solve {
 				if (hypoContext != null) {
 					i.setHypothesisContext(hypoContext);
 				}
-				Value p = i.eval(env);
+				Value p = i.enterEval(env);
 				hypoContext = i.getHypothesisContext();
 				System.out.println(p.toString());
 				System.out.print(" > ");

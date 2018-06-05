@@ -542,6 +542,10 @@ public class Interpreter {
 			}
 			return v;
 		}
+
+		public void addLine(TokenStream tokens) {
+			lines.add(tokens);
+		}
 	}
 
 	public static class HypothesisContext {
@@ -638,6 +642,13 @@ public class Interpreter {
 
 		public Tactic getTactic() {
 			return tactic;
+		}
+
+		public void addLine(TokenStream tokens) {
+			if (tactic != null) {
+				tactic.addLine(tokens);
+			}
+
 		}
 	}
 
@@ -808,5 +819,12 @@ public class Interpreter {
 			}
 		}
 
+	}
+
+	public Value enterEval(Environment env) throws ParseException, LogicException {
+		if (hypothesisContext != null) {
+			hypothesisContext.addLine(tokens);
+		}
+		return eval(env);
 	}
 }
