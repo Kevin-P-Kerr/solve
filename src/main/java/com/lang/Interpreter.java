@@ -526,7 +526,10 @@ public class Interpreter {
 		}
 
 		public Value eval(List<Value> args) throws ParseException, LogicException {
-			HypothesisContext hcontext = null;
+			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
+			args.remove(args.size() - 1);
+			env.put("given", hcontext.getNextEntity());
+			env.put("intermediate", hcontext.getNextHypothesis());
 			Value v = Undefined.undefined;
 			if (args.size() != envNames.size()) {
 				throw new LogicException("args and passed vals must agree");
@@ -782,7 +785,6 @@ public class Interpreter {
 			}
 			Environment t_env = new Environment(env);
 			Tactic tactic = new Tactic(t_env, argNames);
-			t = tokens.getNext();
 			Prop p = (Prop) eval(env);
 			hypothesisContext = new HypothesisContext(p, tacticName);
 			hypothesisContext.setTactic(tactic);
