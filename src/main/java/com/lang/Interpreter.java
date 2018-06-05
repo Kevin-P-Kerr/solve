@@ -624,11 +624,11 @@ public class Interpreter {
 			}
 			Prop p;
 			if (hasThereis) {
-				p = hypothesis.getSubset(coveredQuants).negate();
+				p = hypothesis.getSubset(coveredQuants).negateMatrix();
 			} else {
 				Prop coveredCompounds = hypothesis.getSubset(coveredQuants);
 				coveredCompounds.getMatrix().remove(coveredCompounds.getMatrix().size() - 1);
-				p = coveredCompounds.negate();
+				p = coveredCompounds.negateMatrix();
 			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
@@ -664,6 +664,11 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_TILDE)) {
+			tokens.getNext();
+			Prop p = (Prop) eval(env);
+			p.negate();
+		}
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
 			t = tokens.getNext();

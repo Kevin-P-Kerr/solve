@@ -1116,7 +1116,7 @@ public class Prop extends Value {
 		Prop p = copyWithHecceities();
 		List<CompoundProp> antecedent = Lists.newArrayList(cp);
 
-		antecedent = negate(antecedent, p);
+		antecedent = negateMatrix(antecedent, p);
 		List<CompoundProp> consequent = Lists.newArrayList();
 		for (CompoundProp ccp : getMatrix()) {
 			if (ccp == cp) {
@@ -1124,7 +1124,7 @@ public class Prop extends Value {
 			}
 			consequent.add(ccp);
 		}
-		consequent = negate(consequent, p);
+		consequent = negateMatrix(consequent, p);
 		List<Quantifier> consPrefix = Lists.newArrayList();
 		for (Quantifier q : p.getPrefix()) {
 			if (invertedQuantifiers.indexOf(q) < 0) {
@@ -1223,13 +1223,13 @@ public class Prop extends Value {
 		 * @formatter:on
 		 */
 		if (type == QuantifierType.THEREIS) {
-			preconditions = negate(preconditions, former);
-			postconditions = negate(postconditions, former);
+			preconditions = negateMatrix(preconditions, former);
+			postconditions = negateMatrix(postconditions, former);
 
 		} else {
 			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
-			postconditions = negate(postconditions, former);
-			preconditions = negate(preconditions, former);
+			postconditions = negateMatrix(postconditions, former);
+			preconditions = negateMatrix(preconditions, former);
 		}
 
 		// doesn't really matter but looks nice
@@ -1243,13 +1243,13 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	public Prop negate() {
+	public Prop negateMatrix() {
 		Prop ret = copyWithHecceities();
-		ret.matrix = negate(ret.matrix, ret);
+		ret.matrix = negateMatrix(ret.matrix, ret);
 		return ret;
 	}
 
-	private static List<CompoundProp> negate(CompoundProp cp, Prop p) {
+	private static List<CompoundProp> negateMatrix(CompoundProp cp, Prop p) {
 		List<CompoundProp> ret = Lists.newArrayList();
 		for (AtomicProp ap : cp.getAtomicProps()) {
 			CompoundProp ncp = p.makeBlankCompoundProp();
@@ -1282,13 +1282,13 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	private static List<CompoundProp> negate(List<CompoundProp> matrix, Prop p) {
+	private static List<CompoundProp> negateMatrix(List<CompoundProp> matrix, Prop p) {
 		if (matrix.size() == 1) {
-			return negate(matrix.get(0), p);
+			return negateMatrix(matrix.get(0), p);
 		}
-		List<CompoundProp> base = negate(matrix.get(0), p);
+		List<CompoundProp> base = negateMatrix(matrix.get(0), p);
 		for (int i = 1; i < matrix.size(); i++) {
-			base = combine(base, negate(matrix.get(i), p), p);
+			base = combine(base, negateMatrix(matrix.get(i), p), p);
 		}
 		return base;
 	}
