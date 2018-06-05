@@ -528,6 +528,8 @@ public class Interpreter {
 		public Value eval(List<Value> args) throws ParseException, LogicException {
 			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
 			args.remove(args.size() - 1);
+			Prop given = hcontext.getNextEntity();
+			env.put("given", given);
 
 			Value v = Undefined.undefined;
 			if (args.size() != envNames.size()) {
