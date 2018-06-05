@@ -517,15 +517,23 @@ public class Interpreter {
 
 	private static class Tactic extends Value {
 		private final List<TokenStream> lines = Lists.newArrayList();
+		private final List<String> envNames;
 		private final Environment env;
 
-		public Tactic(Environment env) {
+		public Tactic(Environment env, List<String> names) {
 			this.env = env;
+			this.envNames = names;
 		}
 
-		public Value eval() throws ParseException, LogicException {
+		public Value eval(List<Value> args) throws ParseException, LogicException {
 			HypothesisContext hcontext = null;
 			Value v = Undefined.undefined;
+			if (args.size() != envNames.size()) {
+				throw new LogicException("args and passed vals must agree");
+			}
+			for (int i = 0, ii = args.size(); i < ii; i++) {
+				env.put(envNames.get(i), args.get(i));
+			}
 			for (TokenStream ln : lines) {
 				Interpreter interp = new Interpreter(ln);
 				interp.setHypothesisContext(hcontext);
@@ -542,6 +550,7 @@ public class Interpreter {
 		private Prop currentHypothesis;
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
+		private Tactic tactic;
 
 		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
@@ -622,6 +631,14 @@ public class Interpreter {
 		public String getName() {
 			return name;
 		}
+
+		public void setTactic(Tactic tactic) {
+			this.tactic = tactic;
+		}
+
+		public Tactic getTactic() {
+			return tactic;
+		}
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
@@ -670,6 +687,11 @@ public class Interpreter {
 					System.out.println(hypothesisContext.getName() + " is proven");
 					env.put(hypothesisContext.getName(), hypothesisContext.getHypothesis());
 					Prop ret = hypothesisContext.getHypothesis();
+					Tactic tactic = hypothesisContext.getTactic();
+					String name = hypothesisContext.getName();
+					if (tactic != null) {
+						env.put(name, tactic);
+					}
 					hypothesisContext = null;
 					return ret;
 				}
@@ -732,6 +754,28 @@ public class Interpreter {
 			Value v1 = eval(env);
 			Value v2 = eval(env);
 			return apply((Prop) v1, (Prop) v2);
+		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("tactic")) {
+			tokens.getNext();
+			t = tokens.getNext();
+
+			String tacticName = t.getLit();
+			t = tokens.getNext();
+			List<String> argNames = Lists.newArrayList();
+			while (!t.getType().equals(TokenType.TT_COLON)) {
+				argNames.add(t.getLit());
+				t = tokens.getNext();
+			}
+			Environment t_env = new Environment(env);
+			Tactic tactic = new Tactic(t_env, argNames);
+			t = tokens.getNext();
+			Prop p = (Prop) eval(env);
+			hypothesisContext = new HypothesisContext(p, tacticName);
+			hypothesisContext.setTactic(tactic);
+			Prop ret = hypothesisContext.getNextEntity();
+			env.put("given", ret);
+			return ret;
+
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
