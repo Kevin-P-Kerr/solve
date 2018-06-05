@@ -544,10 +544,10 @@ public class Interpreter {
 				v = interp.eval(env);
 				hcontext = interp.getHypothesisContext();
 			}
-			if (!hcontext.isProven()) {
+			if (hcontext != null && !hcontext.isProven()) {
 				throw new LogicException("invalid argument!");
 			}
-			return hcontext.getHypothesis();
+			return env.lookUp("given");
 		}
 
 		public void addLine(TokenStream tokens) {
@@ -707,7 +707,6 @@ public class Interpreter {
 					Prop ret = hypothesisContext.getHypothesis();
 					Tactic tactic = hypothesisContext.getTactic();
 					String name = hypothesisContext.getName();
-					env.put("given", Undefined.undefined);
 					env.put("intermediate", Undefined.undefined);
 					if (tactic != null) {
 						env.put(name, tactic);
