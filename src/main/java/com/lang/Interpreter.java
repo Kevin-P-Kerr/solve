@@ -664,7 +664,7 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Token t = tokens.peek();
-		if (t.getType().equals(TokenType.TT_TILDE)) {
+		if (t.getType().equals(TokenType.TT_EXCLAIM)) {
 			tokens.getNext();
 			Prop p = (Prop) eval(env);
 			return removeDefects(p.negateMatrix());
