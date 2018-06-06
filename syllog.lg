@@ -29,3 +29,33 @@ given = @ Celarent Aab Abc Barbara
 Darapti = Iab
 
 
+Aab
+b2 = * Aab Abc
+!b2
+b2 = # b a b2
+!b2
+Aac
+Barbara2 = + !b2 Aac
+c2 = * Eab Abc 
+Celarent2 = + !c2 Eac
+Eac
+Celarent
+Eac  =forall a: ~C(a) + ~A(a)
+c2 = * Eab Abc
+Celarent2 = + !c2 Eac
+Celarent2 = # c b Celarent2
+Celarent2 = # b a Celarent2
+Eab
+Aac
+Ebc
+ce = * Eab Aac
+Cesare2 = + !ce + Ebc
+Cesare2
+Ebc
+ce
+!ce
+ce = # b a ce
+Cesare2 = + !ce Ebc
+Cesare2 = # b a Cesare2
+: Cesare2 Cesare2
+:

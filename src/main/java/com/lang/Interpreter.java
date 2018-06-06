@@ -606,7 +606,7 @@ public class Interpreter {
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
 			currentHypothesis = p;
-			return p;
+			return removeDefects(p);
 		}
 
 		public Prop getNextEntity() {
@@ -636,7 +636,7 @@ public class Interpreter {
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
-			return p;
+			return removeDefects(p);
 		}
 
 		public String getName() {
