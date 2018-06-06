@@ -343,6 +343,21 @@ public class Prop extends Value {
 			return ret;
 		}
 
+		public boolean evaluate(CompoundProp ccp) {
+			List<AtomicProp> atoms = ccp.getAtomicProps();
+			for (AtomicProp ap : getAtomicProps()) {
+				int i = atoms.indexOf(ap);
+				if (i < 0) {
+					return false;
+				}
+				AtomicProp aap = atoms.get(i);
+				if (aap.getTruthValue() != ap.getTruthValue()) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1319,25 +1334,7 @@ public class Prop extends Value {
 	public boolean evaluate(Prop p) {
 		for (CompoundProp cp : getMatrix()) {
 			for (CompoundProp ccp : p.getMatrix()) {
-				int status = 0;
-				loop1: for (AtomicProp ap : cp.getAtomicProps()) {
-					if (status == -1) {
-						break;
-					}
-					for (AtomicProp aap : ccp.getAtomicProps()) {
-						if (aap.getName().equals(ap.getName())) {
-							if (ap.getTruthValue() == aap.getTruthValue()) {
-								status = 1;
-							} else {
-								status = -1;
-							}
-							continue loop1;
-						}
-					}
-					status = -1;
-					break;
-				}
-				if (status == 1) {
+				if (cp.evaluate(ccp)) {
 					return true;
 				}
 			}
