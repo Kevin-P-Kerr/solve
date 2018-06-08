@@ -644,9 +644,7 @@ public class Interpreter {
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
-			entity = removeDefects(p);
-			entityIndex = 0;
-			return entity;
+			return removeDefects(p);
 		}
 
 		public String getName() {
@@ -659,6 +657,14 @@ public class Interpreter {
 
 		public Tactic getTactic() {
 			return tactic;
+		}
+
+		public boolean hasCase() {
+			return entity != null;
+		}
+
+		public void setCase(Prop p) {
+			entity = p;
 		}
 
 		public void addLine(TokenStream tokens) {
@@ -818,8 +824,11 @@ public class Interpreter {
 
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
+			if (!hypothesisContext.hasCase()) {
+				hypothesisContext.setCase((Prop) env.lookUp("given"));
+			}
 			Prop p = hypothesisContext.getCase();
-			env.put("given", p);
+			env.put("case", p);
 			return p;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {

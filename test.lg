@@ -32,6 +32,3 @@ given = # c a given
 given = # d b given
 given = * given axiom1
 given = # d a given
-given = * given axiom3
-given = # e a given
-given = # f b given
