@@ -562,6 +562,8 @@ public class Interpreter {
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
 		private Tactic tactic;
+		private Prop entity;
+		private int entityIndex = 0;
 
 		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
@@ -578,6 +580,12 @@ public class Interpreter {
 
 		public boolean compare(Prop p) {
 			if (currentHypothesis.evaluate(p)) {
+				if (entity != null) {
+					entityIndex++;
+					if (entityIndex < entity.getMatrix().size()) {
+						return true;
+					}
+				}
 				if (currentHypothesis.getPrefix().size() == hypothesis.getPrefix().size()) {
 					proven = true;
 				}
@@ -636,7 +644,9 @@ public class Interpreter {
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
-			return removeDefects(p);
+			entity = removeDefects(p);
+			entityIndex = 0;
+			return entity;
 		}
 
 		public String getName() {
@@ -656,6 +666,10 @@ public class Interpreter {
 				tactic.addLine(tokens);
 			}
 
+		}
+
+		public Prop getCase() throws LogicException {
+			return entity.getCase(entityIndex);
 		}
 	}
 
@@ -802,6 +816,11 @@ public class Interpreter {
 			env.put("given", ret);
 			return ret;
 
+		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
+			Prop p = hypothesisContext.getCase();
+			env.put("given", p);
+			return p;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();

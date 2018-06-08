@@ -771,6 +771,29 @@ public class Prop extends Value {
 
 	}
 
+	public Prop getCase(int index) throws LogicException {
+		Prop p = this.copyWithHecceities();
+		CompoundProp cp = null;
+		for (int i = 0, ii = p.matrix.size(); i < ii; i++) {
+			if (i != index) {
+				p.matrix.remove(i);
+			} else {
+				cp = p.matrix.get(i);
+			}
+		}
+		if (cp == null) {
+			throw new LogicException("null compound prop");
+		}
+		List<Quantifier> removals = Lists.newArrayList();
+		for (Quantifier q : p.prefix) {
+			if (!cp.containsHecceity(q.hecceity)) {
+				removals.add(q);
+			}
+		}
+		p.prefix.removeAll(removals);
+		return p;
+	}
+
 	public List<Prop> getIndividualFacts() {
 		List<Quantifier> marked = Lists.newArrayList();
 		List<Prop> ret = Lists.newArrayList();
