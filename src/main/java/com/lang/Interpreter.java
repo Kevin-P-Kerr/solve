@@ -584,6 +584,9 @@ public class Interpreter {
 					entityIndex++;
 					if (entityIndex < entity.getMatrix().size()) {
 						return true;
+					} else {
+						entity = null;
+						entityIndex = 0;
 					}
 				}
 				if (currentHypothesis.getPrefix().size() == hypothesis.getPrefix().size()) {
@@ -618,6 +621,14 @@ public class Interpreter {
 		}
 
 		public Prop getNextEntity() {
+			if (hasCase()) {
+				try {
+					return getCase();
+				} catch (LogicException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			int currentIndex = coveredQuants.size() == 0 ? 0
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
 			boolean hasThereis = false;
@@ -740,7 +751,11 @@ public class Interpreter {
 					return ret;
 				}
 				Prop ret = hypothesisContext.getNextEntity();
-				env.put("given", ret);
+				if (hypothesisContext.hasCase()) {
+					env.put("subcase", ret);
+				} else {
+					env.put("given", ret);
+				}
 				return ret;
 			} else {
 				System.out.println("proof not accepted");
@@ -828,7 +843,7 @@ public class Interpreter {
 				hypothesisContext.setCase((Prop) env.lookUp("given"));
 			}
 			Prop p = hypothesisContext.getCase();
-			env.put("case", p);
+			env.put("subcase", p);
 			return p;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {

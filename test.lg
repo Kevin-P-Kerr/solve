@@ -32,3 +32,8 @@ given = # c a given
 given = # d b given
 given = * given axiom1
 given = # d a given
+case
+s = subcase
+s = * s axiom3
+s = # d a s
+s = # e b s
