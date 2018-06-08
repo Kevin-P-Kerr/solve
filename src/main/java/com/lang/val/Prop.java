@@ -118,7 +118,9 @@ public class Prop extends Value {
 			}
 			int seed = 31;
 			seed *= name.hashCode();
-			seed *= new Integer(hecceities.size()).hashCode();
+			for (Hecceity h : getHecceities()) {
+				seed *= h.hashCode();
+			}
 			hashCode = seed * new Boolean(truthValue).hashCode();
 			return hashCode;
 		}
