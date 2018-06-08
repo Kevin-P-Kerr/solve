@@ -17,8 +17,8 @@ given = # b a given
 / 0 given
 proof = / 0 given
 : proof
-axiom1 = forall a thereis b: ~Nat(a) + Zero(a) + S(b a)*Nat(b)
-axiom2 = forall a forall b thereis c : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)
+axiom1 = forall a thereis b: ~Nat(a) + Zero(a) + S(a b)*Nat(b)
+axiom2 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)
 axiom3 = forall a forall b thereis c thereis d: ~Nat(a) + ~Zero(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
 axiom4 = forall a forall b forall c thereis d thereis e thereis f : ~Nat(a) + ~Nat(c) + ~S(c a) + ~Nat(b) + Nat(d)*Sum(d b c)*Nat(e)*Sum(e a b)*Nat(f)*S(f e)*Eq(f d)
 prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
