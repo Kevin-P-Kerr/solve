@@ -1,0 +1,17 @@
+axiom5 = forall a thereis b : ~Nat(a) + ~Zero(a) + S(a b)*Nat(b)
+axiom1 = forall a : ~Nat(a) + Eq(a a)
+axiom2 = forall a forall b: ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
+axiom3 = forall a forall b forall c: ~Nat(a) + ~Nat(b) + ~Nat(c) + ~Eq(a b) + ~Eq(b c) + Eq(a c) 
+axiom4 = forall a forall b : ~Nat(a) + ~Eq(a b) + Nat(b)
+
+
+axiom5 = forall a forall b thereis c : ~Zero(a) + ~Zero(b) + Zero(c)*Sum(c a b)
+axiom6 = forall a forall b forall c thereis d thereis e thereis f: ~Nat(a) + ~Nat(b) + ~S(b a) + ~Nat(c) + Nat(d)*Sum(d b c)*Nat(e)*Sum(e a c)*Nat(f)*S(f e)*Eq(f d)
+axiom7 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) +  ~Zero(b) + Sum(c a b)*Sum(d b a)*Eq(c d)*Nat(c)*Nat(d)
+axiom8 = forall a forall b: ~Eq(a b) + Eq(b a)
+
+prop1 = forall a forall b thereis c thereis d: ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+
+: prop1 prop1
+:
+
