@@ -563,6 +563,7 @@ public class Interpreter {
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
 		private Tactic tactic;
 		private Prop entity;
+		private int entityCount = 0;
 		private int entityIndex = 0;
 
 		public HypothesisContext(Prop hy, String name) {
@@ -581,12 +582,13 @@ public class Interpreter {
 		public boolean compare(Prop p) {
 			if (currentHypothesis.evaluate(p)) {
 				if (entity != null) {
-					entityIndex++;
-					if (entityIndex < entity.getMatrix().size()) {
+					System.out.println("subcase proven");
+					entityCount++;
+					if (entityCount < entity.getMatrix().size()) {
 						return true;
 					} else {
 						entity = null;
-						entityIndex = 0;
+						entityCount = 0;
 					}
 				}
 				if (currentHypothesis.getPrefix().size() == hypothesis.getPrefix().size()) {
@@ -607,7 +609,7 @@ public class Interpreter {
 			Prop p = hypothesis.getSubset(coveredQuants);
 			for (Quantifier q : coveredQuants) {
 				if (!p.usesQuantifier(q)) {
-					return getNextEntity();
+					return currentHypothesis;
 				}
 			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
@@ -623,7 +625,7 @@ public class Interpreter {
 		public Prop getNextEntity() {
 			if (hasCase()) {
 				try {
-					return getCase();
+					return getCase(entityIndex);
 				} catch (LogicException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -685,8 +687,9 @@ public class Interpreter {
 
 		}
 
-		public Prop getCase() throws LogicException {
-			return entity.getCase(entityIndex);
+		public Prop getCase(int index) throws LogicException {
+			entityIndex = (1 + index) % entity.getMatrix().size();
+			return entity.getCase(index);
 		}
 	}
 
@@ -839,10 +842,13 @@ public class Interpreter {
 
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
+			tokens.getNext();
+			t = tokens.getNext();
 			if (!hypothesisContext.hasCase()) {
 				hypothesisContext.setCase((Prop) env.lookUp("given"));
 			}
-			Prop p = hypothesisContext.getCase();
+			int i = Integer.parseInt(t.getLit());
+			Prop p = hypothesisContext.getCase(i);
 			env.put("subcase", p);
 			return p;
 		}

@@ -27,13 +27,15 @@ prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c
 :
 given
 intermediate
+given
 given = * given axiom2
 given = # c a given
 given = # d b given
-given = * given axiom1
-given = # d a given
-case
-s = subcase
-s = * s axiom3
-s = # d a s
-s = # e b s
+intermediate
+: given
+given
+given = * given axiom3
+given = # e a given
+given = # f b given
+case 1
+intermediate
