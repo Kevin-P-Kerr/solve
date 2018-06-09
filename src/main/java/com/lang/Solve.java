@@ -41,6 +41,7 @@ public class Solve {
 				String s = scanner.nextLine();
 				if (s.startsWith("//")) {
 					// it's a comment
+					System.out.println(s);
 					continue;
 				}
 				if (s.indexOf("exit") == 0) {
