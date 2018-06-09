@@ -580,6 +580,9 @@ public class Interpreter {
 		}
 
 		public boolean compare(Prop p) {
+			if (p == currentHypothesis) {
+				return false; // no cheating!
+			}
 			if (currentHypothesis.evaluate(p)) {
 				if (entity != null) {
 					System.out.println("subcase proven");
