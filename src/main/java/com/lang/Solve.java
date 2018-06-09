@@ -39,6 +39,10 @@ public class Solve {
 		while (scanner.hasNext()) {
 			try {
 				String s = scanner.nextLine();
+				if (s.startsWith("//")) {
+					// it's a comment
+					continue;
+				}
 				if (s.indexOf("exit") == 0) {
 					break;
 				}
