@@ -118,9 +118,7 @@ public class Prop extends Value {
 			}
 			int seed = 31;
 			seed *= name.hashCode();
-			for (Hecceity h : getHecceities()) {
-				seed *= h.hashCode();
-			}
+			seed *= Integer.hashCode(getHecceities().size());
 			hashCode = seed * new Boolean(truthValue).hashCode();
 			return hashCode;
 		}
@@ -144,6 +142,18 @@ public class Prop extends Value {
 			List<Hecceity> hecs = p.getHecceities();
 			if (hecceities.size() != hecs.size()) {
 				return false;
+			}
+			return true;
+		}
+
+		// assume equal hashCodes
+		public boolean exactExactEquals(AtomicProp aap) {
+			List<Hecceity> hecs = getHecceities();
+			List<Hecceity> compHecs = aap.getHecceities();
+			for (int i = 0, ii = hecs.size(); i < ii; i++) {
+				if (hecs.get(i) != compHecs.get(i)) {
+					return false;
+				}
 			}
 			return true;
 		}
@@ -346,7 +356,7 @@ public class Prop extends Value {
 					return false;
 				}
 				AtomicProp aap = atoms.get(i);
-				if (aap.getTruthValue() != ap.getTruthValue()) {
+				if (!ap.exactExactEquals(aap)) {
 					return false;
 				}
 			}
