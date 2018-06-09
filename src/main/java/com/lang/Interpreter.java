@@ -615,7 +615,8 @@ public class Interpreter {
 			Prop p = hypothesis.getSubset(coveredQuants);
 			for (Quantifier q : coveredQuants) {
 				if (!p.usesQuantifier(q)) {
-					return null;
+					p = getNextHypothesis();
+					break;
 				}
 			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
@@ -741,15 +742,7 @@ public class Interpreter {
 			}
 			if (!tokens.hasToken()) {
 				Prop prop = hypothesisContext.getNextHypothesis();
-				Prop g = null;
-				while (prop == null) {
-					g = hypothesisContext.getNextEntity();
-					prop = hypothesisContext.getNextHypothesis();
-				}
 				env.put("intermediate", prop);
-				if (g != null) {
-					env.put("given", g);
-				}
 				return prop;
 			}
 			Prop p = (Prop) eval(env);
