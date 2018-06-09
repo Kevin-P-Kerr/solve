@@ -622,7 +622,7 @@ public class Interpreter {
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
 			currentHypothesis = p;
-			return removeDefects(p);
+			return p;
 		}
 
 		public Prop getNextEntity() {
