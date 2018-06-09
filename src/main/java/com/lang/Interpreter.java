@@ -217,12 +217,15 @@ public class Interpreter {
 		return prop3;
 	}
 
-	private Value product(Value v1, Value v2) {
+	private Value product(Value v1, Value v2, boolean copyHecceities) {
 		if (v1 instanceof Undefined || v2 instanceof Undefined) {
 			return Undefined.undefined;
 		}
 		Prop p1 = (Prop) v1;
 		Prop p2 = (Prop) v2;
+		if (copyHecceities) {
+			return prodProps(p1.copyWithHecceities(), p2.copy());
+		}
 		return prodProps(p1.copy(), p2.copy());
 	}
 
@@ -785,9 +788,12 @@ public class Interpreter {
 		}
 		if (t.getType().equals(TokenType.TT_ASTER)) {
 			tokens.getNext();
+			t = tokens.peek();
+
 			Value v1 = eval(env);
 			Value v2 = eval(env);
-			return product(v1, v2);
+
+			return product(v1, v2, true);
 		}
 		if (t.getType().equals(TokenType.TT_DOLLAR)) {
 			tokens.getNext();
