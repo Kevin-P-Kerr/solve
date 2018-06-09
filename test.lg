@@ -31,29 +31,3 @@ axiom4 = forall a forall b forall c thereis d thereis e thereis f : ~Nat(a) + ~N
 axiom5 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
 // a+b=b+a
 prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
-: prop1 prop1
-:
-:
-given
-intermediate
-given
-given = * given axiom2
-given = # c a given
-given = # d b given
-intermediate
-: given
-given
-given = * given axiom3
-given = # e a given
-given = # f b given
-case 1
-: subcase
-s = subcase
-s = * s axiom1
-s = # e a s
-s = * s thereis a thereis b thereis c thereis d: Nat(a)*Nat(b)*Nat(c)*Nat(d)*Sum(c a b)*Sum(d b a)*Eq(c d)
-:intermediate
-: intermediate
-intermediate
-s
-: s
