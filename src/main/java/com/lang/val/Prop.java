@@ -346,7 +346,7 @@ public class Prop extends Value {
 					return false;
 				}
 				AtomicProp aap = atoms.get(i);
-				if (aap.hashCode != ap.hashCode()) {
+				if (aap.getTruthValue() != ap.getTruthValue()) {
 					return false;
 				}
 			}
