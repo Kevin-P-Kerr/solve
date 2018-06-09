@@ -580,9 +580,6 @@ public class Interpreter {
 		}
 
 		public boolean compare(Prop p) {
-			if (p == currentHypothesis) {
-				return false;
-			}
 			if (currentHypothesis.evaluate(p)) {
 				if (entity != null) {
 					System.out.println("subcase proven");
@@ -621,8 +618,8 @@ public class Interpreter {
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
-			currentHypothesis = removeDefects(p);
-			return currentHypothesis;
+			currentHypothesis = p;
+			return removeDefects(p);
 		}
 
 		public Prop getNextEntity() {
