@@ -1115,12 +1115,23 @@ public class Prop extends Value {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			Set<AtomicProp> atoms = Sets.newHashSet();
 			for (AtomicProp ap : cp.getAtomicProps()) {
-				if (atoms.contains(ap)) {
-					continue;
+				boolean flag = false;
+				for (AtomicProp aap : atoms) {
+					if (aap == ap) {
+						flag = true;
+						break;
+					}
+					if (aap.equals(ap) && aap.exactExactEquals(ap)) {
+						flag = true;
+						break;
+					}
 				}
-				atoms.add(ap);
-				ncp.addAtomicProp(ap);
+				if (!flag) {
+					atoms.add(ap);
+					ncp.addAtomicProp(ap);
+				}
 			}
+			// TODO: do something like exact contains
 			if (compounds.contains(ncp)) {
 				continue;
 			}
