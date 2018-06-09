@@ -1064,6 +1064,7 @@ public class Prop extends Value {
 		return replace(f, t);
 	}
 
+	// TODO: this is (probably) fine. but in the future use the exactEquals method on AtomicProp
 	private static boolean contradiction(CompoundProp cp) {
 		Map<String, Boolean> boolMap = Maps.newHashMap();
 
