@@ -157,6 +157,15 @@ public class Prop extends Value {
 			}
 			return true;
 		}
+
+		public boolean containsAnyHecceity(List<Hecceity> hecs) {
+			for (Hecceity h : hecs) {
+				if (hecceities.contains(h)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	public class CompoundProp {
@@ -353,9 +362,11 @@ public class Prop extends Value {
 			for (AtomicProp ap : getAtomicProps()) {
 				boolean flag = false;
 				for (AtomicProp comp : atoms) {
-					if (ap.equals(comp) && ap.exactExactEquals(comp)) {
-						flag = true;
-						break;
+					if (ap.equals(comp)) {
+						if (ap.exactExactEquals(comp) || ap.containsAnyHecceity(comp.getHecceities())) {
+							flag = true;
+							break;
+						}
 					}
 				}
 				if (!flag) {

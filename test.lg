@@ -47,3 +47,8 @@ s = * s axiom3
 s = # c a s
 s = # d b s
 : s
+given
+subcase
+intermediate
+axiom1a
+s = subcase
