@@ -30,7 +30,7 @@ axiom4 = forall a forall b forall c thereis d thereis e thereis f : ~Nat(a) + ~N
 // a = b implies b = a
 axiom5 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
 // a,b implies c=a+b
-axiom6 = forall a forall b thereis c : ~Nat(a) + ~Nat(b) + Sum(c a b)
+axiom6 = forall a forall b thereis c : ~Nat(a) + ~Nat(b) + Sum(c a b)*Nat(c)
 // a+b=b+a
 prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
 :prop1 prop1
@@ -54,3 +54,11 @@ s
 subcase
 _s = s
 s = subcase
+s = * s axiom6
+s = # d b s
+s = # e c s
+_s
+s
+s = * s axiom6
+s = # f b s
+s = # e c s
