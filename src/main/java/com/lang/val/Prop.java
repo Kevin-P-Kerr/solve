@@ -351,12 +351,14 @@ public class Prop extends Value {
 		public boolean evaluate(CompoundProp ccp) {
 			List<AtomicProp> atoms = ccp.getAtomicProps();
 			for (AtomicProp ap : getAtomicProps()) {
-				int i = atoms.indexOf(ap);
-				if (i < 0) {
-					return false;
+				boolean flag = false;
+				for (AtomicProp comp : atoms) {
+					if (ap.equals(comp) && ap.exactExactEquals(comp)) {
+						flag = true;
+						break;
+					}
 				}
-				AtomicProp aap = atoms.get(i);
-				if (!ap.exactExactEquals(aap)) {
+				if (!flag) {
 					return false;
 				}
 			}
