@@ -218,12 +218,15 @@ public class Interpreter {
 		return prop3;
 	}
 
-	private Value product(Value v1, Value v2) {
+	private Value product(Value v1, Value v2, boolean copyHecceities) {
 		if (v1 instanceof Undefined || v2 instanceof Undefined) {
 			return Undefined.undefined;
 		}
 		Prop p1 = (Prop) v1;
 		Prop p2 = (Prop) v2;
+		if (copyHecceities) {
+			return prodProps(p1.copyWithHecceities(), p2.copy());
+		}
 		return prodProps(p1.copy(), p2.copy());
 	}
 
@@ -516,18 +519,60 @@ public class Interpreter {
 		this.hypothesisContext = context;
 	}
 
+	private static class Tactic extends Value {
+		private final List<TokenStream> lines = Lists.newArrayList();
+		private final List<String> envNames;
+		private final Environment env;
+
+		public Tactic(Environment env, List<String> names) {
+			this.env = env;
+			this.envNames = names;
+		}
+
+		public Value eval(List<Value> args) throws LogicException, ParseException {
+			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
+			args.remove(args.size() - 1);
+			Prop given = hcontext.getNextEntity();
+			env.put("given", given);
+
+			Value v = Undefined.undefined;
+			if (args.size() != envNames.size()) {
+				throw new LogicException("args and passed vals must agree");
+			}
+			for (int i = 0, ii = args.size(); i < ii; i++) {
+				env.put(envNames.get(i), args.get(i));
+			}
+			for (TokenStream ln : lines) {
+				Interpreter interp = new Interpreter(ln);
+				interp.setHypothesisContext(hcontext);
+				v = interp.eval(env);
+				hcontext = interp.getHypothesisContext();
+			}
+			if (hcontext != null && !hcontext.isProven()) {
+				throw new LogicException("invalid argument!");
+			}
+			return env.lookUp("given");
+		}
+
+		public void addLine(TokenStream tokens) {
+			lines.add(tokens);
+		}
+	}
+
 	public static class HypothesisContext {
 		private final Prop hypothesis;
 		private final String name;
-		private final Environment env;
 		private Prop currentHypothesis;
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
+		private Tactic tactic;
+		private Prop entity;
+		private int entityCount = 0;
+		private int entityIndex = 0;
 
-		public HypothesisContext(Prop hy, String name, Environment env) {
+		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
 			this.hypothesis = hy;
-			this.env = env;
 		}
 
 		public boolean isProven() {
@@ -539,7 +584,20 @@ public class Interpreter {
 		}
 
 		public boolean compare(Prop p) {
+			if (p == currentHypothesis) {
+				return false; // no cheating!
+			}
 			if (currentHypothesis.evaluate(p)) {
+				if (entity != null) {
+					System.out.println("subcase proven");
+					entityCount++;
+					if (entityCount < entity.getMatrix().size()) {
+						return true;
+					} else {
+						entity = null;
+						entityCount = 0;
+					}
+				}
 				if (currentHypothesis.getPrefix().size() == hypothesis.getPrefix().size()) {
 					proven = true;
 				}
@@ -552,15 +610,14 @@ public class Interpreter {
 			int currentIndex = coveredQuants.size() == 0 ? 0
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
 			currentIndex++;
-			coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
+			if (coveredQuants.size() < hypothesis.getPrefix().size()) {
+				coveredQuants.add(hypothesis.getPrefix().get(currentIndex));
+			}
 			Prop p = hypothesis.getSubset(coveredQuants);
 			for (Quantifier q : coveredQuants) {
 				if (!p.usesQuantifier(q)) {
-					Prop given = getNextEntity();
-					this.env.put("given", given);
-					Prop h = getNextHypothesis();
-					this.currentHypothesis = h;
-					return h;
+					p = getNextHypothesis();
+					break;
 				}
 			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
@@ -574,28 +631,73 @@ public class Interpreter {
 		}
 
 		public Prop getNextEntity() {
+			if (hasCase()) {
+				try {
+					return getCase(entityIndex);
+				} catch (LogicException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			int currentIndex = coveredQuants.size() == 0 ? 0
 					: hypothesis.getPrefix().indexOf(coveredQuants.get(coveredQuants.size() - 1));
+			boolean hasThereis = false;
 			for (int ii = hypothesis.getPrefix().size(); currentIndex < ii; currentIndex++) {
 				Quantifier q = hypothesis.getPrefix().get(currentIndex);
 				if (q.getType().equals(QuantifierType.THEREIS)) {
+					hasThereis = true;
 					break;
 				} else {
 					coveredQuants.add(q);
 				}
 			}
-			Prop p = hypothesis.getSubset(coveredQuants).negate();
+			Prop p;
+			if (hasThereis) {
+				p = hypothesis.getSubset(coveredQuants).negateMatrix();
+			} else {
+				Prop coveredCompounds = hypothesis.getSubset(coveredQuants);
+				coveredCompounds.getMatrix().remove(coveredCompounds.getMatrix().size() - 1);
+				p = coveredCompounds.negateMatrix();
+			}
 			List<Quantifier> newPrefix = Lists.newArrayList();
 			for (Quantifier q : p.getPrefix()) {
 				newPrefix.add(new Quantifier(QuantifierType.THEREIS, q.getHecceity()));
 			}
 			p.getPrefix().clear();
 			p.getPrefix().addAll(newPrefix);
-			return p;
+			return removeDefects(p);
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public void setTactic(Tactic tactic) {
+			this.tactic = tactic;
+		}
+
+		public Tactic getTactic() {
+			return tactic;
+		}
+
+		public boolean hasCase() {
+			return entity != null;
+		}
+
+		public void setCase(Prop p) {
+			entity = p;
+		}
+
+		public void addLine(TokenStream tokens) {
+			if (tactic != null) {
+				tactic.addLine(tokens);
+			}
+
+		}
+
+		public Prop getCase(int index) throws LogicException {
+			entityIndex = (1 + index) % entity.getMatrix().size();
+			return entity.getCase(index);
 		}
 	}
 
@@ -604,6 +706,11 @@ public class Interpreter {
 			return Undefined.undefined;
 		}
 		Token t = tokens.peek();
+		if (t.getType().equals(TokenType.TT_EXCLAIM)) {
+			tokens.getNext();
+			Prop p = (Prop) eval(env);
+			return removeDefects(p.negateMatrix());
+		}
 		if (t.getType().equals(TokenType.TT_RBRAK)) {
 			tokens.getNext();
 			t = tokens.getNext();
@@ -629,7 +736,7 @@ public class Interpreter {
 				String name = t.getLit();
 				tokens.getClass();
 				Prop hypo = (Prop) eval(env);
-				hypothesisContext = new HypothesisContext(hypo, name, env);
+				hypothesisContext = new HypothesisContext(hypo, name);
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);
 				return ret;
@@ -645,11 +752,21 @@ public class Interpreter {
 					System.out.println(hypothesisContext.getName() + " is proven");
 					env.put(hypothesisContext.getName(), hypothesisContext.getHypothesis());
 					Prop ret = hypothesisContext.getHypothesis();
+					Tactic tactic = hypothesisContext.getTactic();
+					String name = hypothesisContext.getName();
+					env.put("intermediate", Undefined.undefined);
+					if (tactic != null) {
+						env.put(name, tactic);
+					}
 					hypothesisContext = null;
 					return ret;
 				}
 				Prop ret = hypothesisContext.getNextEntity();
-				env.put("given", ret);
+				if (hypothesisContext.hasCase()) {
+					env.put("subcase", ret);
+				} else {
+					env.put("given", ret);
+				}
 				return ret;
 			} else {
 				System.out.println("proof not accepted");
@@ -673,9 +790,12 @@ public class Interpreter {
 		}
 		if (t.getType().equals(TokenType.TT_ASTER)) {
 			tokens.getNext();
+			t = tokens.peek();
+
 			Value v1 = eval(env);
 			Value v2 = eval(env);
-			return product(v1, v2);
+
+			return product(v1, v2, true);
 		}
 		if (t.getType().equals(TokenType.TT_DOLLAR)) {
 			tokens.getNext();
@@ -704,9 +824,44 @@ public class Interpreter {
 		// TODO: this should return a value
 		if (t.getType().equals(TokenType.TT_AT)) {
 			tokens.getNext();
-			Value v1 = eval(env);
-			Value v2 = eval(env);
-			return apply((Prop) v1, (Prop) v2);
+			Tactic tactic = (Tactic) eval(env);
+			List<Value> args = Lists.newArrayList();
+			while (tokens.hasToken()) {
+				args.add(eval(env));
+			}
+			return tactic.eval(args);
+		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("tactic")) {
+			tokens.getNext();
+			t = tokens.getNext();
+
+			String tacticName = t.getLit();
+			t = tokens.getNext();
+			List<String> argNames = Lists.newArrayList();
+			while (!t.getType().equals(TokenType.TT_COLON)) {
+				argNames.add(t.getLit());
+				t = tokens.getNext();
+			}
+			Environment t_env = new Environment(env);
+			Tactic tactic = new Tactic(t_env, argNames);
+			Prop p = (Prop) eval(env);
+			hypothesisContext = new HypothesisContext(p, tacticName);
+			hypothesisContext.setTactic(tactic);
+			Prop ret = hypothesisContext.getNextEntity();
+			env.put("given", ret);
+			return ret;
+
+		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
+			tokens.getNext();
+			t = tokens.getNext();
+			if (!hypothesisContext.hasCase()) {
+				hypothesisContext.setCase((Prop) env.lookUp("given"));
+			}
+			int i = Integer.parseInt(t.getLit());
+			Prop p = hypothesisContext.getCase(i);
+			env.put("subcase", p);
+			return p;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
@@ -739,5 +894,12 @@ public class Interpreter {
 			}
 		}
 
+	}
+
+	public Value enterEval(Environment env) throws ParseException, LogicException {
+		if (hypothesisContext != null) {
+			hypothesisContext.addLine(tokens.copy());
+		}
+		return eval(env);
 	}
 }

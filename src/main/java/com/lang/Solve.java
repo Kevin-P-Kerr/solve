@@ -39,6 +39,11 @@ public class Solve {
 		while (scanner.hasNext()) {
 			try {
 				String s = scanner.nextLine();
+				if (s.startsWith("//")) {
+					// it's a comment
+					System.out.println(s);
+					continue;
+				}
 				if (s.indexOf("exit") == 0) {
 					break;
 				}
@@ -68,7 +73,7 @@ public class Solve {
 							if (hypoContext != null) {
 								i.setHypothesisContext(hypoContext);
 							}
-							Value p = i.eval(env);
+							Value p = i.enterEval(env);
 							hypoContext = i.getHypothesisContext();
 							System.out.println(p.toString());
 						} catch (Exception e) {
@@ -85,7 +90,7 @@ public class Solve {
 				if (hypoContext != null) {
 					i.setHypothesisContext(hypoContext);
 				}
-				Value p = i.eval(env);
+				Value p = i.enterEval(env);
 				hypoContext = i.getHypothesisContext();
 				System.out.println(p.toString());
 				System.out.print(" > ");

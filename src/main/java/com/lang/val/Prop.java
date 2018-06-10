@@ -118,9 +118,7 @@ public class Prop extends Value {
 			}
 			int seed = 31;
 			seed *= name.hashCode();
-			for (Hecceity h : hecceities) {
-				seed *= h.hashCode();
-			}
+			seed *= Integer.hashCode(getHecceities().size());
 			hashCode = seed * new Boolean(truthValue).hashCode();
 			return hashCode;
 		}
@@ -145,8 +143,15 @@ public class Prop extends Value {
 			if (hecceities.size() != hecs.size()) {
 				return false;
 			}
-			for (int i = 0, ii = hecceities.size(); i < ii; i++) {
-				if (hecceities.get(i) != hecs.get(i)) {
+			return true;
+		}
+
+		// assume equal hashCodes
+		public boolean exactExactEquals(AtomicProp aap) {
+			List<Hecceity> hecs = getHecceities();
+			List<Hecceity> compHecs = aap.getHecceities();
+			for (int i = 0, ii = hecs.size(); i < ii; i++) {
+				if (hecs.get(i) != compHecs.get(i)) {
 					return false;
 				}
 			}
@@ -341,6 +346,21 @@ public class Prop extends Value {
 				ret.addAll(ap.getHecceities());
 			}
 			return ret;
+		}
+
+		public boolean evaluate(CompoundProp ccp) {
+			List<AtomicProp> atoms = ccp.getAtomicProps();
+			for (AtomicProp ap : getAtomicProps()) {
+				int i = atoms.indexOf(ap);
+				if (i < 0) {
+					return false;
+				}
+				AtomicProp aap = atoms.get(i);
+				if (!ap.exactExactEquals(aap)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 	}
@@ -761,6 +781,21 @@ public class Prop extends Value {
 
 	}
 
+	public Prop getCase(int index) throws LogicException {
+		Prop p = this.copyWithHecceities();
+		CompoundProp cp = p.matrix.get(index);
+		p.matrix.clear();
+		p.matrix.add(cp);
+		List<Quantifier> removals = Lists.newArrayList();
+		for (Quantifier q : p.prefix) {
+			if (!cp.containsHecceity(q.hecceity)) {
+				removals.add(q);
+			}
+		}
+		p.prefix.removeAll(removals);
+		return p;
+	}
+
 	public List<Prop> getIndividualFacts() {
 		List<Quantifier> marked = Lists.newArrayList();
 		List<Prop> ret = Lists.newArrayList();
@@ -1029,6 +1064,7 @@ public class Prop extends Value {
 		return replace(f, t);
 	}
 
+	// TODO: this is (probably) fine. but in the future use the exactEquals method on AtomicProp
 	private static boolean contradiction(CompoundProp cp) {
 		Map<String, Boolean> boolMap = Maps.newHashMap();
 
@@ -1080,12 +1116,23 @@ public class Prop extends Value {
 			CompoundProp ncp = ret.makeBlankCompoundProp();
 			Set<AtomicProp> atoms = Sets.newHashSet();
 			for (AtomicProp ap : cp.getAtomicProps()) {
-				if (atoms.contains(ap)) {
-					continue;
+				boolean flag = false;
+				for (AtomicProp aap : atoms) {
+					if (aap == ap) {
+						flag = true;
+						break;
+					}
+					if (aap.equals(ap) && aap.exactExactEquals(ap)) {
+						flag = true;
+						break;
+					}
 				}
-				atoms.add(ap);
-				ncp.addAtomicProp(ap);
+				if (!flag) {
+					atoms.add(ap);
+					ncp.addAtomicProp(ap);
+				}
 			}
+			// TODO: do something like exact contains
 			if (compounds.contains(ncp)) {
 				continue;
 			}
@@ -1116,7 +1163,7 @@ public class Prop extends Value {
 		Prop p = copyWithHecceities();
 		List<CompoundProp> antecedent = Lists.newArrayList(cp);
 
-		antecedent = negate(antecedent, p);
+		antecedent = negateMatrix(antecedent, p);
 		List<CompoundProp> consequent = Lists.newArrayList();
 		for (CompoundProp ccp : getMatrix()) {
 			if (ccp == cp) {
@@ -1124,7 +1171,7 @@ public class Prop extends Value {
 			}
 			consequent.add(ccp);
 		}
-		consequent = negate(consequent, p);
+		consequent = negateMatrix(consequent, p);
 		List<Quantifier> consPrefix = Lists.newArrayList();
 		for (Quantifier q : p.getPrefix()) {
 			if (invertedQuantifiers.indexOf(q) < 0) {
@@ -1223,13 +1270,13 @@ public class Prop extends Value {
 		 * @formatter:on
 		 */
 		if (type == QuantifierType.THEREIS) {
-			preconditions = negate(preconditions, former);
-			postconditions = negate(postconditions, former);
+			preconditions = negateMatrix(preconditions, former);
+			postconditions = negateMatrix(postconditions, former);
 
 		} else {
 			// forall a b c : ~bar(a b c) + ac == forall a b thereis c ~a + ~c + bar(abc)
-			postconditions = negate(postconditions, former);
-			preconditions = negate(preconditions, former);
+			postconditions = negateMatrix(postconditions, former);
+			preconditions = negateMatrix(preconditions, former);
 		}
 
 		// doesn't really matter but looks nice
@@ -1243,13 +1290,13 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	public Prop negate() {
+	public Prop negateMatrix() {
 		Prop ret = copyWithHecceities();
-		ret.matrix = negate(ret.matrix, ret);
+		ret.matrix = negateMatrix(ret.matrix, ret);
 		return ret;
 	}
 
-	private static List<CompoundProp> negate(CompoundProp cp, Prop p) {
+	private static List<CompoundProp> negateMatrix(CompoundProp cp, Prop p) {
 		List<CompoundProp> ret = Lists.newArrayList();
 		for (AtomicProp ap : cp.getAtomicProps()) {
 			CompoundProp ncp = p.makeBlankCompoundProp();
@@ -1282,13 +1329,13 @@ public class Prop extends Value {
 		return ret;
 	}
 
-	private static List<CompoundProp> negate(List<CompoundProp> matrix, Prop p) {
+	private static List<CompoundProp> negateMatrix(List<CompoundProp> matrix, Prop p) {
 		if (matrix.size() == 1) {
-			return negate(matrix.get(0), p);
+			return negateMatrix(matrix.get(0), p);
 		}
-		List<CompoundProp> base = negate(matrix.get(0), p);
+		List<CompoundProp> base = negateMatrix(matrix.get(0), p);
 		for (int i = 1; i < matrix.size(); i++) {
-			base = combine(base, negate(matrix.get(i), p), p);
+			base = combine(base, negateMatrix(matrix.get(i), p), p);
 		}
 		return base;
 	}
@@ -1319,25 +1366,7 @@ public class Prop extends Value {
 	public boolean evaluate(Prop p) {
 		for (CompoundProp cp : getMatrix()) {
 			for (CompoundProp ccp : p.getMatrix()) {
-				int status = 0;
-				loop1: for (AtomicProp ap : cp.getAtomicProps()) {
-					if (status == -1) {
-						break;
-					}
-					for (AtomicProp aap : ccp.getAtomicProps()) {
-						if (aap.getName().equals(ap.getName())) {
-							if (ap.getTruthValue() == aap.getTruthValue()) {
-								status = 1;
-							} else {
-								status = -1;
-							}
-							continue loop1;
-						}
-					}
-					status = -1;
-					break;
-				}
-				if (status == 1) {
+				if (cp.evaluate(ccp)) {
 					return true;
 				}
 			}

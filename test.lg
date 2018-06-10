@@ -1,0 +1,37 @@
+axiom1 = forall a : ~A(a) + B(a) + C(a)
+axiom2 = forall a : ~B(a) + D(a)
+axiom3 = forall a : ~C(a) + D(a)
+prop1 = forall a: ~A(a) + D(a)
+: prop1 prop1
+:
+given = * given axiom1
+given = # b a given
+/ 0 given
+/ 1 given
+given
+given = * given axiom2
+given = # b a given
+axiom2
+given = * given axiom3
+given = # b a given
+/ 0 given
+proof = / 0 given
+: proof
+
+// define nats
+axiom1 = forall a thereis b: ~Nat(a) + Zero(a) + S(a b)*Nat(b)
+axiom1a = forall a thereis b: ~Nat(a) + S(b a)*Nat(b)
+// a+b implies thereis b+a (but not that they are equal)
+axiom2 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)
+// 0+a=a+0
+axiom3 = forall a forall b thereis c thereis d: ~Nat(a) + ~Zero(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+// S(a)+b = S(a + b)
+axiom4 = forall a forall b forall c thereis d thereis e thereis f : ~Nat(a) + ~Nat(c) + ~S(c a) + ~Nat(b) + Nat(d)*Sum(d b c)*Nat(e)*Sum(e a b)*Nat(f)*S(f e)*Eq(f d)
+// a = b implies b = a
+axiom5 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
+// a+b=b+a
+prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+:prop1 prop1
+:
+given
+intermediate
