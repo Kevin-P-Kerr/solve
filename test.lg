@@ -35,3 +35,17 @@ prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c
 :
 given
 intermediate
+given
+intermediate
+given = * given axiom1
+given = # c a given
+case 0
+given
+subcase
+s = subcase
+s = * s axiom3
+s = # c a s
+s = # d b s
+: s
+intermediate
+s
