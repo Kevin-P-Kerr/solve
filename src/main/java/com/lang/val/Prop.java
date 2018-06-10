@@ -700,11 +700,8 @@ public class Prop extends Value {
 		}
 		return false;
 	}
-
-	public Prop replace(Quantifier from, Quantifier to) throws LogicException {
-		if (!allowedForReplacement(from)) {
-			throw new LogicException();
-		}
+	
+	private Prop replaceInternal(Quantifier from, Quantifier to) {
 		List<Quantifier> pre = getPrefix();
 		Hecceity fh = from.getHecceity();
 		Hecceity th = to.getHecceity();
@@ -728,7 +725,13 @@ public class Prop extends Value {
 			}
 		}
 		return this;
+	}
 
+	public Prop replace(Quantifier from, Quantifier to) throws LogicException {
+		if (!allowedForReplacement(from)) {
+			throw new LogicException();
+		}
+		return replaceInternal(from, to);
 	}
 
 	public List<Quantifier> addAllQuants(List<Quantifier> quants) {
@@ -1377,6 +1380,17 @@ public class Prop extends Value {
 	}
 
 	public boolean evaluate(Prop p) {
+		if (p.getPrefix().size() != getPrefix().size()) {
+			return false;
+		}
+		p = p.copyWithHecceities();
+		for (int i  =0,ii=p.getPrefix().size(); i<ii;i++) {
+			Quantifier q = p.getPrefix().get(i);
+			Quantifier qq = getPrefix().get(i);
+			if (q.getHecceity() != qq.getHecceity()) {
+				p = p.replaceInternal(q, qq);
+			}
+		}
 		for (CompoundProp cp : getMatrix()) {
 			for (CompoundProp ccp : p.getMatrix()) {
 				if (cp.evaluate(ccp)) {
