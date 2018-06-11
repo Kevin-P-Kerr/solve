@@ -54,11 +54,14 @@ s
 subcase
 _s = s
 s = subcase
-s = * s axiom6
-s = # d b s
-s = # e c s
-_s
+assumption = thereis a thereis b thereis c thereis d : Nat(a)*Nat(b)*Nat(c)*Nat(d)*Sum(c a b)*Sum(d b a)*Eq(c d)
+//s = * s assumption
+//s = * s [ b axiom1
 s
 s = * s axiom6
-s = # f b s
+s = # d a s
+s = # e b s
+s = * s axiom4
+s = # g a s
 s = # e c s
+s = # f b s
