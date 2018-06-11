@@ -46,3 +46,17 @@ s = subcase
 s = * s axiom3
 s = # c a s
 s = # d b s
+: s
+a
+s
+subcase 
+_s = s
+s = subcase
+//s  = * s axiom4
+//axiom4
+//s = # f a s
+//s = # d c s
+//s = # e b s
+assert = thereis a thereis b thereis c thereis d : Nat(a)*Nat(b)*Nat(c)*Nat(d)*Sum(c a b)*(d b a)*Eq(c d)
+h = s
+s = * s assert
