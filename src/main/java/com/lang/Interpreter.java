@@ -863,6 +863,16 @@ public class Interpreter {
 			env.put("subcase", p);
 			return p;
 		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("induct")) {
+			tokens.getNext();
+			t = tokens.getNext();
+			int i = Integer.parseInt(t.getLit());
+			t = tokens.getNext();
+			if (!hypothesisContext.hasCase()) {
+				hypothesisContext.setCase((Prop) env.lookUp("given"));
+			}
+			
+		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
 			String varName = t.getLit();
