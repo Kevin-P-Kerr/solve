@@ -868,10 +868,12 @@ public class Interpreter {
 			t = tokens.getNext();
 			int i = Integer.parseInt(t.getLit());
 			t = tokens.getNext();
-			if (!hypothesisContext.hasCase()) {
-				hypothesisContext.setCase((Prop) env.lookUp("given"));
-			}
-			
+			Prop given = (Prop) env.lookUp("given");
+			Prop inductionPredicate = given.factor().get(i);
+			Prop inductionAxiom = (Prop) eval(env);
+			hypothesisContext.startInduction(inductionPredicate,inductionAxiom);
+			given = hypothesisContext.getInductionEntity();
+			return given;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
