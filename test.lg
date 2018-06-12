@@ -32,6 +32,8 @@ axiom5 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
 // a,b implies c=a+b
 axiom6 = forall a forall b thereis c : ~Nat(a) + ~Nat(b) + Sum(c a b)*Nat(c)
 // a+b=b+a
+// induction axiom: if 0+a=a+a then thereis S(b) such that b+c = c+b
+axiom7 = forall : ~Nat(a) + ~Zero(a) + ~N
 prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
 :prop1 prop1
 :
