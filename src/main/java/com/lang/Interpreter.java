@@ -1,5 +1,6 @@
 package com.lang;
 
+import java.beans.PropertyDescriptor;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -143,7 +144,7 @@ public class Interpreter {
 		addAllCompoundProps(p3, p2);
 	}
 
-	private void multMatrix(Prop p1, Prop p2, Prop p3) {
+	private static void multMatrix(Prop p1, Prop p2, Prop p3) {
 		for (CompoundProp m : p1.getMatrix()) {
 			for (CompoundProp mc : p2.getMatrix()) {
 				CompoundProp np = p3.makeBlankCompoundProp();
@@ -211,7 +212,7 @@ public class Interpreter {
 		p3.addAllQuants(p2.getPrefix());
 	}
 
-	private Prop prodProps(Prop p1, Prop p2) {
+	private static Prop prodProps(Prop p1, Prop p2) {
 		Prop prop3 = new Prop();
 		multPrefix(p1, p2, prop3);
 		multMatrix(p1, p2, prop3);
@@ -569,6 +570,8 @@ public class Interpreter {
 		private Prop entity;
 		private int entityCount = 0;
 		private int entityIndex = 0;
+		private int inductionIndex;
+		private Prop inductionCase;
 
 		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
@@ -698,6 +701,12 @@ public class Interpreter {
 		public Prop getCase(int index) throws LogicException {
 			entityIndex = (1 + index) % entity.getMatrix().size();
 			return entity.getCase(index);
+		}
+
+		public void startInduction(Prop inductionPredicate, Prop inductionAxiom, Prop given) {
+			this.inductionCase =  removeDefects(prodProps(inductionAxiom, inductionPredicate));
+			this.entity = given;
+			this.inductionIndex = 0;
 		}
 	}
 
@@ -871,7 +880,7 @@ public class Interpreter {
 			Prop given = (Prop) env.lookUp("given");
 			Prop inductionPredicate = given.factor().get(i);
 			Prop inductionAxiom = (Prop) eval(env);
-			hypothesisContext.startInduction(inductionPredicate,inductionAxiom);
+			hypothesisContext.startInduction(inductionPredicate,inductionAxiom,given);
 			given = hypothesisContext.getInductionEntity();
 			return given;
 		}
