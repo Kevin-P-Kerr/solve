@@ -363,7 +363,7 @@ public class Prop extends Value {
 				boolean flag = false;
 				for (AtomicProp comp : atoms) {
 					if (ap.equals(comp)) {
-						if (ap.exactExactEquals(comp) || ap.containsAnyHecceity(comp.getHecceities())) {
+						if (ap.exactExactEquals(comp)) {
 							flag = true;
 							break;
 						}
@@ -700,7 +700,7 @@ public class Prop extends Value {
 		}
 		return false;
 	}
-	
+
 	private Prop replaceInternal(Quantifier from, Quantifier to) {
 		List<Quantifier> pre = getPrefix();
 		Hecceity fh = from.getHecceity();
@@ -1384,7 +1384,7 @@ public class Prop extends Value {
 			return false;
 		}
 		p = p.copyWithHecceities();
-		for (int i  =0,ii=p.getPrefix().size(); i<ii;i++) {
+		for (int i = 0, ii = p.getPrefix().size(); i < ii; i++) {
 			Quantifier q = p.getPrefix().get(i);
 			Quantifier qq = getPrefix().get(i);
 			if (q.getHecceity() != qq.getHecceity()) {
