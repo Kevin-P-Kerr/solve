@@ -15,7 +15,7 @@ given = * given axiom2
 given = # d c given
 given = # f a given
 given = # e b given
-: given
+: / 5 given
 : prop2 prop2
 :
 given = * given [ 7 axiom4
