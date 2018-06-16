@@ -570,8 +570,7 @@ public class Interpreter {
 		private Prop entity;
 		private int entityCount = 0;
 		private int entityIndex = 0;
-		private int inductionIndex;
-		private Prop inductionCase;
+		
 
 		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
@@ -701,13 +700,7 @@ public class Interpreter {
 		public Prop getCase(int index) throws LogicException {
 			entityIndex = (1 + index) % entity.getMatrix().size();
 			return entity.getCase(index);
-		}
-
-		public void startInduction(Prop inductionPredicate, Prop inductionAxiom, Prop given) {
-			this.inductionCase =  removeDefects(prodProps(inductionAxiom, inductionPredicate));
-			this.entity = given;
-			this.inductionIndex = 0;
-		}
+		}	
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
@@ -875,13 +868,7 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("induct")) {
 			tokens.getNext();
 			t = tokens.getNext();
-			int i = Integer.parseInt(t.getLit());
-			t = tokens.getNext();
-			Prop given = (Prop) env.lookUp("given");
-			Prop inductionPredicate = given.factor().get(i);
-			Prop inductionAxiom = (Prop) eval(env);
-			hypothesisContext.startInduction(inductionPredicate,inductionAxiom,given);
-			given = hypothesisContext.getInductionEntity();
+			
 			return given;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
