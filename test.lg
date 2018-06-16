@@ -41,7 +41,7 @@ given
 intermediate
 given = * given axiom1
 given = # c a given
-case 0
+induct 0
 given
 subcase
 s = subcase
@@ -51,27 +51,3 @@ s = # d b s
 s
 : s
 s
-subcase
-_s = s
-s = subcase
-assumption = thereis a thereis b thereis c thereis d : Nat(a)*Nat(b)*Nat(c)*Nat(d)*Sum(c a b)*Sum(d b a)*Eq(c d)
-//s = * s assumption
-//s = * s [ b axiom1
-s
-s = * s axiom6
-s = # d a s
-s = # e b s
-s = * s axiom4
-s = # g a s
-s = # e c s
-s = # f b s
-_s = s
-s = subcase
-//s  = * s axiom4
-//axiom4
-//s = # f a s
-//s = # d c s
-//s = # e b s
-assert = thereis a thereis b thereis c thereis d : Nat(a)*Nat(b)*Nat(c)*Nat(d)*Sum(c a b)*(d b a)*Eq(c d)
-h = s
-s = * s assert

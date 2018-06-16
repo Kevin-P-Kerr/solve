@@ -703,7 +703,11 @@ public class Interpreter {
 
 		public Prop getCase(int index) throws LogicException {
 			entityIndex = (1 + index) % entity.getMatrix().size();
-			return entity.getCase(index);
+			Prop ret = entity.getCase(index);
+			if (isInduction && baseCaseProven) {
+				return removeDefects(prodProps(ret.copyWithHecceities(), currentHypothesis.copyWithHecceities()));
+			}
+			return ret;
 		}
 
 		public void startInduction() {
