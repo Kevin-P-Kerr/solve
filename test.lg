@@ -19,3 +19,16 @@ proof = / 0 given
 : proof
 
 // define nats
+axiom1 = forall a thereis b: ~Nat(a) + ~Zero(a) + Nat(b)*S(a b)
+// define addition
+axiom2 = forall a forall b thereis c: ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)
+// define predicates of nats
+axiom3 = forall a forall b thereis c: ~Pred(a) + ~Nat(b) + TruthValue(c)Apply(c a b)
+// define truth values
+axiom4 = forall a: ~TruthValue(a) + True(a) + False(a)
+// induction
+axiom5 = forall a forall b thereis c: ~Pred(a) + ~TrueZero(a) + ~TrueSuccess(a) + ~Nat(b) + TruthValue(c)*True(c)*Apply(c a b)
+// sumEquals
+sumEquals = thereis a forall b forall c thereis d thereis e thereis f: ~Pred(a) + ~Nat(b) + ~Nat(c) + ~Sum(d b c) + ~Sum(e c b) + ~Eq(d e) + TruthValue(f)*True(f)*Apply(f a b)
+
+
