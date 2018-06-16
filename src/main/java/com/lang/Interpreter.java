@@ -570,7 +570,8 @@ public class Interpreter {
 		private Prop entity;
 		private int entityCount = 0;
 		private int entityIndex = 0;
-		
+		private boolean isInduction = false;
+		private boolean baseCaseProven = false;
 
 		public HypothesisContext(Prop hy, String name) {
 			this.name = name;
@@ -592,6 +593,9 @@ public class Interpreter {
 			if (currentHypothesis.evaluate(p)) {
 				if (entity != null) {
 					System.out.println("subcase proven");
+					if (isInduction && !baseCaseProven) {
+						baseCaseProven = true;
+					}
 					entityCount++;
 					if (entityCount < entity.getMatrix().size()) {
 						return true;
@@ -700,6 +704,11 @@ public class Interpreter {
 		public Prop getCase(int index) throws LogicException {
 			entityIndex = (1 + index) % entity.getMatrix().size();
 			return entity.getCase(index);
+		}
+
+		public void startInduction() {
+			 isInduction = true;
+			 baseCaseProven = false;
 		}	
 	}
 
@@ -868,8 +877,14 @@ public class Interpreter {
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("induct")) {
 			tokens.getNext();
 			t = tokens.getNext();
-			
-			return given;
+			if (!hypothesisContext.hasCase()) {
+				hypothesisContext.setCase((Prop) env.lookUp("given"));
+				hypothesisContext.startInduction();
+			}
+			int i = Integer.parseInt(t.getLit());
+			Prop p = hypothesisContext.getCase(i);
+			env.put("subcase", p);
+			return p;
 		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
