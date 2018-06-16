@@ -25,29 +25,38 @@ axiom1a = forall a thereis b: ~Nat(a) + S(b a)*Nat(b)
 axiom2 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)
 // 0+a=a+0
 axiom3 = forall a forall b thereis c thereis d: ~Nat(a) + ~Zero(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+assert1 = thereis a thereis b thereis c thereis d: Nat(a)*Nat(b)*Nat(c)*Nat(d)*Zero(a)*Sum(c a b)*Sum(d a b)*Eq(c d)
 // S(a)+b = S(a + b)
 axiom4 = forall a forall b forall c thereis d thereis e thereis f : ~Nat(a) + ~Nat(c) + ~S(c a) + ~Nat(b) + Nat(d)*Sum(d b c)*Nat(e)*Sum(e a b)*Nat(f)*S(f e)*Eq(f d)
 // a = b implies b = a
 axiom5 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
 // a,b implies c=a+b
 axiom6 = forall a forall b thereis c : ~Nat(a) + ~Nat(b) + Sum(c a b)*Nat(c)
+// a+0=0+a -> S(0)+a=a+S(0)
+axiom7 = forall a forall b forall d forall e thereis f thereis g thereis c:   ~Nat(a) + ~Zero(a) + ~Nat(b) + ~Sum(d a b) + ~Sum(e b a) + ~Eq(d e) + Nat(c)*S(c a)*Sum(f c b)*Sum(g b c)*Eq(g f)
+// S(0)+a=a+S(0)
+prop1 = forall a forall b forall c thereis d thereis e : ~Nat(a) + ~Nat(b) + ~Nat(c) + ~S(a b) + Sum(d a c)*Sum(e c a)*Eq(d e)
 // a+b=b+a
-prop1 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+//prop2 = forall a forall b thereis c thereis d : ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)*Nat(d)*Sum(d b a)*Eq(c d)
+//:prop2 prop2
+//:
+//given = * given axiom1
+//given = # c a given
+//case 0
+//subcase
+//s = subcase
+//s = * s axiom3
+//s = # c a s
+//s = # d b s
+//: s
+//subcase
+//s = subcase
+prop1
 :prop1 prop1
-:
-given
-intermediate
-given
-intermediate
-given = * given axiom1
-given = # c a given
-induct 0
-given
-subcase
-s = subcase
-s = * s axiom3
-s = # c a s
-s = # d b s
-s
-: s
-s
+c = * assert1 axiom7
+assert1
+axiom7
+c = # e a c
+c = # f b c
+c = # g c c
+c = # h d c
