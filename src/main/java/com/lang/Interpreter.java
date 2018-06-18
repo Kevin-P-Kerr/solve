@@ -229,7 +229,7 @@ public class Interpreter {
 		if (copyHecceities) {
 			return prodProps(p1.copyWithHecceities(), p2.copyWithHecceities());
 		}
-		return prodProps(p1.copy(), p2.copy());
+		return prodProps(p1.copyWithHecceities(), p2.copy());
 	}
 
 	private final void addConstructors(Value v) {

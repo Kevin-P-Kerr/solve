@@ -441,7 +441,7 @@ public class Prop extends Value {
 		Quantifier fromQ = prefix.get(from);
 		Quantifier toQ = prefix.get(to);
 		if (quantifierContraints.size() == 0) {
-			throw new LogicException("no quantifier constraints ");
+			//throw new LogicException("no quantifier constraints ");
 		}
 		try {
 			for (List<Quantifier> quants : quantifierContraints) {
