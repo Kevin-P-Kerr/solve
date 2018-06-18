@@ -20,15 +20,13 @@ proof = / 0 given
 
 // define nats
 axiom1 = forall a thereis b: ~Nat(a) + ~Zero(a) + Nat(b)*S(a b)
+axiom2 = forall a : ~Zero(a) + Nat(a)
+axiom3 = forall a forall b: ~S(a b) + Nat(a)*Nat(b)
+// define equality 
+axiom4 = forall a forall b : ~Nat(a) + ~Nat(b) + ~Eq(a b) + Eq(b a)
 // define addition
-axiom2 = forall a forall b thereis c: ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)
-// define predicates of nats
-axiom3 = forall a forall b thereis c: ~Pred(a) + ~Nat(b) + TruthValue(c)Apply(c a b)
-// define truth values
-axiom4 = forall a: ~TruthValue(a) + True(a) + False(a)
-// induction
-axiom5 = forall a forall b thereis c: ~Pred(a) + ~TrueZero(a) + ~TrueSuccess(a) + ~Nat(b) + TruthValue(c)*True(c)*Apply(c a b)
-// sumEquals
-sumEquals = thereis a forall b forall c thereis d thereis e thereis f: ~Pred(a) + ~Nat(b) + ~Nat(c) + ~Sum(d b c) + ~Sum(e c b) + ~Eq(d e) + TruthValue(f)*True(f)*Apply(f a b)
-
+axiom5 = forall a forall b thereis c: ~Nat(a) + ~Nat(b) + Nat(c)*Sum(c a b)
+axiom6 = forall a forall b forall c thereis d : ~Zero(a) + ~Nat(b) + ~Sum(c a b) + Sum(d b a)*Eq(d c)
+axiom7 = forall a forall b forall c forall d thereis e thereis f : ~Nat(a) + ~S(b c) + ~Sum(d b a) + Sum(e c a)*S(f e)*Eq(f e)
+// define predicates
 
