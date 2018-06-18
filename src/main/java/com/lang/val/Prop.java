@@ -1413,4 +1413,15 @@ public class Prop extends Value {
 		return false;
 	}
 
+	public boolean sharesHecceities(Prop p2) {
+		List<Hecceity> hecs = p2.getHecceties();
+		List<Hecceity> localHecs = getHecceties();
+		for (Hecceity h:hecs) {
+			if (localHecs.contains(h)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

@@ -219,14 +219,15 @@ public class Interpreter {
 		return prop3;
 	}
 
-	private Value product(Value v1, Value v2, boolean copyHecceities) {
+	private Value product(Value v1, Value v2) {
 		if (v1 instanceof Undefined || v2 instanceof Undefined) {
 			return Undefined.undefined;
 		}
 		Prop p1 = (Prop) v1;
 		Prop p2 = (Prop) v2;
+		boolean copyHecceities = !p1.sharesHecceities(p2);
 		if (copyHecceities) {
-			return prodProps(p1.copyWithHecceities(), p2.copy());
+			return prodProps(p1.copyWithHecceities(), p2.copyWithHecceities());
 		}
 		return prodProps(p1.copy(), p2.copy());
 	}
@@ -810,7 +811,7 @@ public class Interpreter {
 			Value v1 = eval(env);
 			Value v2 = eval(env);
 
-			return product(v1, v2, true);
+			return product(v1, v2);
 		}
 		if (t.getType().equals(TokenType.TT_DOLLAR)) {
 			tokens.getNext();
