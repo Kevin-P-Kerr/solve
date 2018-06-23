@@ -1,3 +1,4 @@
+read tools/apply.lg
 // define a convenience predicate
 triple_terms = forall a forall b forall c : ~TripleTerms(a b c) + Term(a)*Term(b)*Term(c)
 // define conversion

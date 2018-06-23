@@ -3,6 +3,7 @@ package com.lang;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +18,35 @@ import com.lang.val.Prop.LogicException;
 import com.lang.val.Value;
 
 public class Solve {
+	
+	private static void read (String s, List<String> lines, HypothesisContext hypoContext, Environment env) throws IOException {
+		String[] l = s.split(" ");
+		BufferedReader br = new BufferedReader(new FileReader(l[1]));
+		String st;
+		while ((st = br.readLine()) != null) {
+			try {
+				System.out.println(st);
+				lines.add(st);
+				if (st.indexOf("read") == 0) {
+					read(s,lines,hypoContext,env);
+					continue;
+				}
+				TokenStream tokens = Tokenizer.tokenize(st);
+
+				Interpreter i = new Interpreter(tokens);
+				if (hypoContext != null) {
+					i.setHypothesisContext(hypoContext);
+				}
+				Value p = i.enterEval(env);
+				hypoContext = i.getHypothesisContext();
+				System.out.println(p.toString());
+			} catch (Exception e) {
+
+			}
+		}
+		br.close();
+		System.out.print(" > ");
+	}
 
 	public static void main(String args[]) {
 		System.out.print(" > ");
@@ -60,28 +90,7 @@ public class Solve {
 					continue;
 				}
 				if (s.indexOf("read") == 0) {
-					String[] l = s.split(" ");
-					BufferedReader br = new BufferedReader(new FileReader(l[1]));
-					String st;
-					while ((st = br.readLine()) != null) {
-						try {
-							System.out.println(st);
-							lines.add(st);
-							TokenStream tokens = Tokenizer.tokenize(st);
-
-							Interpreter i = new Interpreter(tokens);
-							if (hypoContext != null) {
-								i.setHypothesisContext(hypoContext);
-							}
-							Value p = i.enterEval(env);
-							hypoContext = i.getHypothesisContext();
-							System.out.println(p.toString());
-						} catch (Exception e) {
-
-						}
-					}
-					br.close();
-					System.out.print(" > ");
+					read(s,lines,hypoContext,env);
 					continue;
 				}
 				lines.add(s);
