@@ -512,13 +512,15 @@ public class Interpreter {
 	}
 
 	private HypothesisContext hypothesisContext = null;
+	private InterpreterContext interpreterContext = new InterpreterContext();
 
-	public HypothesisContext getHypothesisContext() {
-		return hypothesisContext;
+	public InterpreterContext getInterpreterContext() {
+		return interpreterContext;
 	}
 
-	public void setHypothesisContext(HypothesisContext context) {
-		this.hypothesisContext = context;
+	public void setInterpreterContext(InterpreterContext context) {
+		this.interpreterContext = context;
+		this.hypothesisContext = interpreterContext.getHypothesisContext();
 	}
 
 	private static class Tactic extends Value {
@@ -532,11 +534,6 @@ public class Interpreter {
 		}
 
 		public Value eval(List<Value> args) throws LogicException, ParseException {
-			HypothesisContext hcontext = new HypothesisContext((Prop) args.get(args.size() - 1), "");
-			args.remove(args.size() - 1);
-			Prop given = hcontext.getNextEntity();
-			env.put("given", given);
-
 			Value v = Undefined.undefined;
 			if (args.size() != envNames.size()) {
 				throw new LogicException("args and passed vals must agree");
@@ -546,14 +543,10 @@ public class Interpreter {
 			}
 			for (TokenStream ln : lines) {
 				Interpreter interp = new Interpreter(ln);
-				interp.setHypothesisContext(hcontext);
 				v = interp.eval(env);
-				hcontext = interp.getHypothesisContext();
+				
 			}
-			if (hcontext != null && !hcontext.isProven()) {
-				throw new LogicException("invalid argument!");
-			}
-			return env.lookUp("given");
+			return env.lookUp(envNames.get(0));
 		}
 
 		public void addLine(TokenStream tokens) {
@@ -561,13 +554,12 @@ public class Interpreter {
 		}
 	}
 
-	public static class HypothesisContext {
+	private static class HypothesisContext {
 		private final Prop hypothesis;
 		private final String name;
 		private Prop currentHypothesis;
 		private boolean proven = false;
 		private List<Quantifier> coveredQuants = Lists.newArrayList();
-		private Tactic tactic;
 		private Prop entity;
 		private int entityCount = 0;
 		private int entityIndex = 0;
@@ -679,27 +671,12 @@ public class Interpreter {
 			return name;
 		}
 
-		public void setTactic(Tactic tactic) {
-			this.tactic = tactic;
-		}
-
-		public Tactic getTactic() {
-			return tactic;
-		}
-
 		public boolean hasCase() {
 			return entity != null;
 		}
 
 		public void setCase(Prop p) {
 			entity = p;
-		}
-
-		public void addLine(TokenStream tokens) {
-			if (tactic != null) {
-				tactic.addLine(tokens);
-			}
-
 		}
 
 		public Prop getCase(int index) throws LogicException {
@@ -711,6 +688,7 @@ public class Interpreter {
 			return ret;
 		}
 
+		@Deprecated
 		public void startInduction() {
 			 isInduction = true;
 			 baseCaseProven = false;
@@ -768,12 +746,8 @@ public class Interpreter {
 					System.out.println(hypothesisContext.getName() + " is proven");
 					env.put(hypothesisContext.getName(), hypothesisContext.getHypothesis());
 					Prop ret = hypothesisContext.getHypothesis();
-					Tactic tactic = hypothesisContext.getTactic();
 					String name = hypothesisContext.getName();
 					env.put("intermediate", Undefined.undefined);
-					if (tactic != null) {
-						env.put(name, tactic);
-					}
 					hypothesisContext = null;
 					return ret;
 				}
@@ -860,9 +834,7 @@ public class Interpreter {
 			}
 			Environment t_env = new Environment(env);
 			Tactic tactic = new Tactic(t_env, argNames);
-			Prop p = (Prop) eval(env);
-			hypothesisContext = new HypothesisContext(p, tacticName);
-			hypothesisContext.setTactic(tactic);
+			interpreterContext.setCurrentTactic(tactic);
 			Prop ret = hypothesisContext.getNextEntity();
 			env.put("given", ret);
 			return ret;
@@ -931,9 +903,30 @@ public class Interpreter {
 	}
 
 	public Value enterEval(Environment env) throws ParseException, LogicException {
-		if (hypothesisContext != null) {
-			hypothesisContext.addLine(tokens.copy());
+		if (interpreterContext.getCurrentTactic() != null) {
+			interpreterContext.getCurrentTactic().addLine(tokens);
 		}
 		return eval(env);
+	}
+	
+	public static class InterpreterContext {
+		private HypothesisContext hc = null;
+		private Tactic currentTactic = null;
+		
+		public void setHypothesisContext (HypothesisContext hc) {
+			this.hc = hc;
+		}
+		
+		public void setCurrentTactic(Tactic t) {
+			this.currentTactic = t;
+		}
+		
+		public HypothesisContext getHypothesisContext () {
+			return this.getHypothesisContext();
+		}
+		
+		public Tactic getCurrentTactic () {
+			return this.currentTactic;
+		}
 	}
 }

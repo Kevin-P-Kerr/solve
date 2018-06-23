@@ -11,7 +11,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
 import com.google.common.collect.Lists;
-import com.lang.Interpreter.HypothesisContext;
+import com.lang.Interpreter.InterpreterContext;
 import com.lang.parse.Tokenizer;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.val.Prop.LogicException;
@@ -19,7 +19,7 @@ import com.lang.val.Value;
 
 public class Solve {
 	
-	private static void read (String s, List<String> lines, HypothesisContext hypoContext, Environment env) throws IOException {
+	private static void read (String s, List<String> lines, InterpreterContext interpContext, Environment env) throws IOException {
 		String[] l = s.split(" ");
 		BufferedReader br = new BufferedReader(new FileReader(l[1]));
 		String st;
@@ -28,17 +28,17 @@ public class Solve {
 				System.out.println(st);
 				lines.add(st);
 				if (st.indexOf("read") == 0) {
-					read(st,lines,hypoContext,env);
+					read(st,lines,interpContext,env);
 					continue;
 				}
 				TokenStream tokens = Tokenizer.tokenize(st);
 
 				Interpreter i = new Interpreter(tokens);
-				if (hypoContext != null) {
-					i.setHypothesisContext(hypoContext);
+				if (interpContext != null) {
+					i.setInterpreterContext(interpContext);
 				}
 				Value p = i.enterEval(env);
-				hypoContext = i.getHypothesisContext();
+				interpContext = i.getInterpreterContext();
 				System.out.println(p.toString());
 			} catch (Exception e) {
 
@@ -53,7 +53,7 @@ public class Solve {
 		Scanner scanner = new Scanner(System.in);
 		Environment env = new Environment();
 		List<String> lines = Lists.newArrayList();
-		HypothesisContext hypoContext = null;
+		InterpreterContext interpreterContext = null;
 		/*
 		 * // lines.add("forall a thereis b :~Man(a) + Man(b)*Mother(b a)"); //
 		 * lines.add("forall a forall b forall c : ~Mother(b a) + ~Mother(c a)"); //
@@ -90,17 +90,17 @@ public class Solve {
 					continue;
 				}
 				if (s.indexOf("read") == 0) {
-					read(s,lines,hypoContext,env);
+					read(s,lines,interpreterContext,env);
 					continue;
 				}
 				lines.add(s);
 				TokenStream tokens = Tokenizer.tokenize(s);
 				Interpreter i = new Interpreter(tokens);
-				if (hypoContext != null) {
-					i.setHypothesisContext(hypoContext);
+				if (interpreterContext != null) {
+					i.setInterpreterContext(interpreterContext);
 				}
 				Value p = i.enterEval(env);
-				hypoContext = i.getHypothesisContext();
+				interpreterContext = i.getInterpreterContext();
 				System.out.println(p.toString());
 				System.out.print(" > ");
 			} catch (ParseException e) {
