@@ -542,8 +542,12 @@ public class Interpreter {
 				env.put(envNames.get(i), args.get(i));
 			}
 			for (TokenStream ln : lines.subList(0, lines.size()-1)) {
-				Interpreter interp = new Interpreter(ln);
-				v = interp.eval(env);
+				try {
+					Interpreter interp = new Interpreter(ln.copy());
+					v = interp.eval(env);
+				} catch (Exception e) {
+					throw new LogicException("bad eval");
+				}
 			}
 			return env.lookUp(envNames.get(0));
 		}
@@ -822,7 +826,9 @@ public class Interpreter {
 			Tactic tactic = (Tactic) eval(env);
 			List<Value> args = Lists.newArrayList();
 			while (tokens.hasToken()) {
-				args.add(eval(env));
+				Prop p = (Prop) eval(env);
+				p = p.copyWithHecceities();
+				args.add(p);
 			}
 			return tactic.eval(args);
 		}
