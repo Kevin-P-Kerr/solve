@@ -8,5 +8,17 @@ a2i = forall a forall b : ~Term(a) + ~Term(b) + ~A(a b) + O(b a)
 // define a convenience predicate
 triple_terms = forall a forall b forall c : ~TripleTerms(a b c) + Term(a)*Term(b)*Term(c)
 second_figure = forall a forall b forall c: ~SecondFigureSyllog(a b c) + TripleTerms(a b c)*A(a b)*E(a c) + TripleTerms(a b c)*A(a b)*A(a c) + TripleTerms(a b c)*E(a b)*E(a c)
+second_figure_definition = forall a forall b forall c: ~SecondFigureSyllog(a b c) + MiddleTerm(a)*ExtremeTerm(b)*ExtremeTerm(c)
 
+prop1 = forall a forall b forall c: ~TripleTerms(a b c) + ~E(a b) + ~A(a c) + E(c b)
 
+:prop1 prop1
+:
+s = given
+s = * s triple_terms
+s = # d a s
+s = # e b s
+s = # f c s
+s = * s e2e
+s = # d a s
+s = # e b s
