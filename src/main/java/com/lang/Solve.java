@@ -19,7 +19,7 @@ import com.lang.val.Value;
 
 public class Solve {
 	
-	private static void read (String s, List<String> lines, InterpreterContext interpContext, Environment env) throws IOException {
+	private static InterpreterContext read (String s, List<String> lines, InterpreterContext interpContext, Environment env) throws IOException {
 		String[] l = s.split(" ");
 		BufferedReader br = new BufferedReader(new FileReader(l[1]));
 		String st;
@@ -28,7 +28,7 @@ public class Solve {
 				System.out.println(st);
 				lines.add(st);
 				if (st.indexOf("read") == 0) {
-					read(st,lines,interpContext,env);
+					interpContext =read(st,lines,interpContext,env);
 					continue;
 				}
 				TokenStream tokens = Tokenizer.tokenize(st);
@@ -45,7 +45,8 @@ public class Solve {
 			}
 		}
 		br.close();
-		System.out.print(" > ");
+		System.out.println(" > ");
+		return interpContext;
 	}
 
 	public static void main(String args[]) {

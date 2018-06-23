@@ -758,6 +758,7 @@ public class Interpreter {
 					String name = hypothesisContext.getName();
 					env.put("intermediate", Undefined.undefined);
 					hypothesisContext = null;
+					interpreterContext.setHypothesisContext(null);
 					return ret;
 				}
 				Prop ret = hypothesisContext.getNextEntity();
