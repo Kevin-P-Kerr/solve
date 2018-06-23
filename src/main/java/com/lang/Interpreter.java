@@ -725,6 +725,11 @@ public class Interpreter {
 		}
 		if (t.getType().equals(TokenType.TT_COLON)) {
 			tokens.getNext();
+			if (interpreterContext.getCurrentTactic() != null) {
+				Tactic ret = interpreterContext.getCurrentTactic();
+				interpreterContext.setCurrentTactic(null);
+				return ret;
+			}
 			if (hypothesisContext == null) {
 				t = tokens.getNext();
 				String name = t.getLit();
@@ -827,18 +832,16 @@ public class Interpreter {
 			t = tokens.getNext();
 
 			String tacticName = t.getLit();
-			t = tokens.getNext();
 			List<String> argNames = Lists.newArrayList();
-			while (!t.getType().equals(TokenType.TT_COLON)) {
-				argNames.add(t.getLit());
+			while (tokens.hasToken()) {
 				t = tokens.getNext();
+				argNames.add(t.getLit());
 			}
 			Environment t_env = new Environment(env);
 			Tactic tactic = new Tactic(t_env, argNames);
 			interpreterContext.setCurrentTactic(tactic);
-			Prop ret = hypothesisContext.getNextEntity();
-			env.put("given", ret);
-			return ret;
+			env.put(tacticName, tactic);
+			return tactic;
 
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
