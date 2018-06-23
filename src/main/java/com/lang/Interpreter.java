@@ -541,10 +541,9 @@ public class Interpreter {
 			for (int i = 0, ii = args.size(); i < ii; i++) {
 				env.put(envNames.get(i), args.get(i));
 			}
-			for (TokenStream ln : lines) {
+			for (TokenStream ln : lines.subList(0, lines.size()-1)) {
 				Interpreter interp = new Interpreter(ln);
 				v = interp.eval(env);
-				
 			}
 			return env.lookUp(envNames.get(0));
 		}
@@ -829,9 +828,6 @@ public class Interpreter {
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("tactic")) {
 			tokens.getNext();
-			t = tokens.getNext();
-
-			String tacticName = t.getLit();
 			List<String> argNames = Lists.newArrayList();
 			while (tokens.hasToken()) {
 				t = tokens.getNext();
@@ -840,7 +836,6 @@ public class Interpreter {
 			Environment t_env = new Environment(env);
 			Tactic tactic = new Tactic(t_env, argNames);
 			interpreterContext.setCurrentTactic(tactic);
-			env.put(tacticName, tactic);
 			return tactic;
 
 		}
