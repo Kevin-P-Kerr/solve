@@ -922,7 +922,7 @@ public class Interpreter {
 		}
 		
 		public HypothesisContext getHypothesisContext () {
-			return this.getHypothesisContext();
+			return this.hc;
 		}
 		
 		public Tactic getCurrentTactic () {
