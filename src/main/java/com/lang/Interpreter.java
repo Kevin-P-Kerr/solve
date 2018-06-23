@@ -903,7 +903,7 @@ public class Interpreter {
 
 	public Value enterEval(Environment env) throws ParseException, LogicException {
 		if (interpreterContext.getCurrentTactic() != null) {
-			interpreterContext.getCurrentTactic().addLine(tokens);
+			interpreterContext.getCurrentTactic().addLine(tokens.copy());
 		}
 		return eval(env);
 	}
