@@ -45,7 +45,7 @@ public class Solve {
 			}
 		}
 		br.close();
-		System.out.println(" > ");
+		System.out.print(" > ");
 		return interpContext;
 	}
 
