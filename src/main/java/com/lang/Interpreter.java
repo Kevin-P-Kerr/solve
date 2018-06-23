@@ -879,6 +879,12 @@ public class Interpreter {
 			env.put("subcase", p);
 			return p;
 		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("merge")) {
+			tokens.getNext();
+			Prop p1 = (Prop) eval(env);
+			Prop p2 = (Prop) eval(env);
+			return prodProps(p1.copyWithHecceities(), p2.copyWithHecceities());
+		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("induct")) {
 			tokens.getNext();
 			t = tokens.getNext();
