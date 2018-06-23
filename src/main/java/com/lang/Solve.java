@@ -28,7 +28,7 @@ public class Solve {
 				System.out.println(st);
 				lines.add(st);
 				if (st.indexOf("read") == 0) {
-					read(s,lines,hypoContext,env);
+					read(st,lines,hypoContext,env);
 					continue;
 				}
 				TokenStream tokens = Tokenizer.tokenize(st);
