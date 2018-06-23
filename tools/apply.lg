@@ -1,0 +1,29 @@
+a = forall a : ~A(a) + B(a)
+apply_one = forall a : ~A(a) + B(a)
+tactic apply_one a : apply_one
+:
+given = * given p
+given = # b a given
+: given
+
+a = forall a forall b : ~A(a) + ~B(b) + C(a b)
+apply_two = forall a forall b : ~A(a) + ~B(b) + C(a b)
+tactic apply_two a : apply_two
+:
+given = * given a
+given = # c a given
+given = # d b given
+: given
+
+
+a = forall a forall b forall c: ~A(a) + ~B(b) + ~C(c) + D(a b c)
+apply_three = forall a forall b forall c: ~A(a) + ~B(b) + ~C(c) + D(a b c)
+
+tactic apply_three a : apply_three
+:
+given = * given a
+given = # c a given
+given = # d a given
+given = # e b given
+given = # f c given
+: given
