@@ -731,6 +731,7 @@ public class Interpreter {
 				tokens.getClass();
 				Prop hypo = (Prop) eval(env);
 				hypothesisContext = new HypothesisContext(hypo, name);
+				interpreterContext.setHypothesisContext(hypothesisContext);
 				Prop ret = hypothesisContext.getNextEntity();
 				env.put("given", ret);
 				return ret;
