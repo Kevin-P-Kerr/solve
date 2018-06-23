@@ -15,9 +15,9 @@ a = # d b a
 
 a = forall a forall b forall c: ~A(a b c) + B(a b c)
 b = forall a forall b forall c: ~B(a b c) + C(a b c)
-apply_three = tactic a b c
+apply_three = tactic a b
 a = * a b
 a = # d a a
 a = # e b a
-a = # f b a
+a = # f c a
 :
