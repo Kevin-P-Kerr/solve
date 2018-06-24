@@ -91,7 +91,7 @@ public class Solve {
 					continue;
 				}
 				if (s.indexOf("read") == 0) {
-					read(s,lines,interpreterContext,env);
+					interpreterContext = read(s,lines,interpreterContext,env);
 					continue;
 				}
 				lines.add(s);

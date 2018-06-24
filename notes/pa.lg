@@ -45,3 +45,11 @@ triple_terms
 s = apply s triple_terms a b c
 s
 s = apply s e2e a b
+s = apply s Celarent b a c
+x = [ 1 triple_terms
+s = apply s x b a c
+s = apply s e2e b c
+a = / 0 s
+b = / 9 s
+s = merge a b
+: s
