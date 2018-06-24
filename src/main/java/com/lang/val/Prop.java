@@ -1424,4 +1424,12 @@ public class Prop extends Value {
 		return false;
 	}
 
+	public Map<String, Hecceity> getS2H() {
+		return Maps.newHashMap(s2h);
+	}
+
+	public Map<Hecceity, String> getH2S() {
+		return Maps.newHashMap(h2s);
+	}
+
 }

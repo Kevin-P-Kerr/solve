@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -846,6 +847,17 @@ public class Interpreter {
 			return tactic;
 
 		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("apply")) {
+			tokens.getNext();
+			Prop applicator = (Prop) eval(env);
+			Prop applicand = (Prop) eval(env);
+			List<String> variables = Lists.newArrayList();
+			while (tokens.hasToken()) {
+				t = tokens.getNext();
+				variables.add(t.getLit());
+			}
+			return applyProp(applicator, applicand,variables);
+		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
 			tokens.getNext();
 			t = tokens.getNext();
@@ -895,6 +907,25 @@ public class Interpreter {
 			return p;
 		}
 
+	}
+
+	private static Prop applyProp(Prop applicator, Prop applicand, List<String> variables) throws LogicException {
+		Prop applicandCopy = applicand.copy();
+		Prop product = prodProps(applicator.copyWithHecceities(),applicandCopy);
+		List<String> counterParts = Lists.newArrayList();
+		Map<Hecceity,String> h2s = product.getH2S();
+		for (Hecceity h:applicandCopy.getHecceties()) {
+			String s = h2s.get(h);
+			counterParts.add(s);
+		}
+		if (counterParts.size() != variables.size()) {
+			throw new LogicException("arg mismatch");
+		}
+		for (int i = 0,ii= counterParts.size();i<ii;i++) {
+			product = product.replace(counterParts.get(i), variables.get(i));
+		}
+		return product;
+		
 	}
 
 	private static void addHecs(Prop p) {
