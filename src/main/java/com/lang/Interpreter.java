@@ -924,7 +924,7 @@ public class Interpreter {
 		for (int i = 0,ii= counterParts.size();i<ii;i++) {
 			product = product.replace(counterParts.get(i), variables.get(i));
 		}
-		return product;
+		return removeDefects(product);
 		
 	}
 
