@@ -1,26 +1,4 @@
-a = forall a: ~A(a) + B(a)
-b = forall a :  ~B(a) + C(a)
-apply_one = tactic a b
-a = * a b
-a = # b a a
-:
-
-a = forall a forall b: ~A(a b) + B(a b)
-b = forall a forall b : ~B(a b) + C(a b)
-apply_two = tactic a b
-a = * a b
-a = # c a a
-a = # d b a
-:
-
-a = forall a forall b forall c: ~A(a b c) + B(a b c)
-b = forall a forall b forall c: ~B(a b c) + C(a b c)
-apply_three = tactic a b
-a = * a b
-a = # d a a
-a = # e b a
-a = # f c a
-:
+read tools/apply.lg
 // define a convenience predicate
 triple_terms = forall a forall b forall c : ~TripleTerms(a b c) + Term(a)*Term(b)*Term(c)
 // define conversion
