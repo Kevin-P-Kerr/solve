@@ -1,14 +1,10 @@
 package com.lang;
 
-import java.beans.PropertyDescriptor;
-import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -25,7 +21,6 @@ import com.lang.val.Value;
 public class Interpreter {
 
 	private final TokenStream tokens;
-	private final static List<Prop> constructors = Lists.newArrayList();
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -233,283 +228,9 @@ public class Interpreter {
 		return prodProps(p1.copyWithHecceities(), p2.copy());
 	}
 
-	private final void addConstructors(Value v) {
-		if (!(v instanceof Prop)) {
-			return;
-		}
-		Prop p = (Prop) v;
-		List<Quantifier> prefix = p.getPrefix();
-		List<Quantifier> foralls = Lists.newArrayList();
-		for (Quantifier q : prefix) {
-			if (q.getType().equals(QuantifierType.FORALL)) {
-				foralls.add(q);
-			} else {
-				break;
-			}
-		}
-		if (foralls.size() == 0) {
-			return;
-		}
-		constructors.add(p);
-	}
-
-	private static <T> List<T> reverse(List<T> in) {
-		List<T> ret = Lists.newArrayList();
-		for (int i = in.size() - 1, ii = -1; i > ii; i--) {
-			ret.add(in.get(i));
-		}
-		return ret;
-	}
-
 	// TODO: fold these into Prop
 	private static Prop removeDefects(Prop p) {
 		return p.removeContradictions().removeRedundant();
-	}
-
-	private static List<Prop> collectProps(Prop p, List<Hecceity> hecceties) throws LogicException {
-		List<Quantifier> pre = reverse(p.getPrefix());
-		List<Quantifier> realPre = p.getPrefix();
-		List<Prop> ret = Lists.newArrayList();
-		for (Quantifier q : pre) {
-			if (hecceties.indexOf(q.getHecceity()) >= 0) {
-				// continue;
-			}
-			if (q.getType().equals(QuantifierType.FORALL)) {
-				for (int i = 0, ii = realPre.indexOf(q); i < ii; i++) {
-					Prop pp = p.copyWithHecceities().replace(q, realPre.get(i));
-					pp = removeDefects(pp);
-					if (pp.getMatrix().size() > 0) {
-						ret.add(pp);
-						ret.addAll(collectProps(pp, hecceties));
-					}
-
-				}
-			}
-		}
-		return ret;
-	}
-
-	private Prop negateConstraints(List<Quantifier> prefix, Prop p1) throws ParseException, LogicException {
-		Prop p = new Prop();
-		CompoundProp cp = p.makeBlankCompoundProp();
-		for (Quantifier q : prefix) {
-			AtomicProp ap = q.getConstraint();
-			if (ap != null) {
-				QuantifierType qt = q.getType().equals(QuantifierType.FORALL) ? QuantifierType.THEREIS
-						: QuantifierType.FORALL;
-				Quantifier nq = p.addQuantifier(qt);
-				List<Hecceity> arg = Lists.newArrayList(nq.getHecceity());
-				AtomicProp atom = new AtomicProp(ap.getName(), arg, false);
-				cp.addAtomicProp(atom);
-			}
-		}
-		p.addCompoundProp(cp);
-		if (p.getPrefix().size() > 0) {
-			return apply(p1, p);
-		} else {
-			return p1;
-		}
-	}
-
-	private Prop apply(Prop p1, Prop p2) throws ParseException, LogicException {
-		Prop product = prodProps(p1, p2);
-		List<Prop> all = collectProps(product, p1.getHecceties());
-		if (all.size() == 0) {
-			return negateConstraints(p2.getPrefix(), p1);
-		}
-		Prop base = all.get(0);
-		for (int i = 1, ii = all.size(); i < ii; i++) {
-			base = (prodProps(base, all.get(i)));
-		}
-		Prop check = removeDefects(base);
-		if (check.getMatrix().size() == 0) {
-			return negateConstraints(p2.getPrefix(), p1);
-		}
-		return check;
-	}
-
-	private static <T> List<List<T>> getNtuples(List<T> l, int n) {
-		List<List<T>> ret = Lists.newArrayList();
-		if (n == l.size()) {
-			ret.add(l);
-			return ret;
-		}
-		List<T> copy = Lists.newArrayList();
-		for (T t : l) {
-			copy.add(t);
-		}
-		int remaining = n - 1;
-		while (copy.size() >= n) {
-			T head = copy.get(0);
-			List<T> tuple = Lists.newArrayList();
-			copy.remove(0);
-			tuple.add(head);
-			if (tuple.size() == n) {
-				ret.add(tuple);
-				continue;
-			}
-			for (int i = 1, ii = copy.size(); i <= ii; i++) {
-				int endIndex = remaining + i;
-
-				if (endIndex > copy.size()) {
-					break;
-				}
-				for (int z = i; z < endIndex; z++) {
-					tuple.add(copy.get(z));
-				}
-				ret.add(tuple);
-
-			}
-		}
-		return ret;
-
-	}
-
-	private static <T> List<List<T>> rearrange(List<T> tuple) {
-		List<List<T>> ret = Lists.newArrayList();
-		if (tuple.size() == 1) {
-			ret.add(tuple);
-			return ret;
-		}
-		if (tuple.size() == 2) {
-			List<T> a = Lists.newArrayList(tuple.get(0), tuple.get(1));
-			List<T> b = Lists.newArrayList(tuple.get(1), tuple.get(0));
-			ret.add(a);
-			ret.add(b);
-			return ret;
-		}
-		for (int i = 0, ii = tuple.size(); i < ii; i++) {
-			T t = tuple.get(i);
-			List<T> subTuple = Lists.newArrayList();
-			for (int n = 0, nn = tuple.size(); n < nn; n++) {
-				if (n == i) {
-					continue;
-				}
-				subTuple.add(tuple.get(n));
-			}
-			List<List<T>> subPerms = rearrange(subTuple);
-			for (List<T> sub : subPerms) {
-				List<T> l = new ArrayList<T>();
-				l.add(t);
-				for (T tt : sub) {
-					l.add(tt);
-				}
-				ret.add(l);
-			}
-		}
-		return ret;
-	}
-
-	// we already know that n >= l.length
-	private static <T> List<List<T>> getPermutations(List<T> l, int n) {
-		List<List<T>> ret = Lists.newArrayList();
-		List<List<T>> ntuples = getNtuples(l, n);
-
-		for (List<T> tuple : ntuples) {
-			ret.addAll(rearrange(tuple));
-		}
-		return ret;
-	}
-
-	private static boolean primitiveNatOp(String name) {
-		return name == "EQ" || name == "SUM" || name == "PRODUCT" || name == "DIFFERENCE";
-	}
-
-	private static boolean natLit(String name) {
-		return name.matches("^\\d");
-	}
-
-	private static BigInteger evalNatLit(String name) {
-		String lit = "";
-		int i = 0;
-		int ii = name.length();
-		for (; i < ii; i++) {
-			char c = name.charAt(i);
-			if (c >= '0' && c <= '9') {
-				lit += name.charAt(i);
-			} else {
-				break;
-			}
-		}
-		return new BigInteger(lit);
-	}
-
-	private BigInteger resolveNatPrim(AtomicProp atomicProp) {
-		String name = atomicProp.getName();
-		List<Hecceity> hecceities = atomicProp.getHecceities();
-		if (name == "EQ") {
-
-		}
-		return null;
-	}
-
-	private BigInteger resolveNat(AtomicProp atomicProp) {
-		String name = atomicProp.getName();
-		if (natLit(name)) {
-			return evalNatLit(name);
-		} else if (primitiveNatOp(name)) {
-			return resolveNatPrim(atomicProp);
-		} else {
-			return null;
-		}
-
-	}
-
-	private void checkForNativeVals(Prop p) throws ParseException {
-		for (CompoundProp cp : p.getMatrix()) {
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				String predName = ap.getName();
-				if (predName.equals("INT")) {
-					if (ap.getHecceities().size() > 1) {
-						throw new ParseException("NAT is predefined", 0);
-					}
-					BigInteger b = resolveNat(ap);
-
-				} else if (predName.equals("POLY")) {
-
-				} else if (predName.equals("ARRAY")) {
-
-				} else if (predName.equals("SET")) {
-
-				} else if (predName.equals("DIGRAPH")) {
-
-				} else if (predName.equals("RAT")) {
-
-				} else if (predName.equals("REAL")) {
-
-				}
-			}
-		}
-	}
-
-	private Value doInference(Value v) throws ParseException, LogicException {
-		if (!(v instanceof Prop)) {
-			return Undefined.undefined;
-		}
-		Prop p = (Prop) v;
-		List<Prop> facts = Lists.newArrayList();
-
-		for (Prop constructor : constructors) {
-			List<Prop> factors = p.getIndividualFacts();
-			List<Prop> newFactors = Lists.newArrayList();
-			for (Prop f : factors) {
-				f = apply(f, constructor.copy());
-				newFactors.add(f);
-			}
-			Prop base = newFactors.get(0);
-			for (int i = 1, ii = newFactors.size(); i < ii; i++) {
-				base = prodProps(base, newFactors.get(i));
-			}
-			facts.add(base);
-
-		}
-		Prop base = facts.get(0);
-		for (int i = 1, ii = facts.size(); i < ii; i++) {
-			base = prodProps(base, facts.get(i));
-		}
-		checkForNativeVals(p);
-		return removeDefects(base);
-
 	}
 
 	private HypothesisContext hypothesisContext = null;
@@ -542,7 +263,7 @@ public class Interpreter {
 			for (int i = 0, ii = args.size(); i < ii; i++) {
 				env.put(envNames.get(i), args.get(i));
 			}
-			for (TokenStream ln : lines.subList(0, lines.size()-1)) {
+			for (TokenStream ln : lines.subList(0, lines.size() - 1)) {
 				try {
 					Interpreter interp = new Interpreter(ln.copy());
 					v = interp.eval(env);
@@ -694,9 +415,9 @@ public class Interpreter {
 
 		@Deprecated
 		public void startInduction() {
-			 isInduction = true;
-			 baseCaseProven = false;
-		}	
+			isInduction = true;
+			baseCaseProven = false;
+		}
 	}
 
 	public Value eval(Environment env) throws ParseException, LogicException {
@@ -798,11 +519,6 @@ public class Interpreter {
 
 			return product(v1, v2);
 		}
-		if (t.getType().equals(TokenType.TT_DOLLAR)) {
-			tokens.getNext();
-			Value v = eval(env);
-			return doInference(v);
-		}
 		if (t.getType().equals(TokenType.TT_HASH)) {
 			tokens.getNext();
 			t = tokens.getNext();
@@ -856,7 +572,7 @@ public class Interpreter {
 				t = tokens.getNext();
 				variables.add(t.getLit());
 			}
-			return applyProp(applicator, applicand,variables);
+			return applyProp(applicator, applicand, variables);
 		}
 		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("case")) {
 			tokens.getNext();
@@ -902,8 +618,6 @@ public class Interpreter {
 			return env.lookUp(varName);
 		} else {
 			Prop p = evalProp();
-			addConstructors(p);
-			addHecs(p);
 			return p;
 		}
 
@@ -911,31 +625,20 @@ public class Interpreter {
 
 	private static Prop applyProp(Prop applicator, Prop applicand, List<String> variables) throws LogicException {
 		Prop applicandCopy = applicand.copy();
-		Prop product = prodProps(applicator.copyWithHecceities(),applicandCopy);
+		Prop product = prodProps(applicator.copyWithHecceities(), applicandCopy);
 		List<String> counterParts = Lists.newArrayList();
-		Map<Hecceity,String> h2s = product.getH2S();
-		for (Hecceity h:applicandCopy.getHecceties()) {
+		Map<Hecceity, String> h2s = product.getH2S();
+		for (Hecceity h : applicandCopy.getHecceties()) {
 			String s = h2s.get(h);
 			counterParts.add(s);
 		}
 		if (counterParts.size() != variables.size()) {
 			throw new LogicException("arg mismatch");
 		}
-		for (int i = 0,ii= counterParts.size();i<ii;i++) {
+		for (int i = 0, ii = counterParts.size(); i < ii; i++) {
 			product = product.replace(counterParts.get(i), variables.get(i));
 		}
 		return removeDefects(product);
-		
-	}
-
-	private static void addHecs(Prop p) {
-		for (CompoundProp cp : p.getMatrix()) {
-			for (AtomicProp ap : cp.getAtomicProps()) {
-				String name = ap.getName();
-				List<Hecceity> hecs = ap.getHecceities();
-
-			}
-		}
 
 	}
 
@@ -945,24 +648,24 @@ public class Interpreter {
 		}
 		return eval(env);
 	}
-	
+
 	public static class InterpreterContext {
 		private HypothesisContext hc = null;
 		private Tactic currentTactic = null;
-		
-		public void setHypothesisContext (HypothesisContext hc) {
+
+		public void setHypothesisContext(HypothesisContext hc) {
 			this.hc = hc;
 		}
-		
+
 		public void setCurrentTactic(Tactic t) {
 			this.currentTactic = t;
 		}
-		
-		public HypothesisContext getHypothesisContext () {
+
+		public HypothesisContext getHypothesisContext() {
 			return this.hc;
 		}
-		
-		public Tactic getCurrentTactic () {
+
+		public Tactic getCurrentTactic() {
 			return this.currentTactic;
 		}
 	}
