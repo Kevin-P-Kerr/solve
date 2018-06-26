@@ -46,7 +46,7 @@ prop1 = forall a forall b forall c: ~TripleTerms(a b c) + ~E(a b) + ~A(a c) + E(
 // Emn yield Enm (no man is immortal) -- eta conversion
 // Enm, Amx - Enx (no king is immortal ) -- celarent
 // Enx - Exn (no immortal is a king) -- eta conversion
-:prop1 prop1
+:Ceasare prop1
 :
 s = given
 triple_terms

@@ -3,7 +3,6 @@ package com.lang;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,8 +17,9 @@ import com.lang.val.Prop.LogicException;
 import com.lang.val.Value;
 
 public class Solve {
-	
-	private static InterpreterContext read (String s, List<String> lines, InterpreterContext interpContext, Environment env) throws IOException {
+
+	private static InterpreterContext read(String s, List<String> lines, InterpreterContext interpContext,
+			Environment env) throws IOException {
 		String[] l = s.split(" ");
 		BufferedReader br = new BufferedReader(new FileReader(l[1]));
 		String st;
@@ -28,7 +28,8 @@ public class Solve {
 				System.out.println(st);
 				lines.add(st);
 				if (st.indexOf("read") == 0) {
-					interpContext =read(st,lines,interpContext,env);
+					List<String> tmp = Lists.newArrayList();
+					interpContext = read(st, tmp, interpContext, env);
 					continue;
 				}
 				TokenStream tokens = Tokenizer.tokenize(st);
@@ -91,7 +92,7 @@ public class Solve {
 					continue;
 				}
 				if (s.indexOf("read") == 0) {
-					interpreterContext = read(s,lines,interpreterContext,env);
+					interpreterContext = read(s, lines, interpreterContext, env);
 					continue;
 				}
 				lines.add(s);
