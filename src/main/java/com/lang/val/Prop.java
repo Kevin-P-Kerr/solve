@@ -1442,7 +1442,7 @@ public class Prop extends Value {
 		sb.append("(let ((body (list \n");
 		// for every compoud prop, add it
 		for (CompoundProp cp : getMatrix()) {
-			sb.append("(lambda () (and ");
+			sb.append("(cons (lambda () (and ");
 			for (AtomicProp ap : cp.getAtomicProps()) {
 				sb.append(" (");
 				if (!ap.truthValue) {
@@ -1460,6 +1460,22 @@ public class Prop extends Value {
 
 			}
 			sb.append("))\n");
+			sb.append("(cons (lambda () (begin ");
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				sb.append(" (make-");
+				sb.append(ap.getName());
+				for (Hecceity h : ap.getHecceities()) {
+					String arg = h2s.get(h);
+					sb.append(" " + arg);
+				}
+				if (!ap.truthValue) {
+					sb.append(" #f ");
+				} else {
+					sb.append(" #t ");
+				}
+				sb.append(")");
+			}
+			sb.append(")))\n");
 		}
 		sb.append(")");
 		sb.append("))(evaluate-body body)))\n");
