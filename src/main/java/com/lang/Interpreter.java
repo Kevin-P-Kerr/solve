@@ -660,7 +660,7 @@ public class Interpreter {
 					relationsToArgs.put(name, args);
 				}
 			}
-			sb.append(")");
+			sb.append(")\n");
 		}
 		return sb.toString();
 	}

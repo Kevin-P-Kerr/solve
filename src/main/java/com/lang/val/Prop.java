@@ -441,7 +441,7 @@ public class Prop extends Value {
 		Quantifier fromQ = prefix.get(from);
 		Quantifier toQ = prefix.get(to);
 		if (quantifierContraints.size() == 0) {
-			//throw new LogicException("no quantifier constraints ");
+			// throw new LogicException("no quantifier constraints ");
 		}
 		try {
 			for (List<Quantifier> quants : quantifierContraints) {
@@ -1416,7 +1416,7 @@ public class Prop extends Value {
 	public boolean sharesHecceities(Prop p2) {
 		List<Hecceity> hecs = p2.getHecceties();
 		List<Hecceity> localHecs = getHecceties();
-		for (Hecceity h:hecs) {
+		for (Hecceity h : hecs) {
 			if (localHecs.contains(h)) {
 				return true;
 			}
@@ -1435,15 +1435,15 @@ public class Prop extends Value {
 	public String toSCM() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(lambda (");
-		for (String argName: s2h.keySet()) {
-			sb.append(argName+" ");
+		for (String argName : s2h.keySet()) {
+			sb.append(argName + " ");
 		}
 		sb.append(")\n");
-		sb.append("(let ((body (list ");
+		sb.append("(let ((body (list \n");
 		// for every compoud prop, add it
-		for (CompoundProp cp: getMatrix()) {
+		for (CompoundProp cp : getMatrix()) {
 			sb.append("(lambda () (and ");
-			for (AtomicProp ap:cp.getAtomicProps()) {
+			for (AtomicProp ap : cp.getAtomicProps()) {
 				sb.append(" (");
 				if (!ap.truthValue) {
 					sb.append("not (");
@@ -1451,20 +1451,20 @@ public class Prop extends Value {
 				sb.append(ap.getName());
 				for (Hecceity h : ap.getHecceities()) {
 					String arg = h2s.get(h);
-					sb.append(" "+arg);
+					sb.append(" " + arg);
 				}
 				if (!ap.truthValue) {
 					sb.append(")");
 				}
 				sb.append(")");
-				
+
 			}
-			sb.append("))");
+			sb.append("))\n");
 		}
 		sb.append(")");
 		sb.append("))(evaluate-body body)))\n");
 		return sb.toString();
-		
+
 	}
 
 }
