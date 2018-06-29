@@ -621,7 +621,8 @@ public class Interpreter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-					}
+			return Undefined.undefined;
+		}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
 			String varName = t.getLit();

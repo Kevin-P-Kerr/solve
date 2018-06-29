@@ -1441,6 +1441,26 @@ public class Prop extends Value {
 		sb.append(")\n");
 		sb.append("(let ((body (list ");
 		// for every compoud prop, add it
+		for (CompoundProp cp: getMatrix()) {
+			sb.append("(lambda () (and ");
+			for (AtomicProp ap:cp.getAtomicProps()) {
+				sb.append(" (");
+				if (!ap.truthValue) {
+					sb.append("not (");
+				}
+				sb.append(ap.getName());
+				for (Hecceity h : ap.getHecceities()) {
+					String arg = h2s.get(h);
+					sb.append(" "+h);
+				}
+				if (!ap.truthValue) {
+					sb.append("(");
+				}
+				sb.append(")");
+				
+			}
+			sb.append(")");
+		}
 		sb.append("(evaluate body)");
 		return sb.toString();
 		
