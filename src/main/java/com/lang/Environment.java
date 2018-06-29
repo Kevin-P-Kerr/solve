@@ -1,9 +1,8 @@
 package com.lang;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lang.val.Prop;
 import com.lang.val.Undefined;
@@ -37,22 +36,25 @@ public class Environment {
 		}
 		return v;
 	}
-	
-	public List<Value> getAllValues () {
-		List<Value> ret = Lists.newArrayList();
-		ret.addAll(env.values());
+
+	public Map<String, Value> getAllValues() {
+		Map<String, Value> ret = Maps.newHashMap();
+		for (Entry<String, Value> entry : env.entrySet()) {
+			ret.put(entry.getKey(), entry.getValue());
+		}
 		if (parent != null) {
-			ret.addAll(parent.getAllValues());
+			ret.putAll(parent.getAllValues());
 		}
 		return ret;
 	}
-	
-	public List<Prop> getAllProps () {
-		List<Value> values = getAllValues();
-		List<Prop> ret = Lists.newArrayList();
-		for (Value v : values) {
+
+	public Map<String, Prop> getAllProps() {
+		Map<String, Value> values = getAllValues();
+		Map<String, Prop> ret = Maps.newHashMap();
+		for (Entry<String, Value> entry : values.entrySet()) {
+			Value v = entry.getValue();
 			if (v instanceof Prop) {
-				ret.add((Prop) v);
+				ret.put(entry.getKey(), (Prop) entry.getValue());
 			}
 		}
 		return ret;

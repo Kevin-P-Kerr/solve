@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -611,7 +612,7 @@ public class Interpreter {
 			tokens.getNext();
 			t = tokens.getNext();
 			String filename = t.getLit();
-			String program  = extract(env);
+			String program = extract(env);
 			BufferedWriter writer;
 			try {
 				writer = new BufferedWriter(new FileWriter(filename));
@@ -642,20 +643,24 @@ public class Interpreter {
 		}
 
 	}
-	
+
 	private static String extract(Environment env) {
-		List<Prop> props = env.getAllProps();
+		Map<String, Prop> props = env.getAllProps();
 		StringBuilder sb = new StringBuilder();
-		Map<String,Integer> relationsToArgs = Maps.newHashMap();
-		for (Prop p:props) {
+		Map<String, Integer> relationsToArgs = Maps.newHashMap();
+		for (Entry<String, Prop> e : props.entrySet()) {
+			Prop p = e.getValue();
+			String propName = e.getKey();
+			sb.append("(define " + propName + " ");
 			sb.append(p.toSCM());
-			for (CompoundProp cp: p.getMatrix()) {
-				for (AtomicProp ap: cp.getAtomicProps()) {
+			for (CompoundProp cp : p.getMatrix()) {
+				for (AtomicProp ap : cp.getAtomicProps()) {
 					String name = ap.getName();
 					int args = ap.getHecceities().size();
 					relationsToArgs.put(name, args);
 				}
 			}
+			sb.append(")");
 		}
 		return sb.toString();
 	}
