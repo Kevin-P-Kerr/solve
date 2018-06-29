@@ -1,5 +1,8 @@
 package com.lang;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -603,6 +606,22 @@ public class Interpreter {
 			env.put("subcase", p);
 			return p;
 		}
+		if (t.getType().equals(TokenType.TT_VAR) && t.getLit().equals("extract")) {
+			tokens.getNext();
+			t = tokens.getNext();
+			String filename = t.getLit();
+			String program  = extract(env);
+			BufferedWriter writer;
+			try {
+				writer = new BufferedWriter(new FileWriter(filename));
+				writer.write(program);
+				writer.close();
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+					}
 		if (t.getType().equals(TokenType.TT_VAR)) {
 			tokens.getNext();
 			String varName = t.getLit();
@@ -621,6 +640,10 @@ public class Interpreter {
 			return p;
 		}
 
+	}
+	
+	private static String extract(Environment env) {
+		
 	}
 
 	private static Prop applyProp(Prop applicator, Prop applicand, List<String> variables) throws LogicException {
