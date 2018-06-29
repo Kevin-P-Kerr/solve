@@ -1460,7 +1460,7 @@ public class Prop extends Value {
 
 			}
 			sb.append("))\n");
-			sb.append("(cons (lambda () (begin ");
+			sb.append("(lambda () (begin ");
 			for (AtomicProp ap : cp.getAtomicProps()) {
 				sb.append(" (make-");
 				sb.append(ap.getName());
