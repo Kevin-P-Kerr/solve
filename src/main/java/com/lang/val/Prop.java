@@ -1451,17 +1451,18 @@ public class Prop extends Value {
 				sb.append(ap.getName());
 				for (Hecceity h : ap.getHecceities()) {
 					String arg = h2s.get(h);
-					sb.append(" "+h);
+					sb.append(" "+arg);
 				}
 				if (!ap.truthValue) {
-					sb.append("(");
+					sb.append(")");
 				}
 				sb.append(")");
 				
 			}
-			sb.append(")");
+			sb.append("))");
 		}
-		sb.append("(evaluate body)");
+		sb.append(")");
+		sb.append("))(evaluate-body body)))\n");
 		return sb.toString();
 		
 	}
