@@ -1432,4 +1432,18 @@ public class Prop extends Value {
 		return Maps.newHashMap(h2s);
 	}
 
+	public String toSCM() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(lambda (");
+		for (String argName: s2h.keySet()) {
+			sb.append(argName+" ");
+		}
+		sb.append(")\n");
+		sb.append("(let ((body (list ");
+		// for every compoud prop, add it
+		sb.append("(evaluate body)");
+		return sb.toString();
+		
+	}
+
 }

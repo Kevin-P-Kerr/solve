@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -642,7 +643,20 @@ public class Interpreter {
 	}
 	
 	private static String extract(Environment env) {
-		
+		List<Prop> props = env.getAllProps();
+		StringBuilder sb = new StringBuilder();
+		Map<String,Integer> relationsToArgs = Maps.newHashMap();
+		for (Prop p:props) {
+			sb.append(p.toSCM());
+			for (CompoundProp cp: p.getMatrix()) {
+				for (AtomicProp ap: cp.getAtomicProps()) {
+					String name = ap.getName();
+					int args = ap.getHecceities().size();
+					relationsToArgs.put(name, args);
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	private static Prop applyProp(Prop applicator, Prop applicand, List<String> variables) throws LogicException {
