@@ -616,7 +616,6 @@ public class Interpreter {
 				writer = new BufferedWriter(new FileWriter(filename));
 				writer.write(program);
 				writer.close();
-
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

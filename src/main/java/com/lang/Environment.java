@@ -1,8 +1,11 @@
 package com.lang;
 
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lang.val.Prop;
 import com.lang.val.Undefined;
 import com.lang.val.Value;
 
@@ -33,5 +36,25 @@ public class Environment {
 			return parent.lookUp(name);
 		}
 		return v;
+	}
+	
+	public List<Value> getAllValues () {
+		List<Value> ret = Lists.newArrayList();
+		ret.addAll(env.values());
+		if (parent != null) {
+			ret.addAll(parent.getAllValues());
+		}
+		return ret;
+	}
+	
+	public List<Prop> getAllProps () {
+		List<Value> values = getAllValues();
+		List<Prop> ret = Lists.newArrayList();
+		for (Value v : values) {
+			if (v instanceof Prop) {
+				ret.add((Prop) v);
+			}
+		}
+		return ret;
 	}
 }
