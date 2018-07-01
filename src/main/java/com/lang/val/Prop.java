@@ -378,6 +378,7 @@ public class Prop extends Value {
 
 		public String buildConstructorSCM() {
 			StringBuilder sb = new StringBuilder();
+			sb.append("(lambda () (let (");
 			return sb.toString();
 		}
 
@@ -1484,7 +1485,7 @@ public class Prop extends Value {
 				}
 				sb.append("))");
 			}
-			sb.append(""+cp.buildConstructorSCM()+")");
+			sb.append("\n\t"+cp.buildConstructorSCM()+")");
 		}
 		sb.append("))) \n\t\t (eval-body body)))");
 		
