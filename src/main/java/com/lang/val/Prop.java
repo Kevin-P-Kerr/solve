@@ -1432,4 +1432,58 @@ public class Prop extends Value {
 		return Maps.newHashMap(h2s);
 	}
 
+	private static boolean containsHec(CompoundProp cp, List<Hecceity> hecs) {
+		for (AtomicProp ap:cp.getAtomicProps()) {
+			for (Hecceity h: ap.getHecceities()) {
+				if (hecs.contains(h)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public String extractSCM() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(lambda (");
+		List<Hecceity> thereisHecs = Lists.newArrayList();
+		for (Quantifier q: prefix) {
+			if (q.getType().equals(QuantifierType.THEREIS)) {
+				thereisHecs.add(q.getHecceity());
+				continue;
+			}
+			Hecceity h = q.getHecceity();
+			String arg = h2s.get(h);
+			sb.append(arg+" ");
+		}
+		sb.append(")\n\t");
+		sb.append("(let ((body (list ");
+		for (CompoundProp cp: matrix) {
+			sb.append("\n\t (cons ");
+			if (containsHec(cp,thereisHecs)) {
+				sb.append("(lambda () #t)");
+			}
+			else {
+				sb.append("(lambda () (and ");
+				for (AtomicProp ap: cp.getAtomicProps()) {
+					if (!ap.getTruthValue()) {
+						sb.append("(not ");
+					}
+					sb.append("(is-"+ap.getName()+ " ");
+					for (Hecceity h: ap.getHecceities()) {
+						sb.append(h2s.get(h)+ " ");
+					}
+					sb.append(")");
+					if (!ap.getTruthValue()) {
+						sb.append(")");
+					}
+				}
+				sb.append("))");
+			}
+			sb.append(" '())");
+		}
+		sb.append("))) \n\t\t (eval-body body)))");
+		
+		return sb.toString();
+	}
+
 }
