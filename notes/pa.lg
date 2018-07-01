@@ -27,9 +27,7 @@ prop1 = forall a forall b forall c: ~TripleTerms(a b c) + ~E(a b) + ~A(a c) + E(
 :Ceasare prop1
 :
 s = given
-triple_terms
 s = apply s triple_terms a b c
-s
 s = apply s e2e a b
 s = apply s Celarent b a c
 x = [ 1 triple_terms
@@ -39,3 +37,5 @@ a = / 0 s
 b = / 9 s
 s = merge a b
 : s
+
+

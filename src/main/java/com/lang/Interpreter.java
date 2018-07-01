@@ -646,9 +646,7 @@ public class Interpreter {
 
 	private static String extract(Environment env) {
 		Map<String, Prop> props = env.getAllProps();
-		StringBuilder sb = new StringBuilder();
-		
-		return sb.toString();
+		return Extractor.extractProgram(props);
 	}
 
 	private static Prop applyProp(Prop applicator, Prop applicand, List<String> variables) throws LogicException {
