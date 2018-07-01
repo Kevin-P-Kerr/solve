@@ -647,21 +647,7 @@ public class Interpreter {
 	private static String extract(Environment env) {
 		Map<String, Prop> props = env.getAllProps();
 		StringBuilder sb = new StringBuilder();
-		Map<String, Integer> relationsToArgs = Maps.newHashMap();
-		for (Entry<String, Prop> e : props.entrySet()) {
-			Prop p = e.getValue();
-			String propName = e.getKey();
-			sb.append("(define " + propName + " ");
-			sb.append(p.toSCM());
-			for (CompoundProp cp : p.getMatrix()) {
-				for (AtomicProp ap : cp.getAtomicProps()) {
-					String name = ap.getName();
-					int args = ap.getHecceities().size();
-					relationsToArgs.put(name, args);
-				}
-			}
-			sb.append(")\n");
-		}
+		
 		return sb.toString();
 	}
 
