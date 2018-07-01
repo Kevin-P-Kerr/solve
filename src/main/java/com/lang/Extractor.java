@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lang.val.Prop;
 
 public class Extractor {
@@ -35,12 +36,15 @@ public class Extractor {
 	public static String extractProgram(Map<String,Prop> namedProps) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(load \"extract/base.scm\")\n\n");
+		Map<String,String> relation2info = Maps.newHashMap();
 		for ( Entry<String, Prop> entry:namedProps.entrySet()) {
 			String name = entry.getKey();
 			Prop p = entry.getValue();
 			sb.append("(define "+name+" ");
 			sb.append(p.extractSCM());
 			sb.append(")\n");
+			
+			
 		}
 		return sb.toString();
 	}
