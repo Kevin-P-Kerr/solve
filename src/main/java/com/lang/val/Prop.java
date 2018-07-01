@@ -423,16 +423,17 @@ public class Prop extends Value {
 			List<String> retArgs = Lists.newArrayList();
 			sb.append("(lambda () (let (");
 			for (AtomicProp ap:aps) {
-				sb.append("(");
 				Hecceity h = ap.getHecceities().get(0);
 				String ra = "_"+h2s.get(h);
 				boolean make = false;
 				if (isForAllHec(h)) {
 					make = true;
+					sb.append("(");
 					sb.append(ra+" (make-");
 				}
 				else {
 					if (ap.getHecceities().size() > 1) {
+						sb.append("(");
 						sb.append(ra+ " (get-");
 					}
 					else {

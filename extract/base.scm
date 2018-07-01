@@ -1,18 +1,20 @@
-(define (make-entity) 
-  (cons '() (make-strong-eq-hash-table 100)))
+(define (eval-body body)
+  (if (null? body) #f
+    (let ((first (car body))
+          (rest (cdr body)))
+      (let ((condition (car first))
+            (post (cdr first)))
+        (if (or (null? rest) (condition))
+          (post)
+          (eval-body body))))))
 
-(define (set-literal! entity lit) 
-  (set-car! entity lit))
+(define (is-Int? a)
+  (number? a))
 
-(define (evaluate-body body)
-    (if (null? body) #f
-        (construct-relation body)))
+(define (is-Str a)
+  (string? a))
+
+(define (is-Lambda a)
+  (lambda? a))
 
 
-(define (construct-relation lol)
-    (if (null? lol) #f
-        (let ((l (car lol))
-            (rest (cdr lol)))
-            (if (and (l) (all-false? rest))
-              
-(define (relation? ))

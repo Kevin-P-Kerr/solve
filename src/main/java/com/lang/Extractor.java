@@ -34,6 +34,7 @@ public class Extractor {
 	}
 	public static String extractProgram(Map<String,Prop> namedProps) {
 		StringBuilder sb = new StringBuilder();
+		sb.append("(load \"extract/base.scm\")\n\n");
 		for ( Entry<String, Prop> entry:namedProps.entrySet()) {
 			String name = entry.getKey();
 			Prop p = entry.getValue();
