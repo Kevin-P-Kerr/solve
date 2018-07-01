@@ -1,5 +1,6 @@
 package com.lang.val;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.function.UnaryOperator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.lang.val.Prop.AtomicProp;
 
 public class Prop extends Value {
 
@@ -375,10 +377,50 @@ public class Prop extends Value {
 			}
 			return true;
 		}
+		
+		public List<AtomicProp> getNonNegAtomsByArrity() {
+			List<AtomicProp> ret = Lists.newArrayList();
+			for (AtomicProp ap: getAtomicProps()) {
+				if (ap.getTruthValue()) {
+					ret.add(ap);
+				}
+			}
+			Comparator<AtomicProp> comp = new Comparator<Prop.AtomicProp>() {
+				
+				@Override
+				public int compare(AtomicProp o1, AtomicProp o2) {
+					int n = o1.getHecceities().size();
+					int nn = o2.getHecceities().size();
+					if (n < nn) {
+						return -1;
+					}
+					if (n == nn) {
+						return 0;
+					}
+					return 1;
+				}
+			};
+			ret.sort(comp);
+			return ret;
+			
+		}
 
 		public String buildConstructorSCM() {
 			StringBuilder sb = new StringBuilder();
+			List<AtomicProp> aps = getNonNegAtomsByArrity();
+			List<String> retArgs = Lists.newArrayList();
 			sb.append("(lambda () (let (");
+			for (AtomicProp ap:aps) {
+				Hecceity h = ap.getHecceities().get(0);
+				String ra = h2s.get(h);
+				sb.append(ra+" (make-");
+				sb.append(ap.getName() +" ");
+				for (int i =1, ii=ap.getHecceities().size();i<ii;i++) {
+					
+				}
+	
+			}
+			
 			return sb.toString();
 		}
 
