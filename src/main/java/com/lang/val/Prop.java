@@ -376,6 +376,11 @@ public class Prop extends Value {
 			return true;
 		}
 
+		public String buildConstructorSCM() {
+			StringBuilder sb = new StringBuilder();
+			return sb.toString();
+		}
+
 	}
 
 	public static class AtomicPropInfo {
@@ -1479,7 +1484,7 @@ public class Prop extends Value {
 				}
 				sb.append("))");
 			}
-			sb.append(" '())");
+			sb.append(""+cp.buildConstructorSCM()+")");
 		}
 		sb.append("))) \n\t\t (eval-body body)))");
 		
