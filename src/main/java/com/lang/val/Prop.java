@@ -404,6 +404,18 @@ public class Prop extends Value {
 			return ret;
 			
 		}
+		
+		private boolean isForAllHec(Hecceity h) {
+			for (Quantifier q: getPrefix()) {
+				if (q.getHecceity() == h) {
+					return q.getType().equals(QuantifierType.FORALL);
+				}
+				else {
+					return false;
+				}
+			}
+			return false;
+		}
 
 		public String buildConstructorSCM() {
 			StringBuilder sb = new StringBuilder();
@@ -413,11 +425,30 @@ public class Prop extends Value {
 			for (AtomicProp ap:aps) {
 				sb.append("(");
 				Hecceity h = ap.getHecceities().get(0);
-				String ra = h2s.get(h);
-				sb.append(ra+" (make-");
+				String ra = "_"+h2s.get(h);
+				boolean make = false;
+				if (isForAllHec(h)) {
+					make = true;
+					sb.append(ra+" (make-");
+				}
+				else {
+					if (ap.getHecceities().size() > 1) {
+						sb.append(ra+ " (get-");
+					}
+					else {
+						continue;
+					}
+				}
 				sb.append(ap.getName() +" ");
-				for (int i =1, ii=ap.getHecceities().size();i<ii;i++) {
-					sb.append(h2s.get(ap.getHecceities().get(i)));
+				int i;
+				if (make) {
+					i = 0;
+				}
+				else {
+					i =1;
+				}
+				for (int ii=ap.getHecceities().size();i<ii;i++) {
+					sb.append(h2s.get(ap.getHecceities().get(i))+" ");
 				}
 				sb.append("))");
 				retArgs.add(ra);
