@@ -39,7 +39,7 @@ public class Extractor {
 			Prop p = entry.getValue();
 			sb.append("(define "+name+" ");
 			sb.append(p.extractSCM());
-			sb.append("\n");
+			sb.append(")\n");
 		}
 		return sb.toString();
 	}
