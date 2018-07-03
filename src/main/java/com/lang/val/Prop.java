@@ -9,7 +9,6 @@ import java.util.function.UnaryOperator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.lang.val.Prop.AtomicProp;
 
 public class Prop extends Value {
 
@@ -377,16 +376,16 @@ public class Prop extends Value {
 			}
 			return true;
 		}
-		
+
 		public List<AtomicProp> getNonNegAtomsByArrity() {
 			List<AtomicProp> ret = Lists.newArrayList();
-			for (AtomicProp ap: getAtomicProps()) {
+			for (AtomicProp ap : getAtomicProps()) {
 				if (ap.getTruthValue()) {
 					ret.add(ap);
 				}
 			}
 			Comparator<AtomicProp> comp = new Comparator<Prop.AtomicProp>() {
-				
+
 				@Override
 				public int compare(AtomicProp o1, AtomicProp o2) {
 					int n = o1.getHecceities().size();
@@ -402,64 +401,18 @@ public class Prop extends Value {
 			};
 			ret.sort(comp);
 			return ret;
-			
+
 		}
-		
+
 		private boolean isForAllHec(Hecceity h) {
-			for (Quantifier q: getPrefix()) {
+			for (Quantifier q : getPrefix()) {
 				if (q.getHecceity() == h) {
 					return q.getType().equals(QuantifierType.FORALL);
-				}
-				else {
+				} else {
 					return false;
 				}
 			}
 			return false;
-		}
-
-		public String buildConstructorSCM() {
-			StringBuilder sb = new StringBuilder();
-			List<AtomicProp> aps = getNonNegAtomsByArrity();
-			List<String> retArgs = Lists.newArrayList();
-			sb.append("(lambda () (let (");
-			for (AtomicProp ap:aps) {
-				Hecceity h = ap.getHecceities().get(0);
-				String ra = "_"+h2s.get(h);
-				boolean make = false;
-				if (isForAllHec(h)) {
-					make = true;
-					sb.append("(");
-					sb.append(ra+" (make-");
-				}
-				else {
-					if (ap.getHecceities().size() > 1) {
-						sb.append("(");
-						sb.append(ra+ " (get-");
-					}
-					else {
-						continue;
-					}
-				}
-				sb.append(ap.getName() +" ");
-				int i;
-				if (make) {
-					i = 0;
-				}
-				else {
-					i =1;
-				}
-				for (int ii=ap.getHecceities().size();i<ii;i++) {
-					sb.append(h2s.get(ap.getHecceities().get(i))+" ");
-				}
-				sb.append("))");
-				retArgs.add(ra);
-			}
-			sb.append(") (list ");
-			for (String ra:retArgs) {
-				sb.append(ra+" ");
-			}
-			sb.append(")))");	
-			return sb.toString();
 		}
 
 	}
@@ -1516,60 +1469,6 @@ public class Prop extends Value {
 
 	public Map<Hecceity, String> getH2S() {
 		return Maps.newHashMap(h2s);
-	}
-
-	private static boolean containsHec(CompoundProp cp, List<Hecceity> hecs) {
-		for (AtomicProp ap:cp.getAtomicProps()) {
-			for (Hecceity h: ap.getHecceities()) {
-				if (hecs.contains(h)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	public String extractSCM() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("(lambda (");
-		List<Hecceity> thereisHecs = Lists.newArrayList();
-		for (Quantifier q: prefix) {
-			if (q.getType().equals(QuantifierType.THEREIS)) {
-				thereisHecs.add(q.getHecceity());
-				continue;
-			}
-			Hecceity h = q.getHecceity();
-			String arg = h2s.get(h);
-			sb.append(arg+" ");
-		}
-		sb.append(")\n\t");
-		sb.append("(let ((body (list ");
-		for (CompoundProp cp: matrix) {
-			sb.append("\n\t (cons ");
-			if (containsHec(cp,thereisHecs)) {
-				sb.append("(lambda () #t)");
-			}
-			else {
-				sb.append("(lambda () (and ");
-				for (AtomicProp ap: cp.getAtomicProps()) {
-					if (!ap.getTruthValue()) {
-						sb.append("(not ");
-					}
-					sb.append("(is-"+ap.getName()+ " ");
-					for (Hecceity h: ap.getHecceities()) {
-						sb.append(h2s.get(h)+ " ");
-					}
-					sb.append(")");
-					if (!ap.getTruthValue()) {
-						sb.append(")");
-					}
-				}
-				sb.append("))");
-			}
-			sb.append("\n\t"+cp.buildConstructorSCM()+")");
-		}
-		sb.append("))) \n\t\t (eval-body body)))");
-		
-		return sb.toString();
 	}
 
 }
