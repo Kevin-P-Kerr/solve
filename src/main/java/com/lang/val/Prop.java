@@ -404,17 +404,6 @@ public class Prop extends Value {
 
 		}
 
-		private boolean isForAllHec(Hecceity h) {
-			for (Quantifier q : getPrefix()) {
-				if (q.getHecceity() == h) {
-					return q.getType().equals(QuantifierType.FORALL);
-				} else {
-					return false;
-				}
-			}
-			return false;
-		}
-
 	}
 
 	public static class AtomicPropInfo {
