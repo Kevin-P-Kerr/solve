@@ -4,6 +4,9 @@ triple_terms = forall a forall b forall c : ~TripleTerms(a b c) + Term(a)*Term(b
 e2e = forall a forall b: ~Term(a) + ~Term(b) + ~E(a b) + E(b a)
 i2i = forall a forall b : ~Term(a) + ~Term(b) + ~I(a b) + I(b a)
 a2i = forall a forall b : ~Term(a) + ~Term(b) + ~A(a b) + I(b a)
+na2o = forall a forall b :~Term(a) + ~Term(b) + A(a b) + O(a b)
+ne2i = forall a forall b : ~Term(a) + ~Term(b) + E(a b) + I(a b)
+excao = forall a forall b : ~Term(a) + ~Term(b) + ~A(a b) + ~O(a b)
 // define the "perfect" deductions
 Barbara = forall a forall b forall c : ~TripleTerms(a b c) + ~A(a b) + ~A(b c) + A(a c)
 Celarent = forall a forall b forall c: ~TripleTerms(a b c) + ~E(a b) + ~A(b c) + E(a c)
@@ -46,6 +49,7 @@ counter = forall a forall b forall c thereis d thereis e thereis f: ~Argument(a 
 // let's the leave the metatheoretical statements alone for the time being
 #prop2 = forall a forall b forall c : ~Argument(a b c) + ~All(a) + ~A
 
+
 prop2 = forall a forall b forall c : ~TripleTerms(a b c) + ~A(a b) + ~E(a c) + E(b c)
 :Camestres prop2
 #prop3 = forall a forall b forall c: ~TripleTerms(a b c) + ~A(a b) + ~O(a c) + O(b c)
@@ -64,3 +68,36 @@ t2 = / 0 s
 p = merge t1 t2
 p = merge t2 t1
 : p
+
+prop3 = forall a forall b forall c: ~TripleTerms(a b c) + ~E(a b) + ~I(a c) + O(b c)
+:Festino prop3
+:
+s = given
+s = apply s triple_terms a b c
+s = apply s e2e a b
+s = apply s Ferio b a c
+s = apply s x b a c
+t1 = / 7 s
+t2 = / 0 s
+merge t2 t1
+s = merge t2 t1
+: s
+prop4 = forall a forall b forall c : ~TripleTerms(a b c) + ~A(a b) + ~O(a c) + O(b c)
+:Baraco prop4
+:
+s = given
+s = apply s triple_terms a b c
+s = apply s Barbara a b c
+s = apply s excao a c
+s = apply s na2o a c
+s = apply s na2o b c
+t1 = / 8 s
+t2 = / 0 s
+g = merge t2 t1
+: g
+
+prop5 = forall a forall b thereis c: ~A(a b) + ~A(a c) + E(b c)
+subp = forall a forall b thereis c : ~A(a b) + ~A(a c) + A(b c)
+prop5 = * subp prop5
+prop5
+prop5 = # d a prop5
