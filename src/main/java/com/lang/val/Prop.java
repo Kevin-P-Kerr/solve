@@ -258,7 +258,21 @@ public class Prop extends Value {
 				}
 			}
 			return true;
+		}
 
+		public boolean exactEquals(CompoundProp cp) {
+			if (cp.getAtomicProps().size() != getAtomicProps().size()) {
+				return false;
+			}
+			for (AtomicProp ap : cp.getAtomicProps()) {
+				for (AtomicProp aap : getAtomicProps()) {
+					if (ap.exactExactEquals(aap)) {
+						break;
+					}
+				}
+				return false;
+			}
+			return true;
 		}
 
 		public List<AtomicPropInfo> getAtomicPropInfo() {
@@ -1177,7 +1191,7 @@ public class Prop extends Value {
 				}
 			}
 			// TODO: do something like exact contains
-			if (compounds.contains(ncp)) {
+			if (compounds.contains(ncp) && containsExactly(compounds, ncp)) {
 				continue;
 			}
 			compounds.add(ncp);
@@ -1189,6 +1203,15 @@ public class Prop extends Value {
 		ret.h2s = h2s;
 		ret.s2h = s2h;
 		return ret;
+	}
+
+	private static boolean containsExactly(List<CompoundProp> compounds, CompoundProp cp) {
+		for (CompoundProp ccp : compounds) {
+			if (ccp.exactEquals(cp)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static QuantifierType reverseType(Quantifier q) {
