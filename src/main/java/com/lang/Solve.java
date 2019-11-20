@@ -4,8 +4,6 @@ package com.lang;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-
 import com.lang.parse.Tokenizer;
 import com.lang.parse.Tokenizer.TokenStream;
 
@@ -27,7 +25,7 @@ public class Solve {
 			TokenStream tokens = t.tokenize(input);
 			Interpreter i = new Interpreter(tokens);
 			i.eval();
-		} catch (IOException | Exception e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
