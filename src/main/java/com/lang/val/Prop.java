@@ -63,6 +63,12 @@ public class Prop extends Value {
 			return new Quantifier(QuantifierType.FORALL, name);
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder b = new StringBuilder();
+			return b.toString();
+		}
+
 	}
 
 	public static class BooleanPart {
@@ -102,12 +108,25 @@ public class Prop extends Value {
 		}
 	}
 
-	private final Quantifier quantifier;
+	public static class QuantifierPart {
+		private final List<Quantifier> quantifiers;
+
+		public QuantifierPart(List<Quantifier> q) {
+			this.quantifiers = q;
+		}
+	}
+
+	private final QuantifierPart quantifierPart;
 	private final BooleanPart booleanPart;
 
-	public Prop(Quantifier q, BooleanPart b) {
-		this.quantifier = q;
+	public Prop(QuantifierPart q, BooleanPart b) {
+		this.quantifierPart = q;
 		this.booleanPart = b;
+	}
+
+	@Override
+	public String toString() {
+		return quantifierPart.toString() + ":" + booleanPart.toString() + ".";
 	}
 
 }

@@ -38,9 +38,19 @@ public class Interpreter {
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {
-		Prop.Quantifier q = parseQuantifier(tokens);
+		Prop.QuantifierPart q = parseQuantifierPart(tokens);
 		Prop.BooleanPart b = parseBoolean(tokens);
 		return new Prop(q, b);
+	}
+
+	private Prop.QuantifierPart parseQuantifierPart(TokenStream tokens) throws Exception {
+		List<Prop.Quantifier> quantifiers = Lists.newArrayList();
+		Token t = tokens.peek();
+		while (t.getType() != TokenType.TT_COLON) {
+			Prop.Quantifier q = parseQuantifier(tokens);
+			quantifiers.add(q);
+		}
+		return new Prop.QuantifierPart(quantifiers);
 	}
 
 	private Prop.BooleanPart parseBoolean(TokenStream tokens) throws Exception {
@@ -94,9 +104,9 @@ public class Interpreter {
 		Token t = tokens.getNext();
 		switch (t.getType()) {
 		case TT_FORALL:
-			return Prop.Quantifier.newUniversal(t.getLit());
+			return Prop.Quantifier.newUniversal(tokens.getNext().getLit());
 		case TT_THEREIS:
-			return Prop.Quantifier.newExistential(t.getLit());
+			return Prop.Quantifier.newExistential(tokens.getNext().getLit());
 		}
 		throw new Exception("bad quantifier");
 	}
