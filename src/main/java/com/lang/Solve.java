@@ -26,8 +26,8 @@ public class Solve {
 			Tokenizer t = new Tokenizer();
 			TokenStream tokens = t.tokenize(input);
 			Interpreter i = new Interpreter(tokens);
-
-		} catch (IOException e) {
+			i.eval();
+		} catch (IOException | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

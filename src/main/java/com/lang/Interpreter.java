@@ -35,6 +35,9 @@ public class Interpreter {
 				System.exit(1);
 			}
 		}
+		for (Prop p : axioms) {
+			System.out.println(p.toString());
+		}
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {
