@@ -1,0 +1,29 @@
+axiom1 = forall a thereis b: ~Man(a) + Man(b)*Mother(b a)
+axiom2 = forall a forall b forall c: ~Man(a) + ~Man(b) + ~Man(c) + ~Mother(a b) + ~Mother(b c) + Grandmother(a c)
+prop = forall a thereis b: ~Man(a) + Man(b)*Grandmother(b a)
+:prop prop
+:
+given
+given = *  given axiom1
+given = # b a given
+given = * given axiom1
+given = # c b given
+given = * given axiom2
+given = # d c given
+given = # e b given
+given = # f a given
+: given
+intermediate
+s = / 5 given
+g = / 0 given
+h = merge s g
+: h
+intermdiate
+intermediate
+ j = / 1 given
+h = merge s j
+: h
+h
+j = / 3 given
+h = merge s j
+: h

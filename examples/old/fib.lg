@@ -1,0 +1,5 @@
+((lambda (x y z)
+    (z y x z)) 100 0 (lambda (x y z) (if (eq? x 0) y (z (- x 1) (+ y 1) z))))
+
+forall a forall b forall c thereis d: d:c(a b c)
+forall a forall b forall c thereis d: Eq(a 0)*d:b + d:c(minusOne(a) plusOne(b) c)

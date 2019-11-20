@@ -1,0 +1,5 @@
+forall a: ~DSP(a) + GDPR_Compliant(a) + GDPR_Noncompliant(a)
+ttd = thereis a: TTD(a)
+: 0 $ ttd
+ttd = thereis a: DSP(a)
+: 0 $ ttd

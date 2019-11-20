@@ -1,0 +1,13 @@
+# S = S
+# ( = (
+# ) = )
+# 0 = 0
+# + = +
+
+* Nat = 0 | Successor
+* Successor = S ( Nat )
+
+~ a = Sucessor : b = @ Nat a : c = Nat ->  a + c : S ( b + c )
+~ 
+
+
