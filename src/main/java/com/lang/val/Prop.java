@@ -66,6 +66,10 @@ public class Prop extends Value {
 		@Override
 		public String toString() {
 			StringBuilder b = new StringBuilder();
+			if (type == QuantifierType.FORALL) {
+				b.append("forall ");
+				b.append("name");
+			}
 			return b.toString();
 		}
 
@@ -113,6 +117,17 @@ public class Prop extends Value {
 
 		public QuantifierPart(List<Quantifier> q) {
 			this.quantifiers = q;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder b = new StringBuilder();
+			for (Quantifier q : quantifiers) {
+				b.append(q.toString());
+				b.append(" ");
+			}
+			b.append(":");
+			return b.toString();
 		}
 	}
 
