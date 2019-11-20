@@ -40,6 +40,7 @@ public class Interpreter {
 	private Prop ParseProp(TokenStream tokens) throws Exception {
 		Prop.Quantifier q = parseQuantifier(tokens);
 		Prop.BooleanPart b = parseBoolean(tokens);
+		return new Prop(q, b);
 	}
 
 	private Prop.BooleanPart parseBoolean(TokenStream tokens) throws Exception {
@@ -48,12 +49,45 @@ public class Interpreter {
 			throw new Exception();
 		}
 		t = tokens.getNext();
+		List<Prop.ConjunctProp> cons = Lists.newArrayList();
 		while (t.getType() != TokenType.TT_PERIOD) {
-			List<Token> ts = Lists.newArrayList();
-			while (t.getType() != TokenType.TT_PLUS) {
-
-			}
+			Prop.ConjunctProp cp = parseConjunctProp(tokens);
+			cons.add(cp);
+			tokens.getNext(); // throwaway a + sign
+			t = tokens.getNext();
 		}
+		return new Prop.BooleanPart(cons);
+	}
+
+	private Prop.ConjunctProp parseConjunctProp(TokenStream tokens) {
+		Token t = tokens.peek();
+		List<Prop.AtomicProp> atoms = Lists.newArrayList();
+		while (t.getType() != TokenType.TT_PLUS) {
+			Prop.AtomicProp atom = parseAtom(tokens);
+			atoms.add(atom);
+			tokens.getNext(); // throwaway a * sign
+			t = tokens.getNext();
+		}
+		return new Prop.ConjunctProp(atoms);
+	}
+
+	private Prop.AtomicProp parseAtom(TokenStream tokens) {
+		Token t = tokens.getNext();
+		boolean negate = false;
+		if (t.getType() == TokenType.TT_TILDE) {
+			negate = true;
+			t = tokens.getNext();
+		}
+		String name = t.getLit();
+		List<Prop.Heccity> hecs = Lists.newArrayList();
+		t = tokens.getNext();
+		while (t.getType() != TokenType.TT_LPAREN) {
+			Prop.Heccity h = new Prop.Heccity(t.getLit());
+			hecs.add(h);
+			t = tokens.getNext();
+		}
+		return new Prop.AtomicProp(negate, name, hecs);
+
 	}
 
 	private Prop.Quantifier parseQuantifier(TokenStream tokens) throws Exception {

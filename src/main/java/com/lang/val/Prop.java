@@ -102,4 +102,12 @@ public class Prop extends Value {
 		}
 	}
 
+	private final Quantifier quantifier;
+	private final BooleanPart booleanPart;
+
+	public Prop(Quantifier q, BooleanPart b) {
+		this.quantifier = q;
+		this.booleanPart = b;
+	}
+
 }
