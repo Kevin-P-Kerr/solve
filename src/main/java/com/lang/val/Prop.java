@@ -116,6 +116,11 @@ public class Prop extends Value {
 				conjunctions.add(cj);
 			}
 		}
+
+		public void multiply(BooleanPart booleanPart) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	public static class ConjunctProp {
@@ -275,6 +280,21 @@ public class Prop extends Value {
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.add(b.booleanPart);
+		return a;
+	}
+
+	public Prop multiply(Prop b) {
+		Prop a = this.copy();
+		UniqueString s = new UniqueString();
+
+		for (Quantifier q : a.quantifierPart.quantifiers) {
+			a.replaceHeccity(q, s.getString());
+		}
+		for (Quantifier q : b.quantifierPart.quantifiers) {
+			b.replaceHeccity(q, s.getString());
+		}
+		a.quantifierPart.add(b.quantifierPart);
+		a.booleanPart.multiply(b.booleanPart);
 		return a;
 	}
 
