@@ -10,7 +10,11 @@ import com.lang.parse.Tokenizer.TokenStream;
 public class Solve {
 
 	public static void main(String args[]) {
-		String fn = args[0];
+		// String fn = args[0];
+		String fn = null;
+		if (fn == null) {
+			fn = "foo.lg";
+		}
 		try {
 			File file = new File(fn);
 			FileReader r = new FileReader(file);
@@ -21,8 +25,7 @@ public class Solve {
 				sb.append(s);
 			}
 			String input = sb.toString();
-			Tokenizer t = new Tokenizer();
-			TokenStream tokens = t.tokenize(input);
+			TokenStream tokens = Tokenizer.tokenize(input);
 			Interpreter i = new Interpreter(tokens);
 			i.eval();
 		} catch (Exception e) {

@@ -68,8 +68,10 @@ public class Prop extends Value {
 			StringBuilder b = new StringBuilder();
 			if (type == QuantifierType.FORALL) {
 				b.append("forall ");
-				b.append("name");
+			} else {
+				b.append("thereis ");
 			}
+			b.append(name);
 			return b.toString();
 		}
 
@@ -81,6 +83,18 @@ public class Prop extends Value {
 		public BooleanPart(List<ConjunctProp> conjunctions) {
 			this.conjunctions = conjunctions;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
+				sb.append(conjunctions.get(i).toString());
+				if (ii - i > 1) {
+					sb.append(" + ");
+				}
+			}
+			return sb.toString();
+		}
 	}
 
 	public static class ConjunctProp {
@@ -88,6 +102,18 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0, ii = atoms.size(); i < ii; i++) {
+				sb.append(atoms.get(i).toString());
+				if (ii - i > 1) {
+					sb.append("*");
+				}
+			}
+			return sb.toString();
 		}
 
 	}
@@ -101,6 +127,24 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			if (negate) {
+				sb.append("~");
+			}
+			sb.append(name);
+			sb.append("(");
+			for (int i = 0, ii = heccesities.size(); i < ii; i++) {
+				sb.append(heccesities.get(i).name);
+				if (ii - i > 1) {
+					sb.append(" ");
+				}
+			}
+			sb.append(")");
+			return sb.toString();
 		}
 	}
 
@@ -126,7 +170,6 @@ public class Prop extends Value {
 				b.append(q.toString());
 				b.append(" ");
 			}
-			b.append(":");
 			return b.toString();
 		}
 	}
