@@ -38,6 +38,11 @@ public class Interpreter {
 		for (Prop p : axioms) {
 			System.out.println(p.toString());
 		}
+		Prop p = axioms.get(0);
+		for (Prop pp : axioms) {
+			p = p.add(pp);
+		}
+		System.out.print(p.toString());
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {

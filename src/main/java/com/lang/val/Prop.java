@@ -166,7 +166,7 @@ public class Prop extends Value {
 
 		public void replaceHecceities(String oldName, String name2) {
 			for (Heccity h : heccesities) {
-				if (h.name == oldName) {
+				if (h.name.equals(oldName)) {
 					h.name = name2;
 				}
 			}
@@ -266,11 +266,15 @@ public class Prop extends Value {
 	public Prop add(Prop b) {
 		Prop a = this.copy();
 		UniqueString s = new UniqueString();
-		a.quantifierPart.add(b.quantifierPart);
-		a.booleanPart.add(b.booleanPart);
+
 		for (Quantifier q : a.quantifierPart.quantifiers) {
 			a.replaceHeccity(q, s.getString());
 		}
+		for (Quantifier q : b.quantifierPart.quantifiers) {
+			b.replaceHeccity(q, s.getString());
+		}
+		a.quantifierPart.add(b.quantifierPart);
+		a.booleanPart.add(b.booleanPart);
 		return a;
 	}
 
