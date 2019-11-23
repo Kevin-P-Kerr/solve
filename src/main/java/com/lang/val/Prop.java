@@ -2,6 +2,8 @@ package com.lang.val;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public class Prop extends Value {
 
 	private static class UniqueString {
@@ -75,6 +77,10 @@ public class Prop extends Value {
 			return b.toString();
 		}
 
+		public Quantifier copy() {
+			return new Quantifier(type, name);
+		}
+
 	}
 
 	public static class BooleanPart {
@@ -95,6 +101,14 @@ public class Prop extends Value {
 			}
 			return sb.toString();
 		}
+
+		public BooleanPart copy() {
+			List<ConjunctProp> conjs = Lists.newArrayList();
+			for (ConjunctProp cj : conjunctions) {
+				conjs.add(cj.copy());
+			}
+			return new BooleanPart(conjs);
+		}
 	}
 
 	public static class ConjunctProp {
@@ -102,6 +116,14 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public ConjunctProp copy() {
+			List<AtomicProp> a = Lists.newArrayList();
+			for (AtomicProp at : atoms) {
+				a.add(at.copy());
+			}
+			return new ConjunctProp(a);
 		}
 
 		@Override
@@ -129,6 +151,14 @@ public class Prop extends Value {
 			this.heccesities = h;
 		}
 
+		public AtomicProp copy() {
+			List<Heccity> hh = Lists.newArrayList();
+			for (Heccity h : heccesities) {
+				hh.add(h.copy());
+			}
+			return new AtomicProp(negate, name, hh);
+		}
+
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
@@ -154,6 +184,10 @@ public class Prop extends Value {
 		public Heccity(String n) {
 			this.name = n;
 		}
+
+		public Heccity copy() {
+			return new Heccity(name);
+		}
 	}
 
 	public static class QuantifierPart {
@@ -172,6 +206,14 @@ public class Prop extends Value {
 			}
 			return b.toString();
 		}
+
+		public QuantifierPart copy() {
+			List<Quantifier> qs = Lists.newArrayList();
+			for (Quantifier q : quantifiers) {
+				qs.add(q.copy());
+			}
+			return new QuantifierPart(qs);
+		}
 	}
 
 	private final QuantifierPart quantifierPart;
@@ -185,6 +227,10 @@ public class Prop extends Value {
 	@Override
 	public String toString() {
 		return quantifierPart.toString() + ":" + booleanPart.toString() + ".";
+	}
+
+	public Prop copy() {
+		return new Prop(quantifierPart.copy(), booleanPart.copy());
 	}
 
 }
