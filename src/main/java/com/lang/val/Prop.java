@@ -50,7 +50,7 @@ public class Prop extends Value {
 		}
 
 		private final QuantifierType type;
-		private final String name;
+		private String name;
 
 		private Quantifier(QuantifierType t, String name) {
 			this.type = t;
@@ -109,6 +109,13 @@ public class Prop extends Value {
 			}
 			return new BooleanPart(conjs);
 		}
+
+		// mutates the object
+		public void add(BooleanPart booleanPart) {
+			for (ConjunctProp cj : booleanPart.conjunctions) {
+				conjunctions.add(cj);
+			}
+		}
 	}
 
 	public static class ConjunctProp {
@@ -138,6 +145,12 @@ public class Prop extends Value {
 			return sb.toString();
 		}
 
+		public void replaceHecceities(String oldName, String name) {
+			for (AtomicProp ap : atoms) {
+				ap.replaceHecceities(oldName, name);
+			}
+		}
+
 	}
 
 	public static class AtomicProp {
@@ -149,6 +162,15 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		public void replaceHecceities(String oldName, String name2) {
+			for (Heccity h : heccesities) {
+				if (h.name == oldName) {
+					h.name = name2;
+				}
+			}
+
 		}
 
 		public AtomicProp copy() {
@@ -179,7 +201,7 @@ public class Prop extends Value {
 	}
 
 	public static class Heccity {
-		private final String name;
+		private String name;
 
 		public Heccity(String n) {
 			this.name = n;
@@ -214,6 +236,13 @@ public class Prop extends Value {
 			}
 			return new QuantifierPart(qs);
 		}
+
+		// muates the object
+		public void add(QuantifierPart quantifierPart) {
+			for (Quantifier q : quantifierPart.quantifiers) {
+				quantifiers.add(q);
+			}
+		}
 	}
 
 	private final QuantifierPart quantifierPart;
@@ -231,6 +260,32 @@ public class Prop extends Value {
 
 	public Prop copy() {
 		return new Prop(quantifierPart.copy(), booleanPart.copy());
+	}
+
+	// add a prop to this one--return a copy
+	public Prop add(Prop b) {
+		Prop a = this.copy();
+		UniqueString s = new UniqueString();
+		a.quantifierPart.add(b.quantifierPart);
+		a.booleanPart.add(b.booleanPart);
+		for (Quantifier q : a.quantifierPart.quantifiers) {
+			a.replaceHeccity(q, s.getString());
+		}
+		return a;
+	}
+
+	private void replaceHeccity(Quantifier q, String name) {
+		String oldName = q.name;
+		for (Quantifier qq : quantifierPart.quantifiers) {
+			if (qq == q) {
+				qq.name = name;
+				break;
+			}
+		}
+		for (ConjunctProp cj : booleanPart.conjunctions) {
+			cj.replaceHecceities(oldName, name);
+		}
+
 	}
 
 }
