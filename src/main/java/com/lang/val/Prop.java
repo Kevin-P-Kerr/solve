@@ -130,6 +130,28 @@ public class Prop extends Value {
 			}
 			this.conjunctions = ncp;
 		}
+
+		public void simplify() {
+			for (ConjunctProp cp : conjunctions) {
+				cp.simplify();
+			}
+			List<Integer> markedForRemoval = Lists.newArrayList();
+			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
+				ConjunctProp cp = conjunctions.get(i);
+				for (int l = 0, ll = conjunctions.size(); l < ll; l++) {
+					if (l == i) {
+						continue;
+					}
+					ConjunctProp ccp = conjunctions.get(l);
+					if (ccp.equals(cp)) {
+						markedForRemoval.add(l);
+					}
+				}
+			}
+			for (Integer i : markedForRemoval) {
+				conjunctions.remove(i);
+			}
+		}
 	}
 
 	public static class ConjunctProp {
@@ -137,6 +159,26 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public void simplify() {
+			List<Integer> markedForRemoval = Lists.newArrayList();
+			for (int i = 0, ii = atoms.size(); i < ii; i++) {
+				AtomicProp ap = atoms.get(i);
+				for (int l = 0, ll = atoms.size(); l < ll; l++) {
+					if (l == i) {
+						continue;
+					}
+					AtomicProp aap = atoms.get(l);
+					if (aap.equals(ap)) {
+						markedForRemoval.add(l);
+					}
+				}
+			}
+			for (Integer i : markedForRemoval) {
+				atoms.remove(i);
+			}
+
 		}
 
 		public ConjunctProp copy() {
@@ -184,7 +226,24 @@ public class Prop extends Value {
 					h.name = name2;
 				}
 			}
+		}
 
+		public boolean equals(AtomicProp ap) {
+			if (ap == this) {
+				return true;
+			}
+			if (ap.negate != negate) {
+				return false;
+			}
+			if (!ap.name.equals(name)) {
+				return false;
+			}
+			for (Heccity h : heccesities) {
+				if (!ap.heccesities.contains(h)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		public AtomicProp copy() {
@@ -304,7 +363,12 @@ public class Prop extends Value {
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
+		a.simplify();
 		return a;
+	}
+
+	private void simplify() {
+		booleanPart.simplify();
 	}
 
 	private void replaceHeccity(Quantifier q, String name) {
