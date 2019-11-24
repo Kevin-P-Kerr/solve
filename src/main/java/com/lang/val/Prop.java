@@ -181,6 +181,21 @@ public class Prop extends Value {
 
 		}
 
+		public boolean equals(ConjunctProp cp) {
+			if (cp == this) {
+				return true;
+			}
+			if (cp.atoms.size() != atoms.size()) {
+				return false;
+			}
+			for (AtomicProp atom : cp.atoms) {
+				if (!atoms.contains(atom)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public ConjunctProp copy() {
 			List<AtomicProp> a = Lists.newArrayList();
 			for (AtomicProp at : atoms) {
