@@ -40,7 +40,7 @@ public class Interpreter {
 		}
 		Prop p = axioms.get(0);
 		for (Prop pp : axioms) {
-			p = p.add(pp);
+			p = p.multiply(pp);
 		}
 		System.out.print(p.toString());
 	}

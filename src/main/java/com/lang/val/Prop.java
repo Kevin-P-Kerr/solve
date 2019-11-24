@@ -84,7 +84,7 @@ public class Prop extends Value {
 	}
 
 	public static class BooleanPart {
-		private final List<ConjunctProp> conjunctions;
+		private List<ConjunctProp> conjunctions;
 
 		public BooleanPart(List<ConjunctProp> conjunctions) {
 			this.conjunctions = conjunctions;
@@ -117,9 +117,18 @@ public class Prop extends Value {
 			}
 		}
 
-		public void multiply(BooleanPart booleanPart) {
-			// TODO Auto-generated method stub
-
+		// multply two boolean parts. this does not copy
+		// (a+b)(c+d) = ac + bc + ad + bd.
+		public void multiply(BooleanPart b) {
+			List<ConjunctProp> ncp = Lists.newArrayList();
+			for (ConjunctProp cp : b.conjunctions) {
+				for (ConjunctProp ccp : conjunctions) {
+					ConjunctProp nccp = ccp.copy();
+					nccp.atoms.addAll(cp.atoms);
+					ncp.add(nccp);
+				}
+			}
+			this.conjunctions = ncp;
 		}
 	}
 
