@@ -152,6 +152,18 @@ public class Prop extends Value {
 				conjunctions.remove(i);
 			}
 		}
+
+		public void removeContradictions() {
+			List<ConjunctProp> markedForRemoval = Lists.newArrayList();
+			for (ConjunctProp cp : conjunctions) {
+				if (cp.isContradiction()) {
+					markedForRemoval.add(cp);
+				}
+			}
+			for (ConjunctProp cp : markedForRemoval) {
+				conjunctions.remove(cp);
+			}
+		}
 	}
 
 	public static class ConjunctProp {
@@ -159,6 +171,22 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public boolean isContradiction() {
+			for (int i = 0, ii = atoms.size(); i < ii; i++) {
+				AtomicProp ap = atoms.get(i);
+				for (int l = 0, ll = atoms.size(); l < ll; l++) {
+					if (l == i) {
+						continue;
+					}
+					AtomicProp aap = atoms.get(l);
+					if (ap.contradicts(aap)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		public void simplify() {
@@ -233,6 +261,21 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		public boolean contradicts(AtomicProp ap) {
+			if (ap == this) {
+				return false;
+			}
+			if (ap.negate == negate) {
+				return false;
+			}
+			for (Heccity h : heccesities) {
+				if (!ap.heccesities.contains(h)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		public void replaceHecceities(String oldName, String name2) {
@@ -397,7 +440,9 @@ public class Prop extends Value {
 		for (ConjunctProp cj : booleanPart.conjunctions) {
 			cj.replaceHecceities(oldName, name);
 		}
-
 	}
 
+	private void removeContradictions() {
+		booleanPart.removeContradictions();
+	}
 }
