@@ -43,6 +43,14 @@ public class Prop extends Value {
 			return ret;
 		}
 
+		public String getString(Prop a) {
+			String s = getString();
+			while (a.containsHecName(s)) {
+				s = getString();
+			}
+			return s;
+		}
+
 	}
 
 	public static class Quantifier {
@@ -375,9 +383,13 @@ public class Prop extends Value {
 
 	public static class QuantifierPart {
 		private List<Quantifier> quantifiers;
+		private final List<String> hecNames = Lists.newArrayList();
 
 		public QuantifierPart(List<Quantifier> q) {
 			this.quantifiers = q;
+			for (Quantifier qq : quantifiers) {
+				hecNames.add(qq.name);
+			}
 		}
 
 		@Override
@@ -435,6 +447,7 @@ public class Prop extends Value {
 			}
 			if (r != null) {
 				quantifiers.remove(r);
+				hecNames.remove(r.name);
 			}
 		}
 	}
@@ -445,6 +458,10 @@ public class Prop extends Value {
 	public Prop(QuantifierPart q, BooleanPart b) {
 		this.quantifierPart = q;
 		this.booleanPart = b;
+	}
+
+	public boolean containsHecName(String s) {
+		return quantifierPart.hecNames.contains(s);
 	}
 
 	@Override
@@ -476,11 +493,12 @@ public class Prop extends Value {
 		Prop a = this.copy();
 		UniqueString s = new UniqueString();
 
+		// TODO: there is a bug here
 		for (Quantifier q : a.quantifierPart.quantifiers) {
-			a.replaceHeccity(q, s.getString());
+			a.replaceHeccity(q, s.getString(a));
 		}
 		for (Quantifier q : b.quantifierPart.quantifiers) {
-			b.replaceHeccity(q, s.getString());
+			b.replaceHeccity(q, s.getString(b));
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
