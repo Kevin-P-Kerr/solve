@@ -1,3 +1,4 @@
-forall a: ~Mother(a a).
-thereis a thereis b thereis c: Man(a)*Man(b)*Man(c)*Mother(a b)*Mother(b c).
-forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
+forall a: ~Man(a) + Mortal(b).
+thereis b: Soc(b)*Man(b).
+forall a: ~Man(a) + Male(a)*~Female(a) + ~Male(a)*Female(a).
+forall a: ~Soc(a) + Male(b).

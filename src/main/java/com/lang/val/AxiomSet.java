@@ -37,7 +37,7 @@ public class AxiomSet {
 			List<Prop> ret = Lists.newArrayList();
 			ret.add(colligatedConclusions.get(n));
 			ret.addAll(getConclusions(colligatedConclusions.get(n), limit));
-
+			return ret;
 		}
 		Prop x = colligatedConclusions.get(colligatedConclusions.size() - 1);
 		n = n - colligatedConclusions.size();
@@ -45,8 +45,8 @@ public class AxiomSet {
 		while (n >= 0) {
 			n--;
 			x = x.multiply(premier);
+			colligatedConclusions.add(x);
 		}
-		colligatedConclusions.add(x);
 		List<Prop> ret = Lists.newArrayList();
 		ret.add(x);
 		ret.addAll(getConclusions(x, limit));
