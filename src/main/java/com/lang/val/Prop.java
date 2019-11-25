@@ -533,7 +533,12 @@ public class Prop extends Value {
 	}
 
 	public List<Prop> transmitLastUniveral() {
+		System.out.println("** doing inference*");
+		System.out.println("from (below line)");
+		System.out.println(this.toString());
 		Quantifier q = getLastUniversal();
+		System.out.println("transmitting");
+		System.out.println(q);
 		List<Prop> ret = Lists.newArrayList();
 		if (q == null) {
 			return ret;
@@ -542,13 +547,18 @@ public class Prop extends Value {
 			if (qq == q) {
 				break;
 			}
+			System.out.println("replacing");
+			System.out.println(qq);
 			Prop p = this.copy();
 			p.replaceHeccity(qq.name, q.name);
 			p.quantifierPart.removeWithName(q.name);
 			p.simplify();
 			p.removeContradictions();
+			System.out.println("inferred");
+			System.out.println(p);
 			ret.add(p);
 		}
+		System.out.println("done");
 		return ret;
 
 	}
