@@ -31,22 +31,6 @@ public class AxiomSet {
 		this.conclusions = conclusions;
 	}
 
-	// TODO: incomplete
-	public void enumerateFirstNConclusions(int i) {
-		while (i < conclusions.size()) {
-			int n = multiplyAxiomsAndAddToConclusions();
-			if (n >= i) {
-				break;
-			}
-			for (Prop ax : axioms) {
-				n += deriveConclusions(ax);
-				if (n >= i) {
-					break;
-				}
-			}
-		}
-	}
-
 	public List<Prop> getConclusionsOfOrderN(int n, int limit) {
 		n--;
 		if (n < colligatedConclusions.size()) {
@@ -91,19 +75,4 @@ public class AxiomSet {
 		return 0;
 	}
 
-	// TODO: there is a bug in this code
-	private int multiplyAxiomsAndAddToConclusions() {
-		List<Prop> newAxioms = Lists.newArrayList();
-		for (int i = 0, ii = axioms.size(); i < ii; i++) {
-			Prop ax = axioms.get(i);
-			for (int l = i + 1, ll = axioms.size(); l < ll; l++) {
-				Prop aax = axioms.get(l);
-				Prop na = ax.multiply(aax);
-				newAxioms.add(na);
-			}
-		}
-		axioms.addAll(newAxioms);
-		conclusions.addAll(newAxioms);
-		return conclusions.size();
-	}
 }
