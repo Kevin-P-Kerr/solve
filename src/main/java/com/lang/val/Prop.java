@@ -207,18 +207,18 @@ public class Prop extends Value {
 		}
 
 		public void simplify() {
-			List<Integer> markedForRemoval = Lists.newArrayList();
+			List<AtomicProp> markedForRemoval = Lists.newArrayList();
 			for (int i = 0, ii = atoms.size(); i < ii; i++) {
 				AtomicProp ap = atoms.get(i);
 				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 					AtomicProp aap = atoms.get(l);
 					if (aap.equals(ap)) {
-						markedForRemoval.add(l);
+						markedForRemoval.add(aap);
 					}
 				}
 			}
-			for (Integer i : markedForRemoval) {
-				atoms.remove(atoms.get(i));
+			for (AtomicProp i : markedForRemoval) {
+				atoms.remove(i);
 			}
 
 		}
