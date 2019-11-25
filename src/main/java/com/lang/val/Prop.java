@@ -294,6 +294,9 @@ public class Prop extends Value {
 			if (ap.heccesities.size() != heccesities.size()) {
 				return false;
 			}
+			if (!(ap.name.equals(name))) {
+				return false;
+			}
 			for (Heccity h : heccesities) {
 				if (!ap.heccesities.contains(h)) {
 					return false;
