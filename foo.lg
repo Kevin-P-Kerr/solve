@@ -1,0 +1,3 @@
+thereis a: Socrates(a)*Man(a).
+forall a: ~Man(a) + ~Female(a)*Male(a) + ~Male(a)*Female(a).
+forall a: ~Socrates(a) + Male(a).
