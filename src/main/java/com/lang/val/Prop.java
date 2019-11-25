@@ -3,6 +3,7 @@ package com.lang.val;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.lang.val.Prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
 
@@ -164,6 +165,13 @@ public class Prop extends Value {
 				conjunctions.remove(cp);
 			}
 		}
+
+		public void replaceHeccity(String to, String from) {
+			for (ConjunctProp cp : conjunctions) {
+				cp.replaceHecceities(from, to);
+			}
+
+		}
 	}
 
 	public static class ConjunctProp {
@@ -209,10 +217,15 @@ public class Prop extends Value {
 
 		}
 
-		public boolean equals(ConjunctProp cp) {
-			if (cp == this) {
+		@Override
+		public boolean equals(Object anO) {
+			if (anO == this) {
 				return true;
 			}
+			if (!(anO instanceof ConjunctProp)) {
+				return false;
+			}
+			ConjunctProp cp = (ConjunctProp) anO;
 			if (cp.atoms.size() != atoms.size()) {
 				return false;
 			}
@@ -286,10 +299,15 @@ public class Prop extends Value {
 			}
 		}
 
-		public boolean equals(AtomicProp ap) {
-			if (ap == this) {
+		@Override
+		public boolean equals(Object anO) {
+			if (anO == this) {
 				return true;
 			}
+			if (!(anO instanceof AtomicProp)) {
+				return false;
+			}
+			AtomicProp ap = (AtomicProp) anO;
 			if (ap.negate != negate) {
 				return false;
 			}
@@ -341,10 +359,22 @@ public class Prop extends Value {
 		public Heccity copy() {
 			return new Heccity(name);
 		}
+
+		@Override
+		public boolean equals(Object h) {
+			if (super.equals(h)) {
+				return true;
+			}
+			if (h instanceof Heccity) {
+				Heccity k = (Heccity) h;
+				return k.name.equals(name);
+			}
+			return false;
+		}
 	}
 
 	public static class QuantifierPart {
-		private final List<Quantifier> quantifiers;
+		private List<Quantifier> quantifiers;
 
 		public QuantifierPart(List<Quantifier> q) {
 			this.quantifiers = q;
@@ -368,10 +398,43 @@ public class Prop extends Value {
 			return new QuantifierPart(qs);
 		}
 
-		// muates the object
+		// mutates the object
 		public void add(QuantifierPart quantifierPart) {
-			for (Quantifier q : quantifierPart.quantifiers) {
-				quantifiers.add(q);
+			List<Quantifier> newQuants = Lists.newArrayList();
+			int i = 0;
+			int ii = quantifierPart.quantifiers.size();
+			for (Quantifier q : quantifiers) {
+				if (q.type == QuantifierType.THEREIS) {
+					newQuants.add(q);
+				} else {
+					for (; i < ii; i++) {
+						Quantifier qq = quantifierPart.quantifiers.get(i);
+						if (qq.type == QuantifierType.THEREIS) {
+							newQuants.add(qq);
+						} else {
+							break;
+						}
+					}
+					newQuants.add(q);
+				}
+			}
+			for (; i < ii; i++) {
+				Quantifier qq = quantifierPart.quantifiers.get(i);
+				newQuants.add(qq);
+			}
+			this.quantifiers = newQuants;
+		}
+
+		public void removeWithName(String name) {
+			Quantifier r = null;
+			for (Quantifier q : quantifiers) {
+				if (q.name.equals(name)) {
+					r = q;
+					break;
+				}
+			}
+			if (r != null) {
+				quantifiers.remove(r);
 			}
 		}
 	}
@@ -445,5 +508,50 @@ public class Prop extends Value {
 
 	private void removeContradictions() {
 		booleanPart.removeContradictions();
+	}
+
+	public List<Prop> transmitLastUniveral() {
+		Quantifier q = getLastUniversal();
+		List<Prop> ret = Lists.newArrayList();
+		if (q == null) {
+			return ret;
+		}
+		for (Quantifier qq : quantifierPart.quantifiers) {
+			if (qq == q) {
+				break;
+			}
+			Prop p = this.copy();
+			p.replaceHeccity(qq.name, q.name);
+			p.quantifierPart.removeWithName(q.name);
+			p.simplify();
+			p.removeContradictions();
+			ret.add(p);
+		}
+		return ret;
+
+	}
+
+	private void replaceHeccity(String to, String from) {
+		Quantifier qq = null;
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.name.equals(from)) {
+				qq = q;
+			}
+		}
+		if (qq != null) {
+			quantifierPart.quantifiers.remove(qq);
+		}
+		booleanPart.replaceHeccity(to, from);
+
+	}
+
+	private Quantifier getLastUniversal() {
+		for (int i = quantifierPart.quantifiers.size(); i > 0; i--) {
+			Quantifier q = quantifierPart.quantifiers.get(i - 1);
+			if (q.type == QuantifierType.FORALL) {
+				return q;
+			}
+		}
+		return null;
 	}
 }

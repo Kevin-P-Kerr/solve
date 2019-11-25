@@ -40,7 +40,10 @@ public class Interpreter {
 			System.out.println(p.toString());
 		}
 		AxiomSet as = new AxiomSet(axioms);
-		as.enumerateFirstNConclusions(20);
+		List<Prop> pl = as.getConclusionsOfOrderN(1, 20);
+		for (Prop p : pl) {
+			System.out.println(p.toString());
+		}
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {
