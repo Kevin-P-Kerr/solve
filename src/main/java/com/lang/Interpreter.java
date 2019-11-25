@@ -40,7 +40,7 @@ public class Interpreter {
 			System.out.println(p.toString());
 		}
 		AxiomSet as = new AxiomSet(axioms);
-		List<Prop> pl = as.getConclusionsOfOrderN(2, 20);
+		List<Prop> pl = as.getConclusionsOfOrderN(1, 50);
 		for (Prop p : pl) {
 			System.out.println(p.toString());
 		}

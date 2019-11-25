@@ -1,3 +1,2 @@
-thereis a: Socrates(a)*Man(a).
-forall a: ~Man(a) + ~Female(a)*Male(a) + ~Male(a)*Female(a).
-forall a: ~Socrates(a) + Male(a).
+thereis a thereis b thereis c: Man(a)*Man(b)*Man(c)*Mother(a b)*Mother(b c).
+forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
