@@ -422,6 +422,7 @@ public class Prop extends Value {
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
 		a.simplify();
+		a.removeContradictions();
 		return a;
 	}
 
