@@ -1,8 +1,10 @@
 package com.lang.val;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.lang.val.Prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
@@ -144,21 +146,20 @@ public class Prop extends Value {
 			for (ConjunctProp cp : conjunctions) {
 				cp.simplify();
 			}
-			List<Integer> markedForRemoval = Lists.newArrayList();
+			Set<ConjunctProp> markedForRemoval = Sets.newHashSet();
 
 			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
 				ConjunctProp cp = conjunctions.get(i);
-				for (int l = 0, ll = conjunctions.size(); l < ll; l++) {
-					if (l == i) {
-						continue;
-					}
+				for (int l = i + 1, ll = conjunctions.size(); l < ll; l++) {
 					ConjunctProp ccp = conjunctions.get(l);
 					if (ccp.equals(cp)) {
-						markedForRemoval.add(l);
+						d("removing " + cp.toString());
+						d("eq to " + ccp.toString());
+						markedForRemoval.add(cp);
 					}
 				}
 			}
-			for (Integer i : markedForRemoval) {
+			for (ConjunctProp i : markedForRemoval) {
 				conjunctions.remove(i);
 			}
 		}
@@ -193,10 +194,7 @@ public class Prop extends Value {
 		public boolean isContradiction() {
 			for (int i = 0, ii = atoms.size(); i < ii; i++) {
 				AtomicProp ap = atoms.get(i);
-				for (int l = 0, ll = atoms.size(); l < ll; l++) {
-					if (l == i) {
-						continue;
-					}
+				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 					AtomicProp aap = atoms.get(l);
 					if (ap.contradicts(aap)) {
 						return true;
@@ -283,24 +281,9 @@ public class Prop extends Value {
 		}
 
 		public boolean contradicts(AtomicProp ap) {
-			if (ap == this) {
-				return false;
-			}
-			if (ap.negate == negate) {
-				return false;
-			}
-			if (ap.heccesities.size() != heccesities.size()) {
-				return false;
-			}
-			if (!(ap.name.equals(name))) {
-				return false;
-			}
-			for (Heccity h : heccesities) {
-				if (!ap.heccesities.contains(h)) {
-					return false;
-				}
-			}
-			return true;
+			AtomicProp c = new AtomicProp(!ap.negate, ap.name, ap.heccesities);
+			return equals(c);
+
 		}
 
 		public void replaceHecceities(String oldName, String name2) {
@@ -326,8 +309,13 @@ public class Prop extends Value {
 			if (!ap.name.equals(name)) {
 				return false;
 			}
-			for (Heccity h : heccesities) {
-				if (!ap.heccesities.contains(h)) {
+			if (ap.heccesities.size() != heccesities.size()) {
+				return false;
+			}
+			for (int i = 0, ii = heccesities.size(); i < ii; i++) {
+				Heccity h = heccesities.get(i);
+				Heccity hh = ap.heccesities.get(i);
+				if (!(h.equals(hh))) {
 					return false;
 				}
 			}
@@ -532,33 +520,41 @@ public class Prop extends Value {
 		booleanPart.removeContradictions();
 	}
 
+	private static boolean DEBUG = false;
+
+	private static void d(String s) {
+		if (DEBUG) {
+			System.err.println(s);
+		}
+	}
+
 	public List<Prop> transmitLastUniveral() {
-		System.out.println("** doing inference*");
-		System.out.println("from (below line)");
-		System.out.println(this.toString());
+		d("** doing inference*");
+		d("from (below line)");
+		d(this.toString());
 		Quantifier q = getLastUniversal();
-		System.out.println("transmitting");
-		System.out.println(q);
 		List<Prop> ret = Lists.newArrayList();
 		if (q == null) {
 			return ret;
 		}
+		d("transmitting");
+		d(q.toString());
 		for (Quantifier qq : quantifierPart.quantifiers) {
 			if (qq == q) {
 				break;
 			}
-			System.out.println("replacing");
-			System.out.println(qq);
+			d("replacing");
+			d(qq.toString());
 			Prop p = this.copy();
 			p.replaceHeccity(qq.name, q.name);
 			p.quantifierPart.removeWithName(q.name);
 			p.simplify();
 			p.removeContradictions();
-			System.out.println("inferred");
-			System.out.println(p);
+			d("inferred");
+			d(p.toString());
 			ret.add(p);
 		}
-		System.out.println("done");
+		d("done");
 		return ret;
 
 	}

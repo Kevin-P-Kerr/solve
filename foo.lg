@@ -1,2 +1,3 @@
+forall a: ~Mother(a a).
 thereis a thereis b thereis c: Man(a)*Man(b)*Man(c)*Mother(a b)*Mother(b c).
 forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
