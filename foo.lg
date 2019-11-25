@@ -2,3 +2,4 @@ forall a: ~Man(a) + Mortal(b).
 thereis b: Soc(b)*Man(b).
 forall a: ~Man(a) + Male(a)*~Female(a) + ~Male(a)*Female(a).
 forall a: ~Soc(a) + Male(b).
+get 1 10

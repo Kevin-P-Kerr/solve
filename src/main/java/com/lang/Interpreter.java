@@ -28,18 +28,21 @@ public class Interpreter {
 				axioms.add(ax);
 				break;
 			case TT_VAR:
-				if (t.getLit() == "get") {
+				if (t.getLit().equals("get")) {
+					tokens.getNext(); // throw the "get" away
 					t = tokens.getNext();
 					String s = t.getLit();
 					Integer n = Integer.valueOf(s);
 					t = tokens.getNext();
 					Integer nn = Integer.valueOf(t.getLit());
 					AxiomSet as = new AxiomSet(axioms);
+
 					List<Prop> pl = as.getConclusionsOfOrderN(n, nn);
 					for (Prop p : pl) {
 						System.out.println(p.toString());
 					}
 				}
+				break;
 			default:
 				System.err.println("parse error");
 				System.exit(1);
