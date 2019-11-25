@@ -145,6 +145,7 @@ public class Prop extends Value {
 				cp.simplify();
 			}
 			List<Integer> markedForRemoval = Lists.newArrayList();
+
 			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
 				ConjunctProp cp = conjunctions.get(i);
 				for (int l = 0, ll = conjunctions.size(); l < ll; l++) {
@@ -209,10 +210,7 @@ public class Prop extends Value {
 			List<Integer> markedForRemoval = Lists.newArrayList();
 			for (int i = 0, ii = atoms.size(); i < ii; i++) {
 				AtomicProp ap = atoms.get(i);
-				for (int l = 0, ll = atoms.size(); l < ll; l++) {
-					if (l == i) {
-						continue;
-					}
+				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 					AtomicProp aap = atoms.get(l);
 					if (aap.equals(ap)) {
 						markedForRemoval.add(l);
@@ -220,7 +218,7 @@ public class Prop extends Value {
 				}
 			}
 			for (Integer i : markedForRemoval) {
-				atoms.remove(i);
+				atoms.remove(atoms.get(i));
 			}
 
 		}
