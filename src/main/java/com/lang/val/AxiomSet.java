@@ -50,7 +50,8 @@ public class AxiomSet {
 	public List<Prop> getConclusionsOfOrderN(int n, int limit) {
 		n--;
 		if (n < colligatedConclusions.size()) {
-			return getConclusions(colligatedConclusions.get(n), limit);
+			List<Prop> ret = getConclusions(colligatedConclusions.get(n), limit);
+			ret.add(colligatedConclusions.get(n));
 		}
 		Prop x = colligatedConclusions.get(colligatedConclusions.size() - 1);
 		n = n - colligatedConclusions.size();
@@ -59,7 +60,9 @@ public class AxiomSet {
 			x = x.multiply(x);
 		}
 		colligatedConclusions.add(x);
-		return getConclusions(x, limit);
+		List<Prop> ret = getConclusions(x, limit);
+		ret.add(x);
+		return ret;
 	}
 
 	private List<Prop> getConclusions(Prop p, int limit) {
