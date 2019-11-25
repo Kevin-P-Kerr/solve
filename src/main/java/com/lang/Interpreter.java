@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
+import com.lang.val.AxiomSet;
 import com.lang.val.Prop;
 
 public class Interpreter {
@@ -38,11 +39,8 @@ public class Interpreter {
 		for (Prop p : axioms) {
 			System.out.println(p.toString());
 		}
-		Prop p = axioms.get(0);
-		for (Prop pp : axioms) {
-			p = p.multiply(pp);
-		}
-		System.out.print(p.toString());
+		AxiomSet as = new AxiomSet(axioms);
+		as.enumerateFirstNConclusions(20);
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {
