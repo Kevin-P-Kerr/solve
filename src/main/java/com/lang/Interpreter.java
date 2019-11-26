@@ -42,17 +42,21 @@ public class Interpreter {
 						System.out.println(p.toString());
 					}
 				}
-				if (t.getLit().equals("proove")) {
+				if (t.getLit().equals("prove")) {
 					tokens.getNext();
 					Prop p = ParseProp(tokens);
 					AxiomSet as = new AxiomSet(axioms);
-					if (as.contradicts(p, 10000)) {
+					System.out.println("attempting proof of " + p.toString());
+					if (as.contradicts(p, 3, 10000)) {
 						System.out.println("proven false");
-					} else if (as.contradicts(p.negate(), 1000)) {
+					} else if (as.contradicts(p.negate(), 3, 10000)) {
 						System.out.println("proven true");
 					} else {
 						System.out.println("cannot prove true or false given resources");
 					}
+				} else {
+					System.out.println("what's this? " + t.getLit());
+					System.exit(1);
 				}
 				break;
 			default:

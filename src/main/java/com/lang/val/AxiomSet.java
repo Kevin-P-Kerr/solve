@@ -34,14 +34,7 @@ public class AxiomSet {
 		this.conclusions = conclusions;
 	}
 
-	public List<Prop> getConclusionsOfOrderN(int n, int limit) {
-		n--;
-		if (n < colligatedConclusions.size()) {
-			List<Prop> ret = Lists.newArrayList();
-			ret.add(colligatedConclusions.get(n));
-			ret.addAll(getConclusions(colligatedConclusions.get(n), limit));
-			return ret;
-		}
+	private void generateColligated(int n) {
 		Prop x = colligatedConclusions.get(colligatedConclusions.size() - 1);
 		n = n - colligatedConclusions.size();
 		Prop premier = colligatedConclusions.get(0);
@@ -50,6 +43,19 @@ public class AxiomSet {
 			x = x.multiply(premier);
 			colligatedConclusions.add(x);
 		}
+	}
+
+	public List<Prop> getConclusionsOfOrderN(int n, int limit) {
+		n--;
+		if (n < colligatedConclusions.size()) {
+			List<Prop> ret = Lists.newArrayList();
+			ret.add(colligatedConclusions.get(n));
+			ret.addAll(getConclusions(colligatedConclusions.get(n), limit));
+			return ret;
+		}
+		generateColligated(n);
+		Prop x = colligatedConclusions.get(n);
+
 		List<Prop> ret = Lists.newArrayList();
 		ret.add(x);
 		ret.addAll(getConclusions(x, limit));
@@ -120,8 +126,11 @@ public class AxiomSet {
 
 	}
 
-	public boolean contradicts(Prop p, int i) {
-		return checkForContradictions(p, new IntWrapper(i));
+	public boolean contradicts(Prop p, int order, int i) {
+		order--;
+		generateColligated(order);
+		Prop x = colligatedConclusions.get(order).multiply(p);
+		return checkForContradictions(x, new IntWrapper(i));
 	}
 
 }
