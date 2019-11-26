@@ -60,7 +60,7 @@ public class Prop extends Value {
 			FORALL, THEREIS
 		}
 
-		private final QuantifierType type;
+		private QuantifierType type;
 		private String name;
 
 		private Quantifier(QuantifierType t, String name) {
@@ -633,5 +633,23 @@ public class Prop extends Value {
 		}
 		Prop p = (Prop) a;
 		return p.quantifierPart.equals(quantifierPart) && p.booleanPart.equals(booleanPart);
+	}
+
+	public Prop negate() {
+		// forall a thereis b
+		// ~ exists a forall b
+		Prop r = copy();
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.type == QuantifierType.FORALL) {
+				q.type = QuantifierType.THEREIS;
+			} else {
+				q.type = QuantifierType.FORALL;
+			}
+		}
+		return r;
+	}
+
+	public boolean isContradiction() {
+		return booleanPart.conjunctions.isEmpty();
 	}
 }

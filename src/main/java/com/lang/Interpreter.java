@@ -42,6 +42,18 @@ public class Interpreter {
 						System.out.println(p.toString());
 					}
 				}
+				if (t.getLit().equals("proove")) {
+					tokens.getNext();
+					Prop p = ParseProp(tokens);
+					AxiomSet as = new AxiomSet(axioms);
+					if (as.contradicts(p, 10000)) {
+						System.out.println("proven false");
+					} else if (as.contradicts(p.negate(), 1000)) {
+						System.out.println("proven true");
+					} else {
+						System.out.println("cannot prove true or false given resources");
+					}
+				}
 				break;
 			default:
 				System.err.println("parse error");

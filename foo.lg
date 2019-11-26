@@ -1,3 +1,3 @@
 forall a thereis b: ~Man(a) + Man(b)*Mother(b a).
-forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
-get 3 2000000
+thereis b forall a: Man(b)*~Mother(a b).
+get 1 2000000

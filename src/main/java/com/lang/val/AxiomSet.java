@@ -74,4 +74,54 @@ public class AxiomSet {
 
 	}
 
+	private static class IntWrapper {
+		private int i;
+
+		public IntWrapper(int x) {
+			i = x;
+		}
+
+		public void decrement(int y) {
+			i = i - y;
+		}
+
+		public void increment(int y) {
+			i += y;
+		}
+
+		public int get() {
+			return i;
+		}
+	}
+
+	private boolean checkForContradictions(Prop p, IntWrapper limit) {
+		Set<Prop> ret = Sets.newHashSet();
+		if (ret.size() >= limit.get()) {
+			return false;
+		}
+		List<Prop> bases = p.transmitLastUniveral();
+		ret.addAll(bases);
+		for (Prop x : bases) {
+			if (x.isContradiction()) {
+				return true;
+			}
+		}
+		limit.decrement(ret.size());
+		for (Prop b : bases) {
+			boolean iscontra = checkForContradictions(b, limit);
+			if (iscontra) {
+				return true;
+			}
+			if (ret.size() > limit.get()) {
+				break;
+			}
+		}
+		return false;
+
+	}
+
+	public boolean contradicts(Prop p, int i) {
+		return checkForContradictions(p, new IntWrapper(i));
+	}
+
 }
