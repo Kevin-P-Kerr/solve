@@ -30,26 +30,28 @@ public class Interpreter {
 			case TT_VAR:
 				if (t.getLit().equals("get")) {
 					tokens.getNext(); // throw the "get" away
-					t = tokens.getNext();
-					String s = t.getLit();
-					Integer n = Integer.valueOf(s);
-					t = tokens.getNext();
-					Integer nn = Integer.valueOf(t.getLit());
+					int order = parseInt(tokens);
+					int resources = parseInt(tokens);
+
 					AxiomSet as = new AxiomSet(axioms);
 
-					List<Prop> pl = as.getConclusionsOfOrderN(n, nn);
+					List<Prop> pl = as.getConclusionsOfOrderN(order, resources);
 					for (Prop p : pl) {
 						System.out.println(p.toString());
 					}
 				}
 				if (t.getLit().equals("prove")) {
-					tokens.getNext();
+					tokens.getNext(); // throw the "prove" away
+					int order = parseInt(tokens);
+					int resources = parseInt(tokens);
+
 					Prop p = ParseProp(tokens);
 					AxiomSet as = new AxiomSet(axioms);
+
 					System.out.println("attempting proof of " + p.toString());
-					if (as.contradicts(p, 3, 10000)) {
+					if (as.contradicts(p, order, resources)) {
 						System.out.println("proven false");
-					} else if (as.contradicts(p.negate(), 3, 10000)) {
+					} else if (as.contradicts(p.negate(), order, resources)) {
 						System.out.println("proven true");
 					} else {
 						System.out.println("cannot prove true or false given resources");
@@ -64,6 +66,11 @@ public class Interpreter {
 				System.exit(1);
 			}
 		}
+	}
+
+	private int parseInt(TokenStream tokens) {
+		Token t = tokens.getNext();
+		return Integer.parseInt(t.getLit());
 	}
 
 	private Prop ParseProp(TokenStream tokens) throws Exception {
