@@ -1,10 +1,13 @@
 package com.lang.val;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class AxiomSet {
 	private final List<Prop> axioms;
@@ -53,15 +56,15 @@ public class AxiomSet {
 		return ret;
 	}
 
-	private List<Prop> getConclusions(Prop p, int limit) {
-		List<Prop> ret = Lists.newArrayList();
+	private Collection<Prop> getConclusions(Prop p, int limit) {
+		Set<Prop> ret = Sets.newHashSet();
 		if (ret.size() >= limit) {
 			return ret;
 		}
 		List<Prop> bases = p.transmitLastUniveral();
 		ret.addAll(bases);
 		for (Prop b : bases) {
-			List<Prop> m = getConclusions(b, limit - ret.size());
+			Collection<Prop> m = getConclusions(b, limit - ret.size());
 			ret.addAll(m);
 			if (ret.size() > limit) {
 				break;

@@ -1,5 +1,3 @@
-forall a: ~Man(a) + Mortal(b).
-thereis b: Soc(b)*Man(b).
-forall a: ~Man(a) + Male(a)*~Female(a) + ~Male(a)*Female(a).
-forall a: ~Soc(a) + Male(b).
+forall a: ~Man(a) + Mortal(a).
+thereis a: Socrates(a)*Man(a)*~Mortal(a).
 get 1 10

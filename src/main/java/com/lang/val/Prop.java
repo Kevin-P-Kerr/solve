@@ -102,6 +102,26 @@ public class Prop extends Value {
 		}
 
 		@Override
+		public boolean equals(Object a) {
+			if (super.equals(a)) {
+				return true;
+			}
+			if (!(a instanceof BooleanPart)) {
+				return false;
+			}
+			BooleanPart bp = (BooleanPart) a;
+			if (bp.conjunctions.size() != conjunctions.size()) {
+				return false;
+			}
+			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
+				if (!(bp.conjunctions.get(i).equals(conjunctions.get(i)))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0, ii = conjunctions.size(); i < ii; i++) {
@@ -385,6 +405,26 @@ public class Prop extends Value {
 		}
 
 		@Override
+		public boolean equals(Object a) {
+			if (super.equals(a)) {
+				return true;
+			}
+			if (!(a instanceof QuantifierPart)) {
+				return false;
+			}
+			QuantifierPart qp = (QuantifierPart) a;
+			if (qp.quantifiers.size() != quantifiers.size()) {
+				return false;
+			}
+			for (int i = 0, ii = quantifiers.size(); i < ii; i++) {
+				if (!(qp.quantifiers.get(i).equals(quantifiers.get(i)))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		@Override
 		public String toString() {
 			StringBuilder b = new StringBuilder();
 			for (Quantifier q : quantifiers) {
@@ -581,5 +621,17 @@ public class Prop extends Value {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object a) {
+		if (super.equals(a)) {
+			return true;
+		}
+		if (!(a instanceof Prop)) {
+			return false;
+		}
+		Prop p = (Prop) a;
+		return p.quantifierPart.equals(quantifierPart) && p.booleanPart.equals(booleanPart);
 	}
 }
