@@ -74,9 +74,4 @@ public class AxiomSet {
 
 	}
 
-	private int deriveConclusions(Prop ax) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
