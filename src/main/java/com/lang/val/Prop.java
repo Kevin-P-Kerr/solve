@@ -558,8 +558,10 @@ public class Prop extends Value {
 			this.quantifiers = newQuants;
 		}
 
-		public void removeIndex(int i) {
-			quantifiers.remove(quantifiers.get(i));
+		public void removeQuantifier(Quantifier r) {
+
+			quantifiers.remove(r);
+
 		}
 
 		public void negate() {
@@ -572,6 +574,10 @@ public class Prop extends Value {
 					q.type = QuantifierType.FORALL;
 				}
 			}
+		}
+
+		public int getLargestOffset() {
+			return quantifiers.get(quantifiers.size() - 1).index;
 		}
 	}
 
@@ -622,7 +628,7 @@ public class Prop extends Value {
 	public Prop multiply(Prop b) {
 		Prop a = this.copy();
 
-		int offset = a.quantifierPart.quantifiers.size();
+		int offset = a.quantifierPart.getLargestOffset();
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int z = b.quantifierPart.quantifiers.size();
@@ -683,7 +689,7 @@ public class Prop extends Value {
 			d(qq.toString());
 			Prop p = this.copy();
 			p.replaceQuantifier(qq.index, q.index);
-			p.quantifierPart.removeIndex(q.index);
+			p.quantifierPart.removeQuantifier(q);
 			p.simplify();
 			p.removeContradictions();
 			d("inferred");
