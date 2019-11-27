@@ -89,7 +89,7 @@ public class Prop extends Value {
 			} else {
 				b.append("thereis ");
 			}
-			b.append(index);
+			b.append(name);
 			return b.toString();
 		}
 
@@ -212,9 +212,9 @@ public class Prop extends Value {
 			}
 		}
 
-		public void replaceHeccity(int to, int from) {
+		public void replaceHeccity(int to, int from, String name) {
 			for (ConjunctProp cp : conjunctions) {
-				cp.replaceHecceities(from, to);
+				cp.replaceHecceities(from, to, name);
 			}
 
 		}
@@ -351,9 +351,9 @@ public class Prop extends Value {
 			return sb.toString();
 		}
 
-		public void replaceHecceities(int from, int to) {
+		public void replaceHecceities(int from, int to, String name) {
 			for (AtomicProp ap : atoms) {
-				ap.replaceHecceities(from, to);
+				ap.replaceHecceities(from, to, name);
 			}
 		}
 
@@ -392,10 +392,11 @@ public class Prop extends Value {
 
 		}
 
-		public void replaceHecceities(int from, int to) {
+		public void replaceHecceities(int from, int to, String name) {
 			for (Heccity h : heccesities) {
 				if (h.index == from) {
 					h.index = to;
+					h.name = name;
 				}
 			}
 		}
@@ -445,7 +446,7 @@ public class Prop extends Value {
 			sb.append(name);
 			sb.append("(");
 			for (int i = 0, ii = heccesities.size(); i < ii; i++) {
-				sb.append(heccesities.get(i).index);
+				sb.append(heccesities.get(i).name);
 				if (ii - i > 1) {
 					sb.append(" ");
 				}
@@ -617,7 +618,7 @@ public class Prop extends Value {
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int index = i + offset;
-			b.transmitHecceity(index, q.index);
+			b.transmitHecceity(index, q.index, q.name);
 			q.index = index;
 		}
 		a.quantifierPart.add(b.quantifierPart);
@@ -633,7 +634,7 @@ public class Prop extends Value {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int z = b.quantifierPart.quantifiers.size();
 			int index = i + offset;
-			b.transmitHecceity(index, q.index);
+			b.transmitHecceity(index, q.index, q.name);
 			q.index = index;
 		}
 		a.quantifierPart.add(b.quantifierPart);
@@ -661,39 +662,39 @@ public class Prop extends Value {
 		booleanPart.removeContradictions();
 	}
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
-	private static void d(String s) {
+	private static void d(Object o) {
 		if (DEBUG) {
-			System.err.println(s);
+			System.err.println(o.toString());
 		}
 	}
 
 	public List<Prop> transmitLastUniveral(int limit) {
 		d("** doing inference*");
 		d("from (below line)");
-		d(this.toString());
-		Quantifier q = getLastUniversal();
+		d(this);
+		Prop base = copy();
+		Quantifier q = base.getLastUniversal();
 		List<Prop> ret = Lists.newArrayList();
 		if (q == null) {
 			return ret;
 		}
 		d("transmitting");
-		d(q.toString());
+		d(q);
 		int count = 0;
 		for (Quantifier qq : quantifierPart.quantifiers) {
 			if (qq == q || count++ >= limit) {
 				break;
 			}
 			d("replacing");
-			d(qq.toString());
-			Prop p = this.copy();
-			p.replaceQuantifier(qq.index, q.index);
-			p.quantifierPart.removeQuantifier(q);
+			d(qq);
+			Prop p = base.copy();
+			p.replaceQuantifier(qq.index, q.index, qq.name);
 			p.simplify();
 			p.removeContradictions();
 			d("inferred");
-			d(p.toString());
+			d(p);
 			ret.add(p);
 		}
 		d("done");
@@ -701,7 +702,7 @@ public class Prop extends Value {
 
 	}
 
-	private void replaceQuantifier(int to, int from) {
+	private void replaceQuantifier(int to, int from, String name) {
 		Quantifier qq = null;
 		for (Quantifier q : quantifierPart.quantifiers) {
 			if (q.index == from) {
@@ -711,11 +712,11 @@ public class Prop extends Value {
 		if (qq != null) {
 			quantifierPart.quantifiers.remove(qq);
 		}
-		booleanPart.replaceHeccity(to, from);
+		booleanPart.replaceHeccity(to, from, name);
 	}
 
-	private void transmitHecceity(int to, int from) {
-		booleanPart.replaceHeccity(to, from);
+	private void transmitHecceity(int to, int from, String name) {
+		booleanPart.replaceHeccity(to, from, name);
 	}
 
 	private Quantifier getLastUniversal() {
