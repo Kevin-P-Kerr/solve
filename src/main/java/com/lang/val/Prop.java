@@ -44,15 +44,6 @@ public class Prop extends Value {
 			}
 			return ret;
 		}
-
-		public String getString(Prop a) {
-			String s = getString();
-			while (a.containsHecName(s)) {
-				s = getString();
-			}
-			return s;
-		}
-
 	}
 
 	public static class Quantifier {
@@ -496,13 +487,10 @@ public class Prop extends Value {
 
 	public static class QuantifierPart {
 		private List<Quantifier> quantifiers;
-		private final List<String> hecNames = Lists.newArrayList();
 
 		public QuantifierPart(List<Quantifier> q) {
 			this.quantifiers = q;
-			for (Quantifier qq : quantifiers) {
-				hecNames.add(qq.name);
-			}
+
 		}
 
 		@Override
@@ -570,18 +558,8 @@ public class Prop extends Value {
 			this.quantifiers = newQuants;
 		}
 
-		public void removeWithName(String name) {
-			Quantifier r = null;
-			for (Quantifier q : quantifiers) {
-				if (q.name.equals(name)) {
-					r = q;
-					break;
-				}
-			}
-			if (r != null) {
-				quantifiers.remove(r);
-				hecNames.remove(r.name);
-			}
+		public void removeIndex(int i) {
+			quantifiers.remove(quantifiers.get(i));
 		}
 
 		public void negate() {
@@ -615,10 +593,6 @@ public class Prop extends Value {
 			booleanPart.setUpIndex(name, i);
 		}
 
-	}
-
-	public boolean containsHecName(String s) {
-		return quantifierPart.hecNames.contains(s);
 	}
 
 	@Override
@@ -681,7 +655,7 @@ public class Prop extends Value {
 		booleanPart.removeContradictions();
 	}
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
 	private static void d(String s) {
 		if (DEBUG) {
@@ -709,7 +683,7 @@ public class Prop extends Value {
 			d(qq.toString());
 			Prop p = this.copy();
 			p.replaceQuantifier(qq.index, q.index);
-			p.quantifierPart.removeWithName(q.name);
+			p.quantifierPart.removeIndex(q.index);
 			p.simplify();
 			p.removeContradictions();
 			d("inferred");
