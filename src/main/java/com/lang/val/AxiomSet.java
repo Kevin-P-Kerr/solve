@@ -75,7 +75,7 @@ public class AxiomSet {
 			if (ret.size() > limit) {
 				break;
 			}
-			limit -= ret.size();
+			// limit -= ret.size();
 		}
 		return ret;
 

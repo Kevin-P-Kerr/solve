@@ -702,7 +702,7 @@ public class Prop extends Value {
 		d(q.toString());
 		int count = 0;
 		for (Quantifier qq : quantifierPart.quantifiers) {
-			if (qq == q || count++ > limit) {
+			if (qq == q) {
 				break;
 			}
 			d("replacing");
