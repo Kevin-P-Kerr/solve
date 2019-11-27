@@ -98,7 +98,7 @@ public class Prop extends Value {
 			} else {
 				b.append("thereis ");
 			}
-			b.append(name);
+			b.append(index);
 			return b.toString();
 		}
 
@@ -106,6 +106,17 @@ public class Prop extends Value {
 			return new Quantifier(type, name, index);
 		}
 
+		@Override
+		public boolean equals(Object a) {
+			if (super.equals(a)) {
+				return true;
+			}
+			if (!(a instanceof Quantifier)) {
+				return false;
+			}
+			Quantifier q = (Quantifier) a;
+			return q.index == index && q.type == type;
+		}
 	}
 
 	public static class BooleanPart {
@@ -237,13 +248,13 @@ public class Prop extends Value {
 			return ret;
 		}
 
-		public void setUpIndex(String name, int i) {
+		private void setUpIndex(String name, int i) {
 			for (ConjunctProp cp : conjunctions) {
 				cp.setUpIndex(name, i);
 			}
 		}
 
-		public void transmitHecName(int index, String s) {
+		private void transmitHecName(int index, String s) {
 			for (ConjunctProp cp : conjunctions) {
 				cp.transmitHecName(index, s);
 			}
@@ -443,7 +454,7 @@ public class Prop extends Value {
 			sb.append(name);
 			sb.append("(");
 			for (int i = 0, ii = heccesities.size(); i < ii; i++) {
-				sb.append(heccesities.get(i).name);
+				sb.append(heccesities.get(i).index);
 				if (ii - i > 1) {
 					sb.append(" ");
 				}
@@ -626,7 +637,8 @@ public class Prop extends Value {
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int index = i + offset;
-			b.replaceHeccity(q, index);
+			b.transmitHecceity(index, q.index);
+			q.index = index;
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.add(b.booleanPart);
@@ -639,8 +651,10 @@ public class Prop extends Value {
 		int offset = a.quantifierPart.quantifiers.size();
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
+			int z = b.quantifierPart.quantifiers.size();
 			int index = i + offset;
-			b.replaceHeccity(q, index);
+			b.transmitHecceity(index, q.index);
+			q.index = index;
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
@@ -661,19 +675,6 @@ public class Prop extends Value {
 
 	private void simplify() {
 		booleanPart.simplify();
-	}
-
-	private void replaceHeccity(Quantifier q, int index) {
-		int oldIndex = q.index;
-		for (Quantifier qq : quantifierPart.quantifiers) {
-			if (qq == q) {
-				qq.index = index;
-				break;
-			}
-		}
-		for (ConjunctProp cj : booleanPart.conjunctions) {
-			cj.replaceHecceities(oldIndex, index);
-		}
 	}
 
 	private void removeContradictions() {
@@ -706,7 +707,7 @@ public class Prop extends Value {
 			d("replacing");
 			d(qq.toString());
 			Prop p = this.copy();
-			p.replaceHeccity(qq.index, q.index);
+			p.replaceQuantifier(qq.index, q.index);
 			p.quantifierPart.removeWithName(q.name);
 			p.simplify();
 			p.removeContradictions();
@@ -719,7 +720,7 @@ public class Prop extends Value {
 
 	}
 
-	private void replaceHeccity(int to, int from) {
+	private void replaceQuantifier(int to, int from) {
 		Quantifier qq = null;
 		for (Quantifier q : quantifierPart.quantifiers) {
 			if (q.index == from) {
@@ -730,7 +731,10 @@ public class Prop extends Value {
 			quantifierPart.quantifiers.remove(qq);
 		}
 		booleanPart.replaceHeccity(to, from);
+	}
 
+	private void transmitHecceity(int to, int from) {
+		booleanPart.replaceHeccity(to, from);
 	}
 
 	private Quantifier getLastUniversal() {
