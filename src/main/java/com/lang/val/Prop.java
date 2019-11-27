@@ -689,7 +689,7 @@ public class Prop extends Value {
 		}
 	}
 
-	public List<Prop> transmitLastUniveral() {
+	public List<Prop> transmitLastUniveral(int limit) {
 		d("** doing inference*");
 		d("from (below line)");
 		d(this.toString());
@@ -700,8 +700,9 @@ public class Prop extends Value {
 		}
 		d("transmitting");
 		d(q.toString());
+		int count = 0;
 		for (Quantifier qq : quantifierPart.quantifiers) {
-			if (qq == q) {
+			if (qq == q || count++ > limit) {
 				break;
 			}
 			d("replacing");

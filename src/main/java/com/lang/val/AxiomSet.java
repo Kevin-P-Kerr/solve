@@ -67,7 +67,7 @@ public class AxiomSet {
 		if (ret.size() >= limit) {
 			return ret;
 		}
-		List<Prop> bases = p.transmitLastUniveral();
+		List<Prop> bases = p.transmitLastUniveral(limit);
 		ret.addAll(bases);
 		for (Prop b : bases) {
 			Collection<Prop> m = getConclusions(b, limit - ret.size());
@@ -75,6 +75,7 @@ public class AxiomSet {
 			if (ret.size() > limit) {
 				break;
 			}
+			limit -= ret.size();
 		}
 		return ret;
 
@@ -105,7 +106,7 @@ public class AxiomSet {
 		if (ret.size() >= limit.get()) {
 			return false;
 		}
-		List<Prop> bases = p.transmitLastUniveral();
+		List<Prop> bases = p.transmitLastUniveral(limit.get());
 		ret.addAll(bases);
 		for (Prop x : bases) {
 			if (x.isContradiction()) {
