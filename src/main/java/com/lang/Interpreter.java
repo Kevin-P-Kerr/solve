@@ -55,6 +55,12 @@ public class Interpreter {
 					} else {
 						System.out.println("cannot prove true or false given resources");
 					}
+				} else if (t.getLit().equals("negate")) {
+					System.out.println("negating");
+					tokens.getNext();
+					Prop p = ParseProp(tokens);
+					p = p.negate();
+					System.out.println(p.toString());
 				} else {
 					System.out.println("what's this? " + t.getLit());
 					System.exit(1);
