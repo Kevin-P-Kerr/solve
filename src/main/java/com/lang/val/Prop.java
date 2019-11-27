@@ -389,7 +389,7 @@ public class Prop extends Value {
 
 		public void setUpIndex(String n, int i) {
 			for (Heccity h : heccesities) {
-				if (h.name == n) {
+				if (h.name.equals(n)) {
 					h.index = i;
 				}
 			}
