@@ -202,6 +202,26 @@ public class Prop extends Value {
 			}
 
 		}
+
+		public void negate() {
+			// ~(a+b) == ~a*~b
+			// ~(a*b+c) == ~a*~c + ~b*~c
+			List<BooleanPart> c = negateConjucntions();
+			BooleanPart x = c.get(0);
+			for (int i = 1, ii = c.size(); i < ii; i++) {
+				x.multiply(c.get(i));
+			}
+			this.conjunctions = x.conjunctions;
+		}
+
+		private List<BooleanPart> negateConjucntions() {
+			List<BooleanPart> ret = Lists.newArrayList();
+			for (ConjunctProp cp : conjunctions) {
+				List<ConjunctProp> negated = cp.negate();
+				ret.add(new BooleanPart(negated));
+			}
+			return ret;
+		}
 	}
 
 	public static class ConjunctProp {
@@ -209,6 +229,16 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public List<ConjunctProp> negate() {
+			List<ConjunctProp> conjuncts = Lists.newArrayList();
+			for (AtomicProp ap : atoms) {
+				AtomicProp aap = ap.copy();
+				aap.negate = !aap.negate;
+				conjuncts.add(new ConjunctProp(Lists.newArrayList(aap)));
+			}
+			return conjuncts;
 		}
 
 		public boolean isContradiction() {
@@ -290,7 +320,7 @@ public class Prop extends Value {
 	}
 
 	public static class AtomicProp {
-		private final boolean negate;
+		private boolean negate;
 		private final String name;
 		private final List<Heccity> heccesities;
 
@@ -482,6 +512,18 @@ public class Prop extends Value {
 				hecNames.remove(r.name);
 			}
 		}
+
+		public void negate() {
+			// forall a thereis b
+			// ~ exists a forall b
+			for (Quantifier q : quantifiers) {
+				if (q.type == QuantifierType.FORALL) {
+					q.type = QuantifierType.THEREIS;
+				} else {
+					q.type = QuantifierType.FORALL;
+				}
+			}
+		}
 	}
 
 	private final QuantifierPart quantifierPart;
@@ -636,16 +678,10 @@ public class Prop extends Value {
 	}
 
 	public Prop negate() {
-		// forall a thereis b
-		// ~ exists a forall b
 		Prop r = copy();
-		for (Quantifier q : quantifierPart.quantifiers) {
-			if (q.type == QuantifierType.FORALL) {
-				q.type = QuantifierType.THEREIS;
-			} else {
-				q.type = QuantifierType.FORALL;
-			}
-		}
+
+		r.quantifierPart.negate();
+		r.booleanPart.negate();
 		return r;
 	}
 

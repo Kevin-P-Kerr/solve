@@ -39,8 +39,7 @@ public class Interpreter {
 					for (Prop p : pl) {
 						System.out.println(p.toString());
 					}
-				}
-				if (t.getLit().equals("prove")) {
+				} else if (t.getLit().equals("prove")) {
 					tokens.getNext(); // throw the "prove" away
 					int order = parseInt(tokens);
 					int resources = parseInt(tokens);
