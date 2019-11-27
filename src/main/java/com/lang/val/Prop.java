@@ -661,7 +661,7 @@ public class Prop extends Value {
 		booleanPart.removeContradictions();
 	}
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 	private static void d(String s) {
 		if (DEBUG) {
@@ -746,6 +746,12 @@ public class Prop extends Value {
 		r.quantifierPart.negate();
 		r.booleanPart.negate();
 		return r;
+	}
+
+	// TODO: this doesn't really obey the hascode contract
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
 	}
 
 	public boolean isContradiction() {
