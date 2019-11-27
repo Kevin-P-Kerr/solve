@@ -10,8 +10,8 @@ import com.lang.parse.Tokenizer.TokenStream;
 public class Solve {
 
 	public static void main(String args[]) {
-		// String fn = args[0];
-		String fn = null;
+		String fn = args[0];
+		// String fn = null;
 		if (fn == null) {
 			fn = "foo.lg";
 		}

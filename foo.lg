@@ -1,4 +1,5 @@
-forall a thereis b: ~Man(a) + Man(b)*Mother(b a).
-forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
+forall a thereis b: ~Man(a) + Man(b)*Mother(b a)*~Mother(a a).
+forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c)*~Grandmother(a a).
 forall a forall b forall c: ~Mother(a b) + ~Grandmother(b c) + Greatgrandmother(a c).
-get 1 200
+prove 2 2000 forall a: ~Mother(a a).
+prove 4 20000 forall a: ~Greatgrandmother(a a).

@@ -662,7 +662,7 @@ public class Prop extends Value {
 		booleanPart.removeContradictions();
 	}
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 	private static void d(Object o) {
 		if (DEBUG) {
