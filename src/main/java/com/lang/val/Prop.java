@@ -603,12 +603,11 @@ public class Prop extends Value {
 	public Prop add(Prop b) {
 		Prop a = this.copy();
 		UniqueString s = new UniqueString();
-
-		for (Quantifier q : a.quantifierPart.quantifiers) {
-			a.replaceHeccity(q, s.getString());
-		}
-		for (Quantifier q : b.quantifierPart.quantifiers) {
-			b.replaceHeccity(q, s.getString());
+		int offset = a.quantifierPart.quantifiers.size();
+		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
+			Quantifier q = b.quantifierPart.quantifiers.get(i);
+			int index = i + offset;
+			b.replaceHeccity(q, index);
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.add(b.booleanPart);
@@ -619,12 +618,11 @@ public class Prop extends Value {
 		Prop a = this.copy();
 		UniqueString s = new UniqueString();
 
-		// TODO: there is a bug here
-		for (Quantifier q : a.quantifierPart.quantifiers) {
-			a.replaceHeccity(q, s.getString(a));
-		}
-		for (Quantifier q : b.quantifierPart.quantifiers) {
-			b.replaceHeccity(q, s.getString(b));
+		int offset = a.quantifierPart.quantifiers.size();
+		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
+			Quantifier q = b.quantifierPart.quantifiers.get(i);
+			int index = i + offset;
+			b.replaceHeccity(q, index);
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
@@ -637,16 +635,16 @@ public class Prop extends Value {
 		booleanPart.simplify();
 	}
 
-	private void replaceHeccity(Quantifier q, String name) {
-		String oldName = q.name;
+	private void replaceHeccity(Quantifier q, int index) {
+		int oldIndex = q.index;
 		for (Quantifier qq : quantifierPart.quantifiers) {
 			if (qq == q) {
-				qq.name = name;
+				qq.index = index;
 				break;
 			}
 		}
 		for (ConjunctProp cj : booleanPart.conjunctions) {
-			cj.replaceHecceities(oldName, name);
+			cj.replaceHecceities(oldIndex, index);
 		}
 	}
 
