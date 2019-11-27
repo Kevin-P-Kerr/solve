@@ -62,18 +62,32 @@ public class Prop extends Value {
 
 		private QuantifierType type;
 		private String name;
+		private int index;
 
-		private Quantifier(QuantifierType t, String name) {
+		private Quantifier(QuantifierType t, String name, int index) {
 			this.type = t;
 			this.name = name;
+			this.index = index;
+		}
+
+		public static Quantifier newExistential(String name, int index) {
+			return new Quantifier(QuantifierType.THEREIS, name, index);
+		}
+
+		public static Quantifier newUniversal(String name, int index) {
+			return new Quantifier(QuantifierType.FORALL, name, index);
 		}
 
 		public static Quantifier newExistential(String name) {
-			return new Quantifier(QuantifierType.THEREIS, name);
+			return new Quantifier(QuantifierType.THEREIS, name, -1);
 		}
 
 		public static Quantifier newUniversal(String name) {
-			return new Quantifier(QuantifierType.FORALL, name);
+			return new Quantifier(QuantifierType.FORALL, name, -1);
+		}
+
+		public void setIndex(int i) {
+			this.index = i;
 		}
 
 		@Override
@@ -89,7 +103,7 @@ public class Prop extends Value {
 		}
 
 		public Quantifier copy() {
-			return new Quantifier(type, name);
+			return new Quantifier(type, name, index);
 		}
 
 	}
@@ -222,6 +236,12 @@ public class Prop extends Value {
 			}
 			return ret;
 		}
+
+		public void setUpIndex(String name, int i) {
+			for (ConjunctProp cp : conjunctions) {
+				cp.setUpIndex(name, i);
+			}
+		}
 	}
 
 	public static class ConjunctProp {
@@ -229,6 +249,12 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public void setUpIndex(String name, int i) {
+			for (AtomicProp ap : atoms) {
+				ap.setUpIndex(name, i);
+			}
 		}
 
 		public List<ConjunctProp> negate() {
@@ -330,6 +356,14 @@ public class Prop extends Value {
 			this.heccesities = h;
 		}
 
+		public void setUpIndex(String n, int i) {
+			for (Heccity h : heccesities) {
+				if (h.name == n) {
+					h.index = i;
+				}
+			}
+		}
+
 		public boolean contradicts(AtomicProp ap) {
 			AtomicProp c = new AtomicProp(!ap.negate, ap.name, ap.heccesities);
 			return equals(c);
@@ -401,13 +435,19 @@ public class Prop extends Value {
 
 	public static class Heccity {
 		private String name;
+		private int index;
 
 		public Heccity(String n) {
 			this.name = n;
 		}
 
+		private Heccity(String n, int i) {
+			this.name = n;
+			this.index = i;
+		}
+
 		public Heccity copy() {
-			return new Heccity(name);
+			return new Heccity(name, index);
 		}
 
 		@Override
@@ -417,7 +457,7 @@ public class Prop extends Value {
 			}
 			if (h instanceof Heccity) {
 				Heccity k = (Heccity) h;
-				return k.name.equals(name);
+				return k.index == index;
 			}
 			return false;
 		}
@@ -532,6 +572,18 @@ public class Prop extends Value {
 	public Prop(QuantifierPart q, BooleanPart b) {
 		this.quantifierPart = q;
 		this.booleanPart = b;
+		this.init();
+	}
+
+	private void init() {
+		// set up the indices of the heccities
+		for (int i = 0, ii = quantifierPart.quantifiers.size(); i < ii; i++) {
+			Quantifier q = quantifierPart.quantifiers.get(i);
+			String name = q.name;
+			q.setIndex(i);
+			booleanPart.setUpIndex(name, i);
+		}
+
 	}
 
 	public boolean containsHecName(String s) {
