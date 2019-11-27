@@ -12,9 +12,9 @@ public class Solve {
 	public static void main(String args[]) {
 		String fn = args[0];
 		// String fn = null;
-		if (fn == null) {
-			fn = "foo.lg";
-		}
+		// if (fn == null) {
+		// fn = "notes/free_will.lg";
+		// }
 		try {
 			File file = new File(fn);
 			FileReader r = new FileReader(file);
@@ -22,7 +22,7 @@ public class Solve {
 			StringBuilder sb = new StringBuilder();
 			String s;
 			while ((s = bf.readLine()) != null) {
-				sb.append(s);
+				sb.append(s + " \n");
 			}
 			String input = sb.toString();
 			TokenStream tokens = Tokenizer.tokenize(input);

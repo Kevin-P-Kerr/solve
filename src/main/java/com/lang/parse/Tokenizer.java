@@ -34,7 +34,7 @@ public class Tokenizer {
 	}
 
 	private static boolean isWhite(char c) {
-		return c == ' ';
+		return c == ' ' || c == '\t' || c == '\n';
 	}
 
 	public static TokenStream tokenize(String ln) {
@@ -43,6 +43,13 @@ public class Tokenizer {
 		for (int i = 0, ii = ln.length(); i < ii; i++) {
 			char c = ln.charAt(i);
 			if (isWhite(c)) {
+				continue;
+			}
+			if (c == '#') { // it's a comment--move to new line
+				while (c != '\n' && i < ii) {
+					i++;
+					c = ln.charAt(i);
+				}
 				continue;
 			}
 			String lit = Character.toString(c);
@@ -82,7 +89,7 @@ public class Tokenizer {
 			} else {
 
 				i++;
-				while (i < ii && (c = ln.charAt(i)) != ' ') {
+				while (i < ii && !isWhite((c = ln.charAt(i)))) {
 					if (isReserved(c)) {
 						i--;
 						break;
