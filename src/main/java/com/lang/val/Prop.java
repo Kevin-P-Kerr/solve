@@ -210,7 +210,7 @@ public class Prop extends Value {
 			}
 		}
 
-		public void replaceHeccity(String to, String from) {
+		public void replaceHeccity(int to, int from) {
 			for (ConjunctProp cp : conjunctions) {
 				cp.replaceHecceities(from, to);
 			}
@@ -337,9 +337,9 @@ public class Prop extends Value {
 			return sb.toString();
 		}
 
-		public void replaceHecceities(String oldName, String name) {
+		public void replaceHecceities(int from, int to) {
 			for (AtomicProp ap : atoms) {
-				ap.replaceHecceities(oldName, name);
+				ap.replaceHecceities(from, to);
 			}
 		}
 
@@ -370,10 +370,10 @@ public class Prop extends Value {
 
 		}
 
-		public void replaceHecceities(String oldName, String name2) {
+		public void replaceHecceities(int from, int to) {
 			for (Heccity h : heccesities) {
-				if (h.name.equals(oldName)) {
-					h.name = name2;
+				if (h.index == from) {
+					h.index = to;
 				}
 			}
 		}
@@ -680,7 +680,7 @@ public class Prop extends Value {
 			d("replacing");
 			d(qq.toString());
 			Prop p = this.copy();
-			p.replaceHeccity(qq.name, q.name);
+			p.replaceHeccity(qq.index, q.index);
 			p.quantifierPart.removeWithName(q.name);
 			p.simplify();
 			p.removeContradictions();
@@ -693,10 +693,10 @@ public class Prop extends Value {
 
 	}
 
-	private void replaceHeccity(String to, String from) {
+	private void replaceHeccity(int to, int from) {
 		Quantifier qq = null;
 		for (Quantifier q : quantifierPart.quantifiers) {
-			if (q.name.equals(from)) {
+			if (q.index == from) {
 				qq = q;
 			}
 		}
