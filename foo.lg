@@ -1,6 +1,4 @@
 forall a thereis b: ~Man(a) + Man(b)*Mother(b a).
 forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
-get 4 10 
-negate forall a thereis b: ~Man(a) + Man(b)*Grandmother(b a).
-prove 4 10000 thereis a forall b: Man(a)*~Man(b) + Man(a)*~Grandmother(b a).
-prove 3 1000 forall a thereis b: ~Man(a) + Man(b)*Grandmother(b a).
+get 3 2 
+prove 3 200 forall a thereis b: ~Man(a) + Man(b)*Grandmother(b a).
