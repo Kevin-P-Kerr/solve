@@ -242,6 +242,12 @@ public class Prop extends Value {
 				cp.setUpIndex(name, i);
 			}
 		}
+
+		public void transmitHecName(int index, String s) {
+			for (ConjunctProp cp : conjunctions) {
+				cp.transmitHecName(index, s);
+			}
+		}
 	}
 
 	public static class ConjunctProp {
@@ -249,6 +255,12 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		public void transmitHecName(int index, String s) {
+			for (AtomicProp ap : atoms) {
+				ap.transmitHecName(index, s);
+			}
 		}
 
 		public void setUpIndex(String name, int i) {
@@ -354,6 +366,14 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		public void transmitHecName(int index, String s) {
+			for (Heccity h : heccesities) {
+				if (h.index == index) {
+					h.name = s;
+				}
+			}
 		}
 
 		public void setUpIndex(String n, int i) {
@@ -602,7 +622,6 @@ public class Prop extends Value {
 	// add a prop to this one--return a copy
 	public Prop add(Prop b) {
 		Prop a = this.copy();
-		UniqueString s = new UniqueString();
 		int offset = a.quantifierPart.quantifiers.size();
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
@@ -616,7 +635,6 @@ public class Prop extends Value {
 
 	public Prop multiply(Prop b) {
 		Prop a = this.copy();
-		UniqueString s = new UniqueString();
 
 		int offset = a.quantifierPart.quantifiers.size();
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
@@ -626,9 +644,19 @@ public class Prop extends Value {
 		}
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
+		a.resetHecNames();
 		a.simplify();
 		a.removeContradictions();
 		return a;
+	}
+
+	private void resetHecNames() {
+		UniqueString strMaker = new UniqueString();
+		for (Quantifier q : quantifierPart.quantifiers) {
+			String s = strMaker.getString();
+			q.name = s;
+			booleanPart.transmitHecName(q.index, s);
+		}
 	}
 
 	private void simplify() {
