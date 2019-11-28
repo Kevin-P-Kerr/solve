@@ -578,7 +578,7 @@ public class Prop extends Value {
 		}
 
 		public int getLargestOffset() {
-			return quantifiers.get(quantifiers.size() - 1).index;
+			return quantifiers.get(quantifiers.size() - 1).index + 1;
 		}
 	}
 
@@ -632,7 +632,6 @@ public class Prop extends Value {
 		int offset = a.quantifierPart.getLargestOffset();
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
-			int z = b.quantifierPart.quantifiers.size();
 			int index = i + offset;
 			b.transmitHecceity(index, q.index, q.name);
 			q.index = index;
@@ -684,7 +683,7 @@ public class Prop extends Value {
 		d(q);
 		int count = 0;
 		for (Quantifier qq : quantifierPart.quantifiers) {
-			if (qq == q || count++ >= limit) {
+			if (qq.equals(q) || count++ >= limit) {
 				break;
 			}
 			d("replacing");
