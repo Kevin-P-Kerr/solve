@@ -578,7 +578,7 @@ public class Prop extends Value {
 		}
 
 		public int getLargestOffset() {
-			return quantifiers.get(quantifiers.size() - 1).index + 1;
+			return quantifiers.get(quantifiers.size() - 1).index;
 		}
 	}
 
@@ -629,8 +629,8 @@ public class Prop extends Value {
 	public Prop multiply(Prop b) {
 		Prop a = this.copy();
 
-		int offset = a.quantifierPart.getLargestOffset();
-		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
+		int offset = a.quantifierPart.getLargestOffset() + 1;
+		for (int i = b.quantifierPart.quantifiers.size() - 1, ii = 0; i >= ii; i--) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int index = i + offset;
 			b.transmitHecceity(index, q.index, q.name);
