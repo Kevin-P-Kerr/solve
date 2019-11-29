@@ -1,0 +1,5 @@
+# let's begin by defining free will
+forall a thereis b: ~Will(a) + FreeWill(a) + Determines(b a).
+# the relationship of willing
+forall a forall b thereis c: ~Wills(a b) + WillsForItself(a b) + WillsFor(a b c).
+get 1 20
