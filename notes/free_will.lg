@@ -1,5 +1,12 @@
 # let's begin by defining free will
-forall a thereis b: ~Will(a) + FreeWill(a) + Determines(b a).
-# the relationship of willing
-forall a forall b thereis c: ~Wills(a b) + WillsForItself(a b) + WillsFor(a b c).
+# something is a will if and only if it is either a freewill or a determined will
+# a iff b == (~a+b)*(~b*a) == ~a*~b + b*a
+forall a : ~Will(a)*~DeterminedWill(a)*~FreeWill(a) + DeterminedWill(a)*Will(a) + FreeWill(a)*Will(a).
+# next, we can say that a free will and a determined will are mutually exclusive
+forall a: ~Will(a) + ~DeterminedWill(a)*FreeWill(a) + ~FreeWill(a)*DeterminedWill(a).
+forall a forall b: ~Will(a) + ~Determines(b a) + DeterminedWill(a).
+thereis a forall b: Determines(a b).
 get 1 20
+prove 2 32000 thereis a: FreeWill(a).
+
+# theries a thereis b thereis c : FreeWill(a)*~DeterminedWill(a)*Will(a)*~Determines(b a)*Determines(c a)
