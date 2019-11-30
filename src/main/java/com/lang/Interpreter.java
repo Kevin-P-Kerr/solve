@@ -50,10 +50,17 @@ public class Interpreter {
 					System.out.println("attempting proof of " + p.toString());
 					if (as.contradicts(p, order, resources)) {
 						System.out.println("proven false");
-					} else if (as.contradicts(p.negate(), order, resources)) {
-						System.out.println("proven true");
 					} else {
-						System.out.println("cannot prove true or false given resources");
+						Prop neg = p.negate();
+						System.out.println("attempting proof of " + neg.toString());
+
+						if (as.contradicts(neg, order, resources)) {
+
+							System.out.println("proven true");
+
+						} else {
+							System.out.println("cannot prove true or false given resources");
+						}
 					}
 				} else if (t.getLit().equals("negate")) {
 					System.out.println("negating");
