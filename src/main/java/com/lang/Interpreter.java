@@ -37,6 +37,9 @@ public class Interpreter {
 
 					List<Prop> pl = as.getConclusionsOfOrderN(order, resources);
 					for (Prop p : pl) {
+						if (!p.isInteresting()) {
+							continue;
+						}
 						System.out.println(p.toString());
 					}
 				} else if (t.getLit().equals("prove")) {

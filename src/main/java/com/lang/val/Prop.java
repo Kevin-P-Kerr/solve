@@ -757,4 +757,8 @@ public class Prop extends Value {
 	public boolean isContradiction() {
 		return booleanPart.conjunctions.isEmpty();
 	}
+
+	public boolean isInteresting() {
+		return quantifierPart.quantifiers.size() <= 2;
+	}
 }
