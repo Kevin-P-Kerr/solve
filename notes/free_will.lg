@@ -1,12 +1,29 @@
 # let's begin by defining free will
 # something is a will if and only if it is either a freewill or a determined will
+# further, we can say that free will and a determined will are mutually exclusive 
 # a iff b == (~a+b)*(~b*a) == ~a*~b + b*a
-forall a : ~Will(a)*~DeterminedWill(a)*~FreeWill(a) + DeterminedWill(a)*Will(a) + FreeWill(a)*Will(a).
-# next, we can say that a free will and a determined will are mutually exclusive
-forall a: ~Will(a) + ~DeterminedWill(a)*FreeWill(a) + ~FreeWill(a)*DeterminedWill(a).
+forall a : ~Will(a)*~DeterminedWill(a)*~FreeWill(a) + DeterminedWill(a)*Will(a)*~FreeWill(a) + FreeWill(a)*Will(a)*~DeterminedWill(a).
+# now, it also seems that a determined will must be determined by something.
 forall a forall b: ~Will(a) + ~Determines(b a) + DeterminedWill(a).
+# but, it seems that god must determine everything, given that he is omnipotent
 thereis a forall b: Determines(a b).
-get 1 20
-prove 2 32000 thereis a: FreeWill(a).
+# proven below
+forall a : ~FreeWill(a).
+# given that, it seems that there cannot be free will
+#prove 3 2000 thereis a: FreeWill(a).
+# which, being proven, we then add to our axioms
+#get 1 20
+# examining the conclusions, we see this
+# thereis a :~DeterminedWill(a)*~Will(a)*Determines(a a)*~FreeWill(a) + Will(a)*DeterminedWill(a)*Determines(a a)*~FreeWill(a).
+# this is a statement, as best as we can tell according to our mortal powers, about God.  It says that 
+# a) G-d determines himself.  That is, that Gd is a self determining.  Before anything that was, he is, and in that before--in that beginning--he begins by determining himself.  
+# b) If Gd is a will, then he is accordingly not a free will--since his will is determined, in some way which we cannot understand, by himself.  
+# And, since his will does not change, it is eternal.  Therefore, at that very moment, a moment beyond the reaches of time, back behind eternity, that he determined his own will, he determined also that the world should be as it is, that every rock, star, tree, toad, bacterium, and human should be just as they are.  this is what he has willed. 
 
-# theries a thereis b thereis c : FreeWill(a)*~DeterminedWill(a)*Will(a)*~Determines(b a)*Determines(c a)
+#thereis a forall b :~Will(b) + (DeterminedWill(b)*Will(b)*~FreeWill(b)*Determines(a a)*~FreeWill(a))(~Determines(a b) +.1)
+# this is maybe not as interesting, that if anything is a will, then it is a determined will, and it is either not determined by Gd, or, vacously, true.
+# now, we can also say that someone wills something either for itself, or for some other thing
+forall a forall b forall c: ~Wills(a b)*~WillsForSomeOther(a b c)*~WillsForItself(a b) + ~WillsForSomeOther(a b c)*WillsForItself(a b) + WillsForSomeOther(a b c)*~WillsForItself(a b).
+get 1 10000
+# an interesting result
+#thereis a forall b forall c ~Will(b)+~DeterminedWill(b)+Will(c) + ~Determines(b c)*Determines(a a)*~Wills(a a)*~WillsForSomeOther(a a b)*~WillsForItself(a a) + DeterminedWill(c)*Determines(a a)*~Wills(a a)*~WillsForSomeOther(a a b)*~WillsForItself(a a) + ~Determines(b c)*Determines(a a)*~FreeWill(b)*~WillsForSomeOther(a a b)*WillsForItself(a a) + DeterminedWill(c)*Determines(a a)*~FreeWill(b)*~WillsForSomeOther(a a b)*WillsForItself(a a) + ~Determines(b c)*Determines(a a)*WillsForSomeOther(a a b)*~WillsForItself(a a) + DeterminedWill(b)*Will(b)*DeterminedWill(c)*Determines(a a)*WillsForSomeOther(a a b)*~WillsForItself(a a).

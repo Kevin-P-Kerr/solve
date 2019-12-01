@@ -38,7 +38,7 @@ public class Interpreter {
 
 					List<Prop> pl = as.getConclusionsOfOrderN(order, resources);
 					for (Prop p : pl) {
-						if (!p.isInteresting()) {
+						if (!p.isInteresting(interestingLimit)) {
 							continue;
 						}
 						System.out.println(p.toString());
