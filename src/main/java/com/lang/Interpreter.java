@@ -1,8 +1,15 @@
 package com.lang;
 
 import java.util.List;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
@@ -72,10 +79,23 @@ public class Interpreter {
 				} else if (t.getLit().equals("betterProve")) {
 					tokens.getNext(); // throw the "prove" away
 					Prop p = ParseProp(tokens);
-					AxiomSet as = new AxiomSet(axioms);
+					AxiomSet as1 = new AxiomSet(axioms);
+					AxiomSet as2 = new AxiomSet(axioms);
 
 					System.out.println("attempting proof of " + p.toString());
-					exec.submit(task)
+					ProofTask pt = new ProofTask(as1, p);
+					ProofTask ptt = new ProofTask(as2, p.negate());
+					CompletionService<ProofResult> proofService = new ExecutorCompletionService<ProofResult>(exec);
+					proofService.submit(pt);
+					proofService.submit(ptt);
+					Future<ProofResult> result = proofService.take();
+					ProofResult r;
+					try {
+						r = result.get(5, TimeUnit.MINUTES);
+					} catch (InterruptedException | TimeoutException | ExecutionException e) {
+						result.cancel(true);
+						proofService.
+					}
 				} else if (t.getLit().equals("negate")) {
 					System.out.println("negating");
 					tokens.getNext();
