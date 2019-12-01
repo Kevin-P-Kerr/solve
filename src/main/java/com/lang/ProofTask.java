@@ -9,10 +9,16 @@ public class ProofTask implements Callable<ProofResult> {
 
 	private final AxiomSet axioms;
 	private final Prop toBeProven;
+	private final boolean isNegated;
 
 	public ProofTask(AxiomSet as, Prop p) {
+		this(as, p, false);
+	}
+
+	public ProofTask(AxiomSet as, Prop p, boolean b) {
 		this.axioms = as;
 		this.toBeProven = p;
+		this.isNegated = b;
 	}
 
 	@Override
@@ -20,6 +26,9 @@ public class ProofTask implements Callable<ProofResult> {
 		ProofResult pf = new ProofResult();
 		try {
 			pf = axioms.proveByContradiction(toBeProven);
+			if (isNegated) {
+				pf.negateResult();
+			}
 		} catch (InterruptedException e) {
 
 		} finally {

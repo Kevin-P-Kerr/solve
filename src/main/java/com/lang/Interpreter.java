@@ -1,9 +1,8 @@
 package com.lang;
 
 import java.util.List;
-import java.util.concurrent.CompletionService;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -84,17 +83,30 @@ public class Interpreter {
 
 					System.out.println("attempting proof of " + p.toString());
 					ProofTask pt = new ProofTask(as1, p);
-					ProofTask ptt = new ProofTask(as2, p.negate());
-					CompletionService<ProofResult> proofService = new ExecutorCompletionService<ProofResult>(exec);
-					proofService.submit(pt);
-					proofService.submit(ptt);
-					Future<ProofResult> result = proofService.take();
-					ProofResult r;
+					ProofTask ptt = new ProofTask(as2, p.negate(), true);
+					// TODO, make this more efficient
+					Future<ProofResult> resultA = exec.submit(pt);
+					Future<ProofResult> resultB = exec.submit(ptt);
+					ProofResult r = new ProofResult();
 					try {
-						r = result.get(5, TimeUnit.MINUTES);
-					} catch (InterruptedException | TimeoutException | ExecutionException e) {
-						result.cancel(true);
-						proofService.
+						r = resultA.get(5, TimeUnit.MINUTES);
+					} catch (TimeoutException | InterruptedException | ExecutionException | CancellationException e) {
+
+					} finally {
+						switch (r.getProofValue()) {
+						case PF_PROVED_FALSE:
+							System.out.println("proven false");
+							break;
+						case PF_PROVED_TRUE:
+							System.out.println("proven true");
+							break;
+						case PF_UNPROVED:
+							System.out.println("could not prove in given time");
+							break;
+						default:
+							break;
+
+						}
 					}
 				} else if (t.getLit().equals("negate")) {
 					System.out.println("negating");

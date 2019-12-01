@@ -18,4 +18,12 @@ public class ProofResult {
 	public PROOF_VALUE getProofValue() {
 		return pf;
 	}
+
+	public void negateResult() {
+		if (pf == PROOF_VALUE.PF_PROVED_FALSE) {
+			pf = PROOF_VALUE.PF_PROVED_TRUE;
+		} else if (pf == PROOF_VALUE.PF_PROVED_TRUE) {
+			pf = PROOF_VALUE.PF_PROVED_FALSE;
+		}
+	}
 }
