@@ -1,14 +1,12 @@
 package com.lang;
 
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
@@ -84,16 +82,22 @@ public class Interpreter {
 					System.out.println("attempting proof of " + p.toString());
 					ProofTask pt = new ProofTask(as1, p);
 					ProofTask ptt = new ProofTask(as2, p.negate(), true);
-					// TODO, make this more efficient
-					Future<ProofResult> resultA = exec.submit(pt);
-					Future<ProofResult> resultB = exec.submit(ptt);
-					ProofResult r = new ProofResult();
+					CompletionService<ProofResult> cs = new ExecutorCompletionService<>(exec);
+					cs.submit(ptt);
+					cs.submit(pt);
+					Future<ProofResult> r = null;
 					try {
-						r = resultA.get(5, TimeUnit.MINUTES);
-					} catch (TimeoutException | InterruptedException | ExecutionException | CancellationException e) {
-						r = resultB.get(20, TimeUnit.MILLISECONDS);
+						r = cs.poll(300, TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
 					} finally {
-						switch (r.getProofValue()) {
+						ProofResult ret;
+						if (r == null) {
+							ret = null;
+						} else {
+							ret = r.get();
+						}
+						switch (ret.getProofValue()) {
 						case PF_PROVED_FALSE:
 							System.out.println("proven false");
 							break;
