@@ -32,6 +32,7 @@ public class Interpreter {
 					tokens.getNext(); // throw the "get" away
 					int order = parseInt(tokens);
 					int resources = parseInt(tokens);
+					int intrestingLimit = parseInt(tokens);
 
 					AxiomSet as = new AxiomSet(axioms);
 

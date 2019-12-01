@@ -758,7 +758,7 @@ public class Prop extends Value {
 		return booleanPart.conjunctions.isEmpty();
 	}
 
-	public boolean isInteresting() {
-		return quantifierPart.quantifiers.size() <= 2;
+	public boolean isInteresting(int n) {
+		return quantifierPart.quantifiers.size() <= n;
 	}
 }
