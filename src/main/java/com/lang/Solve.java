@@ -10,11 +10,11 @@ import com.lang.parse.Tokenizer.TokenStream;
 public class Solve {
 
 	public static void main(String args[]) {
-		String fn = args[0];
-		// String fn = null;
-		// if (fn == null) {
-		// fn = "notes/free_will.lg";
-		// }
+		// String fn = args[0];
+		String fn = null;
+		if (fn == null) {
+			fn = "notes/free_will.lg";
+		}
 		try {
 			File file = new File(fn);
 			FileReader r = new FileReader(file);

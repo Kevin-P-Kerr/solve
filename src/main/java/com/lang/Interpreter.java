@@ -1,7 +1,8 @@
 package com.lang;
 
 import java.util.List;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
@@ -12,6 +13,8 @@ import com.lang.val.Prop;
 public class Interpreter {
 
 	private final TokenStream tokens;
+	private static final int NUM_CPUS = Runtime.getRuntime().availableProcessors();
+	private static final ExecutorService exec = Executors.newFixedThreadPool(NUM_CPUS - 2);
 
 	public Interpreter(TokenStream s) {
 		this.tokens = s;
@@ -56,7 +59,7 @@ public class Interpreter {
 						System.out.println("proven false");
 					} else {
 						Prop neg = p.negate();
-						System.out.println("attempting proof of " + neg.toString());
+						System.out.println("negating:  " + neg.toString());
 
 						if (as.contradicts(neg, order, resources)) {
 
@@ -66,6 +69,13 @@ public class Interpreter {
 							System.out.println("cannot prove true or false given resources");
 						}
 					}
+				} else if (t.getLit().equals("betterProve")) {
+					tokens.getNext(); // throw the "prove" away
+					Prop p = ParseProp(tokens);
+					AxiomSet as = new AxiomSet(axioms);
+
+					System.out.println("attempting proof of " + p.toString());
+					exec.submit(task)
 				} else if (t.getLit().equals("negate")) {
 					System.out.println("negating");
 					tokens.getNext();
