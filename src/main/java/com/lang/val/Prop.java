@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lang.Tuple;
 import com.lang.val.Prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
@@ -250,6 +251,37 @@ public class Prop extends Value {
 				cp.transmitHecName(index, s);
 			}
 		}
+
+		public boolean couldContradict(BooleanPart booleanPart) {
+			for (ConjunctProp cp : conjunctions) {
+				for (ConjunctProp ccp : booleanPart.conjunctions) {
+					if (cp.couldContradict(ccp)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private int firstContradictionIndex = -1;
+
+		public boolean hasPotentialContradictions() {
+			int i = 0;
+			for (ConjunctProp cp : conjunctions) {
+				if (cp.hasPotentialContradictions()) {
+					this.firstContradictionIndex = i;
+					return true;
+				}
+				i++;
+			}
+			return false;
+		}
+
+		public Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
+			ConjunctProp cp = conjunctions.get(firstContradictionIndex);
+			firstContradictionIndex = -1;
+			return cp.getFirstContradiction();
+		}
 	}
 
 	public static class ConjunctProp {
@@ -257,6 +289,53 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		private int firstContradictionIndex = -1;
+		private int secondContradictionIndex = -1;
+
+		// must be called after hasPotentialContradictions()
+		protected Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
+			AtomicProp from = atoms.get(firstContradictionIndex);
+			AtomicProp to = atoms.get(secondContradictionIndex);
+			List<Integer> froml = Lists.newArrayList();
+			List<Integer> tol = Lists.newArrayList();
+			firstContradictionIndex = -1;
+			secondContradictionIndex = -1;
+			for (Heccity h : from.heccesities) {
+				froml.add(h.index);
+			}
+			for (Heccity h : to.heccesities) {
+				tol.add(h.index);
+			}
+			return new Tuple<List<Integer>, List<Integer>>(froml, tol);
+
+		}
+
+		public boolean hasPotentialContradictions() {
+			for (int i = 0, ii = atoms.size(); i < ii; i++) {
+				AtomicProp ap = atoms.get(i);
+				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
+					AtomicProp aap = atoms.get(l);
+					if (ap.couldContradict(aap)) {
+						firstContradictionIndex = i;
+						secondContradictionIndex = l;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public boolean couldContradict(ConjunctProp ccp) {
+			for (AtomicProp ap : atoms) {
+				for (AtomicProp aap : ccp.atoms) {
+					if (ap.couldContradict(aap)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -368,6 +447,10 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		public boolean couldContradict(AtomicProp aap) {
+			return name.equals(aap.name) && negate != aap.negate;
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -760,5 +843,34 @@ public class Prop extends Value {
 
 	public boolean isInteresting(int n) {
 		return quantifierPart.quantifiers.size() <= n;
+	}
+
+	public boolean couldContradict(Prop b) {
+		// TODO: this could be made more sophisticated by checking the quantifier list to see if replacement is possible
+		return booleanPart.couldContradict(b.booleanPart);
+	}
+
+	// watch out, this mutates the object!
+	public void simplifyViaContradictions() {
+		if (!booleanPart.hasPotentialContradictions()) {
+			return;
+		}
+		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
+		List<Integer> from = l.getLeft();
+		List<Integer> to = l.getRight();
+		for (int i = 0, ii = from.size(); i < ii; i++) {
+			int f = from.get(i);
+			int t = to.get(i);
+			Quantifier q = quantifierPart.quantifiers.get(f);
+			Quantifier qq = quantifierPart.quantifiers.get(t);
+			quantifierPart.removeQuantifier(q);
+			booleanPart.replaceHeccity(t, f, qq.name);
+			booleanPart.removeContradictions();
+		}
+		if (!booleanPart.hasPotentialContradictions()) {
+			return;
+		}
+		simplifyViaContradictions();
+
 	}
 }

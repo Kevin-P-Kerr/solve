@@ -144,7 +144,7 @@ public class AxiomSet {
 			for (Prop a : axioms) {
 				if (a.couldContradict(toBeProven)) {
 					toBeProven = toBeProven.multiply(a);
-					toBeProven.simplifyViaContradiction();
+					toBeProven.simplifyViaContradictions();
 					if (toBeProven.isContradiction()) {
 						ProofResult pr = new ProofResult();
 						pr.setProofValue(PROOF_VALUE.PF_PROVED_TRUE);
