@@ -24,16 +24,14 @@ public class ProofTask implements Callable<ProofResult> {
 	@Override
 	public ProofResult call() throws Exception {
 		ProofResult pf = new ProofResult();
-		try {
-			pf = axioms.proveByContradiction(toBeProven);
-			if (isNegated) {
-				pf.negateResult();
-			}
-		} catch (InterruptedException e) {
 
-		} finally {
-			return pf;
+		pf = axioms.proveByContradiction(toBeProven);
+		if (isNegated) {
+			pf.negateResult();
 		}
+
+		return pf;
+
 	}
 
 }
