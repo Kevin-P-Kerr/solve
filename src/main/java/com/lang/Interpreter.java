@@ -80,8 +80,8 @@ public class Interpreter {
 					AxiomSet as2 = new AxiomSet(axioms);
 
 					System.out.println("attempting proof of " + p.toString());
-					ProofTask pt = new ProofTask(as1, p);
-					ProofTask ptt = new ProofTask(as2, p.negate(), true);
+					ProofTask pt = new ProofTask(as1, p, 100);
+					ProofTask ptt = new ProofTask(as2, p.negate(), true, 100);
 					CompletionService<ProofResult> cs = new ExecutorCompletionService<>(exec);
 					cs.submit(ptt);
 					cs.submit(pt);

@@ -11,6 +11,10 @@ public class ProofResult {
 
 	}
 
+	public ProofResult(boolean b) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setProofValue(PROOF_VALUE pf) {
 		this.pf = pf;
 	}
