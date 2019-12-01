@@ -91,7 +91,7 @@ public class Interpreter {
 					try {
 						r = resultA.get(5, TimeUnit.MINUTES);
 					} catch (TimeoutException | InterruptedException | ExecutionException | CancellationException e) {
-
+						r = resultB.get(20, TimeUnit.MILLISECONDS);
 					} finally {
 						switch (r.getProofValue()) {
 						case PF_PROVED_FALSE:
