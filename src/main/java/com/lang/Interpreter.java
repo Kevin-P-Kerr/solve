@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import com.google.common.collect.Lists;
@@ -17,11 +16,11 @@ import com.lang.val.Prop;
 public class Interpreter {
 
 	private final TokenStream tokens;
-	private static final int NUM_CPUS = Runtime.getRuntime().availableProcessors();
-	private static final ExecutorService exec = Executors.newFixedThreadPool(NUM_CPUS - 2);
+	private final ExecutorService exec;
 
-	public Interpreter(TokenStream s) {
+	public Interpreter(TokenStream s, ExecutorService exec) {
 		this.tokens = s;
+		this.exec = exec;
 	}
 
 	public void eval() throws Exception {
