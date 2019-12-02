@@ -31,4 +31,5 @@ forall a forall b forall c: ~Wills(a b)*~WillsForSomeOther(a b c)*~WillsForItsel
 # furthermore, it seems that one is only moral culpable for something if one wills it freely
 forall a forall b: ~Culpable(a b) + FreeWill(a)*Wills(a b).
 # but that implies that no one is morally culpable
-prove 3 3000 thereis a thereis b: Culpable(a b).
+#prove 3 3000 thereis a thereis b: Culpable(a b).
+betterProve thereis a thereis b: Culpable(a b).
