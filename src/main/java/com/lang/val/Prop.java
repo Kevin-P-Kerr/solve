@@ -879,42 +879,33 @@ public class Prop extends Value {
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
-		List<Integer> from;
-		List<Integer> to;
-		boolean cleared = true;
+		List<Integer> from = Lists.newArrayList();
+		List<Integer> to = Lists.newArrayList();
 		// pre-condition check--can we do this?
 		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
 		List<Integer> left = l.getLeft();
 		List<Integer> right = l.getRight();
 		for (int i = 0, ii = left.size(); i < ii; i++) {
-			int f = left.get(i);
-			int t = right.get(i);
-			if (t == f) {
+			int a = right.get(i);
+			int b = left.get(i);
+			int t, f;
+			if (a == b) {
 				continue;
 			}
-			Quantifier qq = quantifierPart.getQuantifier(t);
+			if (a < b) {
+				t = a;
+				f = b;
+			} else {
+				t = b;
+				f = a;
+			}
+
+			Quantifier qq = quantifierPart.getQuantifier(f);
 			if (qq.type != Quantifier.QuantifierType.FORALL) {
-				cleared = false;
-				break; // we can't do this.
+				continue;
 			}
-		}
-		if (!cleared) {
-			for (int i = 0, ii = left.size(); i < ii; i++) {
-				int f = right.get(i);
-				int t = left.get(i);
-				if (t == f) {
-					continue;
-				}
-				Quantifier qq = quantifierPart.getQuantifier(t);
-				if (qq.type != Quantifier.QuantifierType.FORALL) {
-					return; // we can't do this at all.
-				}
-			}
-			to = left;
-			from = right;
-		} else {
-			to = right;
-			from = left;
+			to.add(t);
+			from.add(f);
 		}
 
 		for (int i = 0, ii = from.size(); i < ii; i++) {
@@ -925,6 +916,9 @@ public class Prop extends Value {
 			}
 			Quantifier qq = quantifierPart.getQuantifier(t);
 			Quantifier old = quantifierPart.getQuantifier(f);
+			if (old == null || qq == null) {
+				continue;
+			}
 			trace.removeQuantifier(f);
 			quantifierPart.removeQuantifier(f);
 			trace.replaceHeccity(t, f, qq.name, old.name);
@@ -932,10 +926,11 @@ public class Prop extends Value {
 		}
 		trace.removeContradictions();
 		booleanPart.removeContradictions();
+		// TODO: this is the problem method
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
-		simplifyViaContradictions(trace);
+		// simplifyViaContradictions(trace);
 
 	}
 

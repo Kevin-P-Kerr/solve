@@ -16,10 +16,13 @@ public class Solve {
 	private static final ExecutorService exec = Executors.newFixedThreadPool(NUM_CPUS - 2);
 
 	public static void main(String args[]) {
-		String fn = args[0];
-		/*
-		 * String fn = null; if (fn == null) { fn = "notes/free_will.lg"; }
-		 */
+		// String fn = args[0];
+
+		String fn = null;
+		if (fn == null) {
+			fn = "gm.lg";
+		}
+
 		try {
 			File file = new File(fn);
 			FileReader r = new FileReader(file);
