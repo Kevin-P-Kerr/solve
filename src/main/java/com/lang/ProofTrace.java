@@ -8,6 +8,8 @@ import com.lang.val.Prop;
 public class ProofTrace {
 	public static interface Instruction {
 		public void doInstruction(Prop p);
+
+		public String getNote();
 	}
 
 	public static class RemoveQuantifierInstruction implements Instruction {
@@ -22,22 +24,34 @@ public class ProofTrace {
 		public void doInstruction(Prop p) {
 			p.removeQuantifier(index);
 		}
+
+		@Override
+		public String getNote() {
+			return "rq: " + index;
+		}
 	}
 
 	public static class ReplaceHeccityInstruction implements Instruction {
 		private final int from;
 		private final int to;
 		private final String name;
+		private final String oldName;
 
-		public ReplaceHeccityInstruction(int from, int to, String name) {
+		public ReplaceHeccityInstruction(int from, int to, String name, String oldName) {
 			this.to = to;
 			this.from = from;
 			this.name = name;
+			this.oldName = oldName;
 		}
 
 		@Override
 		public void doInstruction(Prop p) {
 			p.replaceHeccity(to, from, name);
+		}
+
+		@Override
+		public String getNote() {
+			return "rh + : " + oldName + " " + name;
 		}
 	}
 
@@ -55,6 +69,11 @@ public class ProofTrace {
 		public void doInstruction(Prop p) {
 			pt.base = p.multiply(m);
 		}
+
+		@Override
+		public String getNote() {
+			return "m : " + m.toString();
+		}
 	}
 
 	public static class RemoveContradictionsInstruction implements Instruction {
@@ -62,6 +81,11 @@ public class ProofTrace {
 		@Override
 		public void doInstruction(Prop p) {
 			p.removeContradictions();
+		}
+
+		@Override
+		public String getNote() {
+			return "rc";
 		}
 	}
 
@@ -77,8 +101,8 @@ public class ProofTrace {
 
 	}
 
-	public void replaceHeccity(int t, int f, String name) {
-		instructions.add(new ReplaceHeccityInstruction(f, t, name));
+	public void replaceHeccity(int t, int f, String name, String oldName) {
+		instructions.add(new ReplaceHeccityInstruction(f, t, name, oldName));
 	}
 
 	public void multiply(Prop copy) {
@@ -90,7 +114,7 @@ public class ProofTrace {
 		int i = 1;
 		for (Instruction instruction : instructions) {
 			instruction.doInstruction(base);
-			System.out.println("(" + i + ")\t" + base.toString());
+			System.out.println("(" + i++ + ")\t" + base.toString() + "," + instruction.getNote());
 		}
 		System.out.println("fin");
 	}

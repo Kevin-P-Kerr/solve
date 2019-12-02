@@ -924,9 +924,10 @@ public class Prop extends Value {
 				continue;
 			}
 			Quantifier qq = quantifierPart.getQuantifier(t);
+			Quantifier old = quantifierPart.getQuantifier(f);
 			trace.removeQuantifier(f);
 			quantifierPart.removeQuantifier(f);
-			trace.replaceHeccity(t, f, qq.name);
+			trace.replaceHeccity(t, f, qq.name, old.name);
 			booleanPart.replaceHeccity(t, f, qq.name);
 		}
 		trace.removeContradictions();
