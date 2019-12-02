@@ -1,0 +1,5 @@
+forall a thereis b: ~Man(a) + Mother(b c).
+forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
+forall a forall b forall c: ~Grandmother(a b) + ~Mother(b c) + GreatGrandmother(a c).
+betterProve forall a thereis b: ~Man(a) + Grandmother(b c).
+betterProve forall a thereis b: ~Man(a) + GreatGrandmother(b c).
