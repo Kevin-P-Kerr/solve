@@ -24,6 +24,11 @@ forall a : ~FreeWill(a).
 # this is maybe not as interesting, that if anything is a will, then it is a determined will, and it is either not determined by Gd, or, vacously, true.
 # now, we can also say that someone wills something either for itself, or for some other thing
 forall a forall b forall c: ~Wills(a b)*~WillsForSomeOther(a b c)*~WillsForItself(a b) + ~WillsForSomeOther(a b c)*WillsForItself(a b) + WillsForSomeOther(a b c)*~WillsForItself(a b).
-get 1 10000
+# a hypothetical scenario
+#thereis a thereis b: Will(b)*WillsForItself(a b).
 # an interesting result
 #thereis a forall b forall c ~Will(b)+~DeterminedWill(b)+Will(c) + ~Determines(b c)*Determines(a a)*~Wills(a a)*~WillsForSomeOther(a a b)*~WillsForItself(a a) + DeterminedWill(c)*Determines(a a)*~Wills(a a)*~WillsForSomeOther(a a b)*~WillsForItself(a a) + ~Determines(b c)*Determines(a a)*~FreeWill(b)*~WillsForSomeOther(a a b)*WillsForItself(a a) + DeterminedWill(c)*Determines(a a)*~FreeWill(b)*~WillsForSomeOther(a a b)*WillsForItself(a a) + ~Determines(b c)*Determines(a a)*WillsForSomeOther(a a b)*~WillsForItself(a a) + DeterminedWill(b)*Will(b)*DeterminedWill(c)*Determines(a a)*WillsForSomeOther(a a b)*~WillsForItself(a a).
+# furthermore, it seems that one is only moral culpable for something if one wills it freely
+forall a forall b: ~Culpable(a b) + FreeWill(a)*Wills(a b).
+# but that implies that no one is morally culpable
+prove 3 3000 thereis a thereis b: Culpable(a b).
