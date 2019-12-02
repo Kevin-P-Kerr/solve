@@ -31,9 +31,7 @@ public class ProofTask implements Callable<ProofResult> {
 		if (isNegated) {
 			pf.negateResult();
 		}
-
 		return pf;
-
 	}
 
 }

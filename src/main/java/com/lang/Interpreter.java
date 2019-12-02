@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import com.google.common.collect.Lists;
+import com.lang.ProofResult.PROOF_VALUE;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
@@ -86,7 +87,17 @@ public class Interpreter {
 					Future<ProofResult> f2 = cs.submit(pt);
 					Future<ProofResult> r = null;
 					try {
+						long start = System.currentTimeMillis();
 						r = cs.poll(300, TimeUnit.SECONDS);
+						long elapsed = 300 - (start / 1000);
+						if (r.get().getProofValue() == PROOF_VALUE.PF_UNPROVED) {
+							if (elapsed < 300) {
+								r = cs.poll(300 - elapsed, TimeUnit.SECONDS);
+							} else {
+								r = cs.poll(100, TimeUnit.MILLISECONDS);
+							}
+						}
+
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
@@ -111,6 +122,11 @@ public class Interpreter {
 						default:
 							break;
 
+						}
+
+						ProofTrace proofTrace = ret.getTrace();
+						if (proofTrace != null) {
+							proofTrace.doTrace();
 						}
 					}
 				} else if (t.getLit().equals("negate")) {

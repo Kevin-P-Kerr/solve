@@ -57,6 +57,14 @@ public class ProofTrace {
 		}
 	}
 
+	public static class RemoveContradictionsInstruction implements Instruction {
+
+		@Override
+		public void doInstruction(Prop p) {
+			p.removeContradictions();
+		}
+	}
+
 	private final List<Instruction> instructions = Lists.newArrayList();
 	private Prop base;
 
@@ -85,6 +93,10 @@ public class ProofTrace {
 			System.out.println("(" + i + ")\t" + base.toString());
 		}
 		System.out.println("fin");
+	}
+
+	public void removeContradictions() {
+		instructions.add(new RemoveContradictionsInstruction());
 	}
 
 }
