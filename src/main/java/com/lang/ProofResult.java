@@ -6,6 +6,7 @@ public class ProofResult {
 	}
 
 	private PROOF_VALUE pf = PROOF_VALUE.PF_UNPROVED;
+	private ProofTrace trace;
 
 	public ProofResult() {
 
@@ -29,5 +30,17 @@ public class ProofResult {
 		} else if (pf == PROOF_VALUE.PF_PROVED_TRUE) {
 			pf = PROOF_VALUE.PF_PROVED_FALSE;
 		}
+	}
+
+	public void setProofTrace(ProofTrace pt) {
+		this.trace = pt;
+	}
+
+	public boolean hasProofTrace() {
+		return !(trace == null);
+	}
+
+	public ProofTrace getTrace() {
+		return trace;
 	}
 }

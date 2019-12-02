@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lang.ProofTrace;
 import com.lang.Tuple;
 import com.lang.val.Prop.Quantifier.QuantifierType;
 
@@ -874,7 +875,7 @@ public class Prop extends Value {
 	}
 
 	// watch out, this mutates the object!
-	public void simplifyViaContradictions() {
+	public void simplifyViaContradictions(ProofTrace trace) {
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
@@ -923,18 +924,24 @@ public class Prop extends Value {
 				continue;
 			}
 			Quantifier qq = quantifierPart.getQuantifier(t);
-			if (qq == null) {
-				// wtf
-				return;
-			}
+			trace.removeQuantifier(f);
 			quantifierPart.removeQuantifier(f);
+			trace.replaceHeccity(t, f, qq.name);
 			booleanPart.replaceHeccity(t, f, qq.name);
 		}
 		booleanPart.removeContradictions();
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
-		simplifyViaContradictions();
+		simplifyViaContradictions(trace);
 
+	}
+
+	public void removeQuantifier(int index) {
+		quantifierPart.removeQuantifier(index);
+	}
+
+	public void replaceHeccity(int to, int from, String name) {
+		booleanPart.replaceHeccity(to, from, name);
 	}
 }
