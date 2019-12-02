@@ -147,7 +147,7 @@ public class AxiomSet {
 					toBeProven.simplifyViaContradictions();
 					if (toBeProven.isContradiction()) {
 						ProofResult pr = new ProofResult();
-						pr.setProofValue(PROOF_VALUE.PF_PROVED_TRUE);
+						pr.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
 						return pr;
 					}
 				}

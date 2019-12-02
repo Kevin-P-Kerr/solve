@@ -663,6 +663,28 @@ public class Prop extends Value {
 		public int getLargestOffset() {
 			return quantifiers.get(quantifiers.size() - 1).index;
 		}
+
+		public Quantifier getQuantifier(int t) {
+			for (Quantifier q : quantifiers) {
+				if (q.index == t) {
+					return q;
+				}
+			}
+			return null;
+		}
+
+		public void removeQuantifier(int f) {
+			Quantifier toRemove = null;
+			for (Quantifier q : quantifiers) {
+				if (q.index == f) {
+					toRemove = q;
+					break;
+				}
+			}
+			if (toRemove != null) {
+				quantifiers.remove(toRemove);
+			}
+		}
 	}
 
 	private final QuantifierPart quantifierPart;
@@ -711,6 +733,7 @@ public class Prop extends Value {
 
 	public Prop multiply(Prop b) {
 		Prop a = this.copy();
+		b = b.copy();
 
 		int offset = a.quantifierPart.getLargestOffset() + 1;
 		for (int i = b.quantifierPart.quantifiers.size() - 1, ii = 0; i >= ii; i--) {
@@ -855,15 +878,56 @@ public class Prop extends Value {
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
+		List<Integer> from;
+		List<Integer> to;
+		boolean cleared = true;
+		// pre-condition check--can we do this?
 		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
-		List<Integer> from = l.getLeft();
-		List<Integer> to = l.getRight();
+		List<Integer> left = l.getLeft();
+		List<Integer> right = l.getRight();
+		for (int i = 0, ii = left.size(); i < ii; i++) {
+			int f = left.get(i);
+			int t = right.get(i);
+			if (t == f) {
+				continue;
+			}
+			Quantifier qq = quantifierPart.getQuantifier(t);
+			if (qq.type != Quantifier.QuantifierType.FORALL) {
+				cleared = false;
+				break; // we can't do this.
+			}
+		}
+		if (!cleared) {
+			for (int i = 0, ii = left.size(); i < ii; i++) {
+				int f = right.get(i);
+				int t = left.get(i);
+				if (t == f) {
+					continue;
+				}
+				Quantifier qq = quantifierPart.getQuantifier(t);
+				if (qq.type != Quantifier.QuantifierType.FORALL) {
+					return; // we can't do this at all.
+				}
+			}
+			to = left;
+			from = right;
+		} else {
+			to = right;
+			from = left;
+		}
+
 		for (int i = 0, ii = from.size(); i < ii; i++) {
 			int f = from.get(i);
 			int t = to.get(i);
-			Quantifier q = quantifierPart.quantifiers.get(f);
-			Quantifier qq = quantifierPart.quantifiers.get(t);
-			quantifierPart.removeQuantifier(q);
+			if (f == t) {
+				continue;
+			}
+			Quantifier qq = quantifierPart.getQuantifier(t);
+			if (qq == null) {
+				// wtf
+				return;
+			}
+			quantifierPart.removeQuantifier(f);
 			booleanPart.replaceHeccity(t, f, qq.name);
 			booleanPart.removeContradictions();
 		}
