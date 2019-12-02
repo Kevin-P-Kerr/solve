@@ -1,7 +1,11 @@
 package com.lang;
 
 import java.util.List;
-
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import com.google.common.collect.Lists;
 import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
@@ -12,9 +16,11 @@ import com.lang.val.Prop;
 public class Interpreter {
 
 	private final TokenStream tokens;
+	private final ExecutorService exec;
 
-	public Interpreter(TokenStream s) {
+	public Interpreter(TokenStream s, ExecutorService exec) {
 		this.tokens = s;
+		this.exec = exec;
 	}
 
 	public void eval() throws Exception {
@@ -56,7 +62,7 @@ public class Interpreter {
 						System.out.println("proven false");
 					} else {
 						Prop neg = p.negate();
-						System.out.println("attempting proof of " + neg.toString());
+						System.out.println("negating:  " + neg.toString());
 
 						if (as.contradicts(neg, order, resources)) {
 
@@ -64,6 +70,47 @@ public class Interpreter {
 
 						} else {
 							System.out.println("cannot prove true or false given resources");
+						}
+					}
+				} else if (t.getLit().equals("betterProve")) {
+					tokens.getNext(); // throw the "prove" away
+					Prop p = ParseProp(tokens);
+					AxiomSet as1 = new AxiomSet(axioms);
+					AxiomSet as2 = new AxiomSet(axioms);
+
+					System.out.println("attempting proof of " + p.toString());
+					ProofTask pt = new ProofTask(as1, p, 100);
+					ProofTask ptt = new ProofTask(as2, p.negate(), true, 100);
+					CompletionService<ProofResult> cs = new ExecutorCompletionService<>(exec);
+					Future<ProofResult> f1 = cs.submit(ptt);
+					Future<ProofResult> f2 = cs.submit(pt);
+					Future<ProofResult> r = null;
+					try {
+						r = cs.poll(300, TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					} finally {
+						f1.cancel(true);
+						f2.cancel(true);
+						ProofResult ret;
+						if (r == null) {
+							ret = null;
+						} else {
+							ret = r.get();
+						}
+						switch (ret.getProofValue()) {
+						case PF_PROVED_FALSE:
+							System.out.println("proven false");
+							break;
+						case PF_PROVED_TRUE:
+							System.out.println("proven true");
+							break;
+						case PF_UNPROVED:
+							System.out.println("could not prove in given time");
+							break;
+						default:
+							break;
+
 						}
 					}
 				} else if (t.getLit().equals("negate")) {

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lang.Tuple;
 import com.lang.val.Prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
@@ -250,6 +251,37 @@ public class Prop extends Value {
 				cp.transmitHecName(index, s);
 			}
 		}
+
+		public boolean couldContradict(BooleanPart booleanPart) {
+			for (ConjunctProp cp : conjunctions) {
+				for (ConjunctProp ccp : booleanPart.conjunctions) {
+					if (cp.couldContradict(ccp)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private int firstContradictionIndex = -1;
+
+		public boolean hasPotentialContradictions() {
+			int i = 0;
+			for (ConjunctProp cp : conjunctions) {
+				if (cp.hasPotentialContradictions()) {
+					this.firstContradictionIndex = i;
+					return true;
+				}
+				i++;
+			}
+			return false;
+		}
+
+		public Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
+			ConjunctProp cp = conjunctions.get(firstContradictionIndex);
+			firstContradictionIndex = -1;
+			return cp.getFirstContradiction();
+		}
 	}
 
 	public static class ConjunctProp {
@@ -257,6 +289,53 @@ public class Prop extends Value {
 
 		public ConjunctProp(List<AtomicProp> atoms) {
 			this.atoms = atoms;
+		}
+
+		private int firstContradictionIndex = -1;
+		private int secondContradictionIndex = -1;
+
+		// must be called after hasPotentialContradictions()
+		protected Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
+			AtomicProp from = atoms.get(firstContradictionIndex);
+			AtomicProp to = atoms.get(secondContradictionIndex);
+			List<Integer> froml = Lists.newArrayList();
+			List<Integer> tol = Lists.newArrayList();
+			firstContradictionIndex = -1;
+			secondContradictionIndex = -1;
+			for (Heccity h : from.heccesities) {
+				froml.add(h.index);
+			}
+			for (Heccity h : to.heccesities) {
+				tol.add(h.index);
+			}
+			return new Tuple<List<Integer>, List<Integer>>(froml, tol);
+
+		}
+
+		public boolean hasPotentialContradictions() {
+			for (int i = 0, ii = atoms.size(); i < ii; i++) {
+				AtomicProp ap = atoms.get(i);
+				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
+					AtomicProp aap = atoms.get(l);
+					if (ap.couldContradict(aap)) {
+						firstContradictionIndex = i;
+						secondContradictionIndex = l;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public boolean couldContradict(ConjunctProp ccp) {
+			for (AtomicProp ap : atoms) {
+				for (AtomicProp aap : ccp.atoms) {
+					if (ap.couldContradict(aap)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -368,6 +447,10 @@ public class Prop extends Value {
 			this.negate = n;
 			this.name = name;
 			this.heccesities = h;
+		}
+
+		public boolean couldContradict(AtomicProp aap) {
+			return name.equals(aap.name) && negate != aap.negate;
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -580,6 +663,28 @@ public class Prop extends Value {
 		public int getLargestOffset() {
 			return quantifiers.get(quantifiers.size() - 1).index;
 		}
+
+		public Quantifier getQuantifier(int t) {
+			for (Quantifier q : quantifiers) {
+				if (q.index == t) {
+					return q;
+				}
+			}
+			return null;
+		}
+
+		public void removeQuantifier(int f) {
+			Quantifier toRemove = null;
+			for (Quantifier q : quantifiers) {
+				if (q.index == f) {
+					toRemove = q;
+					break;
+				}
+			}
+			if (toRemove != null) {
+				quantifiers.remove(toRemove);
+			}
+		}
 	}
 
 	private final QuantifierPart quantifierPart;
@@ -628,6 +733,7 @@ public class Prop extends Value {
 
 	public Prop multiply(Prop b) {
 		Prop a = this.copy();
+		b = b.copy();
 
 		int offset = a.quantifierPart.getLargestOffset() + 1;
 		for (int i = b.quantifierPart.quantifiers.size() - 1, ii = 0; i >= ii; i--) {
@@ -760,5 +866,75 @@ public class Prop extends Value {
 
 	public boolean isInteresting(int n) {
 		return quantifierPart.quantifiers.size() <= n;
+	}
+
+	public boolean couldContradict(Prop b) {
+		// TODO: this could be made more sophisticated by checking the quantifier list to see if replacement is possible
+		return booleanPart.couldContradict(b.booleanPart);
+	}
+
+	// watch out, this mutates the object!
+	public void simplifyViaContradictions() {
+		if (!booleanPart.hasPotentialContradictions()) {
+			return;
+		}
+		List<Integer> from;
+		List<Integer> to;
+		boolean cleared = true;
+		// pre-condition check--can we do this?
+		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
+		List<Integer> left = l.getLeft();
+		List<Integer> right = l.getRight();
+		for (int i = 0, ii = left.size(); i < ii; i++) {
+			int f = left.get(i);
+			int t = right.get(i);
+			if (t == f) {
+				continue;
+			}
+			Quantifier qq = quantifierPart.getQuantifier(t);
+			if (qq.type != Quantifier.QuantifierType.FORALL) {
+				cleared = false;
+				break; // we can't do this.
+			}
+		}
+		if (!cleared) {
+			for (int i = 0, ii = left.size(); i < ii; i++) {
+				int f = right.get(i);
+				int t = left.get(i);
+				if (t == f) {
+					continue;
+				}
+				Quantifier qq = quantifierPart.getQuantifier(t);
+				if (qq.type != Quantifier.QuantifierType.FORALL) {
+					return; // we can't do this at all.
+				}
+			}
+			to = left;
+			from = right;
+		} else {
+			to = right;
+			from = left;
+		}
+
+		for (int i = 0, ii = from.size(); i < ii; i++) {
+			int f = from.get(i);
+			int t = to.get(i);
+			if (f == t) {
+				continue;
+			}
+			Quantifier qq = quantifierPart.getQuantifier(t);
+			if (qq == null) {
+				// wtf
+				return;
+			}
+			quantifierPart.removeQuantifier(f);
+			booleanPart.replaceHeccity(t, f, qq.name);
+		}
+		booleanPart.removeContradictions();
+		if (!booleanPart.hasPotentialContradictions()) {
+			return;
+		}
+		simplifyViaContradictions();
+
 	}
 }

@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lang.ProofResult;
+import com.lang.ProofResult.PROOF_VALUE;
 
 public class AxiomSet {
 	private final List<Prop> axioms;
@@ -132,6 +134,26 @@ public class AxiomSet {
 		generateColligated(order);
 		Prop x = colligatedConclusions.get(order).multiply(p);
 		return checkForContradictions(x, new IntWrapper(i));
+	}
+
+	public ProofResult contradicts(Prop toBeProven, int order) {
+		if (order < 0) {
+			return new ProofResult();
+		}
+		while (order-- >= 0) {
+			for (Prop a : axioms) {
+				if (a.couldContradict(toBeProven)) {
+					toBeProven = toBeProven.multiply(a);
+					toBeProven.simplifyViaContradictions();
+					if (toBeProven.isContradiction()) {
+						ProofResult pr = new ProofResult();
+						pr.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
+						return pr;
+					}
+				}
+			}
+		}
+		return new ProofResult();
 	}
 
 }
