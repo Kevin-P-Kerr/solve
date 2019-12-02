@@ -8,9 +8,9 @@ forall a forall b: ~Will(a) + ~Determines(b a) + DeterminedWill(a).
 # but, it seems that god must determine everything, given that he is omnipotent
 thereis a forall b: Determines(a b).
 # proven below
-forall a : ~FreeWill(a).
+#forall a : ~FreeWill(a).
 # given that, it seems that there cannot be free will
-#prove 3 2000 thereis a: FreeWill(a).
+prove 3 2000 thereis a: FreeWill(a).
 # which, being proven, we then add to our axioms
 #get 1 20
 # examining the conclusions, we see this
