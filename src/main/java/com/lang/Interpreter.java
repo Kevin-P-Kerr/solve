@@ -83,14 +83,16 @@ public class Interpreter {
 					ProofTask pt = new ProofTask(as1, p, 100);
 					ProofTask ptt = new ProofTask(as2, p.negate(), true, 100);
 					CompletionService<ProofResult> cs = new ExecutorCompletionService<>(exec);
-					cs.submit(ptt);
-					cs.submit(pt);
+					Future<ProofResult> f1 = cs.submit(ptt);
+					Future<ProofResult> f2 = cs.submit(pt);
 					Future<ProofResult> r = null;
 					try {
 						r = cs.poll(300, TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					} finally {
+						f1.cancel(true);
+						f2.cancel(true);
 						ProofResult ret;
 						if (r == null) {
 							ret = null;

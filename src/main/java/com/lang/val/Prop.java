@@ -929,8 +929,8 @@ public class Prop extends Value {
 			}
 			quantifierPart.removeQuantifier(f);
 			booleanPart.replaceHeccity(t, f, qq.name);
-			booleanPart.removeContradictions();
 		}
+		booleanPart.removeContradictions();
 		if (!booleanPart.hasPotentialContradictions()) {
 			return;
 		}
