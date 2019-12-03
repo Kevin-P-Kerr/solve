@@ -466,6 +466,9 @@ public class Prop extends Value {
 				}
 				Quantifier aq = quantifierPart.getQuantifier(a.index);
 				Quantifier bq = quantifierPart.getQuantifier(b.index);
+				if (aq == null || bq == null) {
+					continue;
+				}
 				if (a.index < b.index) {
 					if (bq.type != QuantifierType.FORALL) {
 						return false;

@@ -105,7 +105,8 @@ public class Interpreter {
 						f2.cancel(true);
 						ProofResult ret;
 						if (r == null) {
-							ret = null;
+							return;
+
 						} else {
 							ret = r.get();
 						}
