@@ -266,10 +266,10 @@ public class Prop extends Value {
 
 		private int firstContradictionIndex = -1;
 
-		public boolean hasPotentialContradictions() {
+		public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
 			int i = 0;
 			for (ConjunctProp cp : conjunctions) {
-				if (cp.hasPotentialContradictions()) {
+				if (cp.hasPotentialContradictions(quantifierPart)) {
 					this.firstContradictionIndex = i;
 					return true;
 				}
@@ -313,12 +313,12 @@ public class Prop extends Value {
 
 		}
 
-		public boolean hasPotentialContradictions() {
+		public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
 			for (int i = 0, ii = atoms.size(); i < ii; i++) {
 				AtomicProp ap = atoms.get(i);
 				for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 					AtomicProp aap = atoms.get(l);
-					if (ap.couldContradict(aap)) {
+					if (ap.couldContradict(aap, quantifierPart)) {
 						firstContradictionIndex = i;
 						secondContradictionIndex = l;
 						return true;
@@ -450,8 +450,32 @@ public class Prop extends Value {
 			this.heccesities = h;
 		}
 
-		public boolean couldContradict(AtomicProp aap) {
-			return name.equals(aap.name) && negate != aap.negate;
+		public boolean couldContradict(AtomicProp aap, QuantifierPart quantifierPart) {
+			if (!(name.equals(aap.name) && negate != aap.negate)) {
+				return false;
+			}
+			List<Integer> toList = Lists.newArrayList();
+			List<Integer> fromList = Lists.newArrayList();
+			for (int i = 0, ii = heccesities.size(); i < ii; i++) {
+				int from;
+				int to;
+				Heccity a = heccesities.get(i);
+				Heccity b = aap.heccesities.get(i);
+				if (a.equals(b)) {
+					continue;
+				}
+				Quantifier aq = quantifierPart.getQuantifier(a.index);
+				Quantifier bq = quantifierPart.getQuantifier(b.index);
+				if (aq.type == QuantifierType.THEREIS && bq.type == QuantifierType.THEREIS) {
+					return false;
+				} else if (aq.type == QuantifierType.THEREIS) {
+					to = a.index;
+					from = b.index;
+				} else {
+					to = b.index;
+					from = a.index;
+				}
+			}
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -876,7 +900,7 @@ public class Prop extends Value {
 
 	// watch out, this mutates the object!
 	public void simplifyViaContradictions(ProofTrace trace) {
-		if (!booleanPart.hasPotentialContradictions()) {
+		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
 		}
 		List<Integer> from = Lists.newArrayList();
@@ -926,7 +950,7 @@ public class Prop extends Value {
 		trace.removeContradictions();
 		booleanPart.removeContradictions();
 		// TODO: this is the problem method
-		if (!booleanPart.hasPotentialContradictions()) {
+		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
 		}
 		// simplifyViaContradictions(trace);
