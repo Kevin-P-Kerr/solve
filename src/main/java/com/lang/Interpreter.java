@@ -103,9 +103,12 @@ public class Interpreter {
 					} finally {
 						f1.cancel(true);
 						f2.cancel(true);
-						ProofResult ret;
+						ProofResult ret = null;
 						if (r == null) {
-							return;
+							r = cs.poll(100, TimeUnit.MILLISECONDS);
+							if (r == null) {
+								ret = new ProofResult();
+							}
 
 						} else {
 							ret = r.get();
