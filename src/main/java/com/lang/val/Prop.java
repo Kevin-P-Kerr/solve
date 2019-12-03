@@ -919,7 +919,6 @@ public class Prop extends Value {
 			if (old == null || qq == null) {
 				continue;
 			}
-			trace.removeQuantifier(f);
 			quantifierPart.removeQuantifier(f);
 			trace.replaceHeccity(t, f, qq.name, old.name);
 			booleanPart.replaceHeccity(t, f, qq.name);

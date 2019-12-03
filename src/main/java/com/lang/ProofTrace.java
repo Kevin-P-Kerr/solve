@@ -12,25 +12,6 @@ public class ProofTrace {
 		public String getNote();
 	}
 
-	public static class RemoveQuantifierInstruction implements Instruction {
-
-		private final int index;
-
-		public RemoveQuantifierInstruction(int i) {
-			this.index = i;
-		}
-
-		@Override
-		public void doInstruction(Prop p) {
-			p.removeQuantifier(index);
-		}
-
-		@Override
-		public String getNote() {
-			return "rq: " + index;
-		}
-	}
-
 	public static class ReplaceHeccityInstruction implements Instruction {
 		private final int from;
 		private final int to;
@@ -46,6 +27,7 @@ public class ProofTrace {
 
 		@Override
 		public void doInstruction(Prop p) {
+			p.removeQuantifier(from);
 			p.replaceHeccity(to, from, name);
 		}
 
@@ -94,11 +76,6 @@ public class ProofTrace {
 
 	public ProofTrace(Prop p) {
 		this.base = p;
-	}
-
-	public void removeQuantifier(int f) {
-		instructions.add(new RemoveQuantifierInstruction(f));
-
 	}
 
 	public void replaceHeccity(int t, int f, String name, String oldName) {
