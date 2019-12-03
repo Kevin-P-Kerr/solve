@@ -253,10 +253,10 @@ public class Prop extends Value {
 			}
 		}
 
-		public boolean couldContradict(BooleanPart booleanPart) {
+		public boolean couldContradict(BooleanPart booleanPart, QuantifierPart quantifierPart) {
 			for (ConjunctProp cp : conjunctions) {
 				for (ConjunctProp ccp : booleanPart.conjunctions) {
-					if (cp.couldContradict(ccp)) {
+					if (cp.couldContradict(ccp, quantifierPart)) {
 						return true;
 					}
 				}
@@ -328,10 +328,10 @@ public class Prop extends Value {
 			return false;
 		}
 
-		public boolean couldContradict(ConjunctProp ccp) {
+		public boolean couldContradict(ConjunctProp ccp, QuantifierPart quantifierPart) {
 			for (AtomicProp ap : atoms) {
 				for (AtomicProp aap : ccp.atoms) {
-					if (ap.couldContradict(aap)) {
+					if (ap.couldContradict(aap, quantifierPart)) {
 						return true;
 					}
 				}
@@ -466,16 +466,29 @@ public class Prop extends Value {
 				}
 				Quantifier aq = quantifierPart.getQuantifier(a.index);
 				Quantifier bq = quantifierPart.getQuantifier(b.index);
-				if (aq.type == QuantifierType.THEREIS && bq.type == QuantifierType.THEREIS) {
-					return false;
-				} else if (aq.type == QuantifierType.THEREIS) {
-					to = a.index;
+				if (a.index < b.index) {
+					if (bq.type != QuantifierType.FORALL) {
+						return false;
+					}
 					from = b.index;
+					to = a.index;
 				} else {
-					to = b.index;
+					if (aq.type != QuantifierType.FORALL) {
+						return false;
+					}
 					from = a.index;
+					to = b.index;
 				}
+				if (fromList.contains(from)) {
+					if (toList.get(fromList.indexOf(from)) != to) {
+						return false;
+					}
+				}
+				// TODO: caching?
+				fromList.add(from);
+				toList.add(to);
 			}
+			return true;
 		}
 
 		public void transmitHecName(int index, String s) {
@@ -894,8 +907,7 @@ public class Prop extends Value {
 	}
 
 	public boolean couldContradict(Prop b) {
-		// TODO: this could be made more sophisticated by checking the quantifier list to see if replacement is possible
-		return booleanPart.couldContradict(b.booleanPart);
+		return booleanPart.couldContradict(b.booleanPart, quantifierPart);
 	}
 
 	// watch out, this mutates the object!
