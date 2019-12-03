@@ -657,6 +657,7 @@ public class Prop extends Value {
 		}
 
 		// mutates the object
+		// thereis a forall b forall c thereis d :Man(a)*~Mother(b a)*~Man(c) + Man(a)*~Mother(b a)*Man(d)*Mother(d c).
 		public void add(QuantifierPart quantifierPart) {
 			List<Quantifier> newQuants = Lists.newArrayList();
 			int i = 0;
@@ -911,6 +912,10 @@ public class Prop extends Value {
 
 	public boolean couldContradict(Prop b) {
 		return booleanPart.couldContradict(b.booleanPart, quantifierPart);
+	}
+
+	public boolean hasPotentialContradictions() {
+		return booleanPart.hasPotentialContradictions(quantifierPart);
 	}
 
 	// watch out, this mutates the object!

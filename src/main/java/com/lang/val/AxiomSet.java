@@ -146,7 +146,7 @@ public class AxiomSet {
 			for (Prop a : axioms) {
 				// TODO: it's annoying that we have to do this multiply
 				Prop test = toBeProven.multiply(a);
-				if (test.couldContradict(toBeProven)) {
+				if (test.hasPotentialContradictions()) {
 					trace.multiply(a.copy());
 					toBeProven = test;
 					toBeProven.simplifyViaContradictions(trace);
