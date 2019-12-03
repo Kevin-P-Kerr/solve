@@ -965,7 +965,7 @@ public class Prop extends Value {
 		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
 		}
-		// simplifyViaContradictions(trace);
+		simplifyViaContradictions(trace);
 
 	}
 

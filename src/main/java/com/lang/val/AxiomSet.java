@@ -144,9 +144,11 @@ public class AxiomSet {
 		ProofTrace trace = new ProofTrace(toBeProven.copy());
 		while (order-- >= 0) {
 			for (Prop a : axioms) {
-				if (a.couldContradict(toBeProven)) {
+				// TODO: it's annoying that we have to do this multiply
+				Prop test = toBeProven.multiply(a);
+				if (test.couldContradict(toBeProven)) {
 					trace.multiply(a.copy());
-					toBeProven = toBeProven.multiply(a);
+					toBeProven = test;
 					toBeProven.simplifyViaContradictions(trace);
 					if (toBeProven.isContradiction()) {
 						ProofResult pr = new ProofResult();
