@@ -741,11 +741,28 @@ public class Prop extends Value {
 
 	private void init() {
 		// set up the indices of the heccities
+		List<Quantifier> foralls = Lists.newArrayList();
 		for (int i = 0, ii = quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = quantifierPart.quantifiers.get(i);
 			String name = q.name;
 			q.setIndex(i);
 			q.setIndicesPriorTo(i);
+			if (q.type == QuantifierType.FORALL) {
+				foralls.add(q);
+			} else {
+				for (int l = 0, ll = foralls.size(); l < ll; l++) {
+					Quantifier qq = foralls.get(l);
+					for (int n = l + 1, nn = foralls.size(); n < nn; n++) {
+						Quantifier qz = foralls.get(n);
+						int dex = qz.index;
+						if (qq.indicesForTransmission.contains(dex)) {
+							continue;
+						}
+						qq.indicesForTransmission.add(dex);
+					}
+				}
+				foralls = Lists.newArrayList();
+			}
 			booleanPart.setUpIndex(name, i);
 		}
 

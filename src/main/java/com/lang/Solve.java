@@ -23,7 +23,7 @@ public class Solve {
 			fn = args[0];
 		}
 		if (fn == null) {
-			fn = "gm.lg";
+			fn = "notes/syllog.lg";
 		}
 
 		try {

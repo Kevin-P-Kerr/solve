@@ -89,7 +89,8 @@ public class Interpreter {
 					try {
 						long start = System.currentTimeMillis();
 						r = cs.poll(300, TimeUnit.SECONDS);
-						long elapsed = 300 - (start / 1000);
+						long now = System.currentTimeMillis();
+						long elapsed = (now - start) / 1000;
 						if (r.get().getProofValue() == PROOF_VALUE.PF_UNPROVED) {
 							if (elapsed < 300) {
 								r = cs.poll(300 - elapsed, TimeUnit.SECONDS);
