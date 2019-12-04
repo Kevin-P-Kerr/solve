@@ -56,6 +56,7 @@ public class Prop extends Value {
 		private QuantifierType type;
 		private String name;
 		private int index;
+		private final List<Integer> indicesForTransmission = Lists.newArrayList();
 
 		private Quantifier(QuantifierType t, String name, int index) {
 			this.type = t;
@@ -81,6 +82,10 @@ public class Prop extends Value {
 
 		public void setIndex(int i) {
 			this.index = i;
+		}
+
+		public boolean canTransmitInto(Quantifier q) {
+			return indicesForTransmission.contains(q.index);
 		}
 
 		@Override
@@ -464,32 +469,27 @@ public class Prop extends Value {
 				if (a.equals(b)) {
 					continue;
 				}
-				Quantifier aq = quantifierPart.getQuantifier(a.index);
-				Quantifier bq = quantifierPart.getQuantifier(b.index);
-				if (aq == null || bq == null) {
-					continue;
-				}
-				if (a.index < b.index) {
-					if (bq.type != QuantifierType.FORALL) {
-						return false;
-					}
-					from = b.index;
-					to = a.index;
+				int indexA = a.index;
+				int indexB = b.index;
+				Quantifier qA = quantifierPart.getQuantifier(indexA);
+				Quantifier qB = quantifierPart.getQuantifier(indexB);
+				if (qA.canTransmitInto(qB)) {
+					from = qA.index;
+					to = qB.index;
+				} else if (qB.canTransmitInto(qA)) {
+					from = qB.index;
+					to = qB.index;
 				} else {
-					if (aq.type != QuantifierType.FORALL) {
-						return false;
-					}
-					from = a.index;
-					to = b.index;
+					return false;
+				}
+				if (fromList.contains(to)) {
+					return false;
 				}
 				if (fromList.contains(from)) {
-					if (toList.get(fromList.indexOf(from)) != to) {
-						return false;
-					}
+					continue;
 				}
-				// TODO: caching?
-				fromList.add(from);
 				toList.add(to);
+				fromList.add(from);
 			}
 			return true;
 		}
@@ -659,29 +659,19 @@ public class Prop extends Value {
 		// mutates the object
 		// thereis a forall b forall c thereis d :Man(a)*~Mother(b a)*~Man(c) + Man(a)*~Mother(b a)*Man(d)*Mother(d c).
 		public void add(QuantifierPart quantifierPart) {
-			List<Quantifier> newQuants = Lists.newArrayList();
-			int i = 0;
-			int ii = quantifierPart.quantifiers.size();
-			for (Quantifier q : quantifiers) {
-				if (q.type == QuantifierType.THEREIS) {
-					newQuants.add(q);
-				} else {
-					for (; i < ii; i++) {
-						Quantifier qq = quantifierPart.quantifiers.get(i);
-						if (qq.type == QuantifierType.THEREIS) {
-							newQuants.add(qq);
-						} else {
-							break;
-						}
+			for (Quantifier q : quantifierPart.quantifiers) {
+				boolean isForall = q.type == QuantifierType.FORALL;
+				for (Quantifier qq : quantifiers) {
+					boolean localForAll = qq.type == QuantifierType.FORALL;
+					if (isForall) {
+						q.indicesForTransmission.add(qq.index);
 					}
-					newQuants.add(q);
+					if (localForAll) {
+						qq.indicesForTransmission.add(q.index);
+					}
 				}
 			}
-			for (; i < ii; i++) {
-				Quantifier qq = quantifierPart.quantifiers.get(i);
-				newQuants.add(qq);
-			}
-			this.quantifiers = newQuants;
+			quantifiers.addAll(quantifierPart.quantifiers);
 		}
 
 		public void removeQuantifier(Quantifier r) {
@@ -761,7 +751,7 @@ public class Prop extends Value {
 	// add a prop to this one--return a copy
 	public Prop add(Prop b) {
 		Prop a = this.copy();
-		int offset = a.quantifierPart.quantifiers.size();
+		int offset = a.quantifierPart.getLargestOffset() + 1;
 		for (int i = 0, ii = b.quantifierPart.quantifiers.size(); i < ii; i++) {
 			Quantifier q = b.quantifierPart.quantifiers.get(i);
 			int index = i + offset;
