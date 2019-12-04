@@ -62,6 +62,7 @@ public class ProofTrace {
 
 		@Override
 		public void doInstruction(Prop p) {
+			p.simplify();
 			p.removeContradictions();
 		}
 

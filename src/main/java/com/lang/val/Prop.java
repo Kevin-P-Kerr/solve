@@ -803,7 +803,7 @@ public class Prop extends Value {
 		}
 	}
 
-	private void simplify() {
+	public void simplify() {
 		booleanPart.simplify();
 	}
 
@@ -935,6 +935,7 @@ public class Prop extends Value {
 			booleanPart.replaceHeccity(t, f, qq.name);
 		}
 		trace.removeContradictions();
+		simplify();
 		booleanPart.removeContradictions();
 		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
