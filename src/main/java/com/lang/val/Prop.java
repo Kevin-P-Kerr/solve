@@ -101,7 +101,11 @@ public class Prop extends Value {
 		}
 
 		public Quantifier copy() {
-			return new Quantifier(type, name, index);
+			Quantifier q = new Quantifier(type, name, index);
+			for (Integer i : indicesForTransmission) {
+				q.indicesForTransmission.add(i);
+			}
+			return q;
 		}
 
 		@Override
@@ -114,6 +118,16 @@ public class Prop extends Value {
 			}
 			Quantifier q = (Quantifier) a;
 			return q.index == index && q.type == type;
+		}
+
+		public void setIndicesPriorTo(int i) {
+			if (type == QuantifierType.THEREIS) {
+				return;
+			}
+			while (i-- >= 0) {
+				indicesForTransmission.add(i);
+			}
+
 		}
 	}
 
@@ -734,6 +748,7 @@ public class Prop extends Value {
 			Quantifier q = quantifierPart.quantifiers.get(i);
 			String name = q.name;
 			q.setIndex(i);
+			q.setIndicesPriorTo(i);
 			booleanPart.setUpIndex(name, i);
 		}
 
