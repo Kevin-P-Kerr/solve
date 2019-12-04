@@ -16,9 +16,12 @@ public class Solve {
 	private static final ExecutorService exec = Executors.newFixedThreadPool(NUM_CPUS - 2);
 
 	public static void main(String args[]) {
-		// String fn = args[0];
-
-		String fn = null;
+		String fn;
+		if (args.length == 0) {
+			fn = null;
+		} else {
+			fn = args[0];
+		}
 		if (fn == null) {
 			fn = "gm.lg";
 		}
