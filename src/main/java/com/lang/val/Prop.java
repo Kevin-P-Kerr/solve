@@ -85,7 +85,11 @@ public class Prop extends Value {
 		}
 
 		public boolean canTransmitInto(Quantifier q) {
-			return indicesForTransmission.contains(q.index);
+			boolean b = indicesForTransmission.contains(q.index);
+			if (type == QuantifierType.THEREIS && b) {
+				return false;
+			}
+			return b;
 		}
 
 		@Override
@@ -103,7 +107,7 @@ public class Prop extends Value {
 		public Quantifier copy() {
 			Quantifier q = new Quantifier(type, name, index);
 			for (Integer i : indicesForTransmission) {
-				q.indicesForTransmission.add(i);
+				q.addIndex(i);
 			}
 			return q;
 		}
@@ -124,9 +128,18 @@ public class Prop extends Value {
 			if (type == QuantifierType.THEREIS) {
 				return;
 			}
-			while (i-- >= 0) {
-				indicesForTransmission.add(i);
+			while (i >= 0) {
+				addIndex(i);
+				i--;
 			}
+
+		}
+
+		public void addIndex(int index2) {
+			if (type == QuantifierType.THEREIS) {
+				return;
+			}
+			indicesForTransmission.add(index2);
 
 		}
 	}
@@ -675,10 +688,10 @@ public class Prop extends Value {
 				for (Quantifier qq : quantifiers) {
 					boolean localForAll = qq.type == QuantifierType.FORALL;
 					if (isForall) {
-						q.indicesForTransmission.add(qq.index);
+						q.addIndex(qq.index);
 					}
 					if (localForAll) {
-						qq.indicesForTransmission.add(q.index);
+						qq.addIndex(q.index);
 					}
 				}
 			}
@@ -695,6 +708,7 @@ public class Prop extends Value {
 			// forall a thereis b
 			// ~ exists a forall b
 			for (Quantifier q : quantifiers) {
+				q.indicesForTransmission.clear();
 				if (q.type == QuantifierType.FORALL) {
 					q.type = QuantifierType.THEREIS;
 				} else {
@@ -746,9 +760,10 @@ public class Prop extends Value {
 			Quantifier q = quantifierPart.quantifiers.get(i);
 			String name = q.name;
 			q.setIndex(i);
-			q.setIndicesPriorTo(i);
+
 			if (q.type == QuantifierType.FORALL) {
 				foralls.add(q);
+				q.setIndicesPriorTo(i);
 			} else {
 				for (int l = 0, ll = foralls.size(); l < ll; l++) {
 					Quantifier qq = foralls.get(l);
@@ -758,7 +773,7 @@ public class Prop extends Value {
 						if (qq.indicesForTransmission.contains(dex)) {
 							continue;
 						}
-						qq.indicesForTransmission.add(dex);
+						qq.addIndex(dex);
 					}
 				}
 				foralls = Lists.newArrayList();
@@ -912,6 +927,7 @@ public class Prop extends Value {
 
 		r.quantifierPart.negate();
 		r.booleanPart.negate();
+		r.init();
 		return r;
 	}
 
