@@ -312,23 +312,16 @@ public class Prop extends Value {
 		}
 
 		private int firstContradictionIndex = -1;
-		private int secondContradictionIndex = -1;
 
 		// must be called after hasPotentialContradictions()
 		protected Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
-			AtomicProp from = atoms.get(firstContradictionIndex);
-			AtomicProp to = atoms.get(secondContradictionIndex);
-			List<Integer> froml = Lists.newArrayList();
-			List<Integer> tol = Lists.newArrayList();
+			AtomicProp ap = atoms.get(firstContradictionIndex);
 			firstContradictionIndex = -1;
-			secondContradictionIndex = -1;
-			for (Heccity h : from.heccesities) {
-				froml.add(h.index);
-			}
-			for (Heccity h : to.heccesities) {
-				tol.add(h.index);
-			}
-			return new Tuple<List<Integer>, List<Integer>>(froml, tol);
+			List<Integer> from = ap.fromIndices;
+			List<Integer> tol = ap.toIndices;
+			ap.fromIndices = Lists.newArrayList();
+			ap.toIndices = Lists.newArrayList();
+			return new Tuple<List<Integer>, List<Integer>>(from, tol);
 
 		}
 
@@ -339,7 +332,6 @@ public class Prop extends Value {
 					AtomicProp aap = atoms.get(l);
 					if (ap.couldContradict(aap, quantifierPart)) {
 						firstContradictionIndex = i;
-						secondContradictionIndex = l;
 						return true;
 					}
 				}
@@ -469,6 +461,9 @@ public class Prop extends Value {
 			this.heccesities = h;
 		}
 
+		private List<Integer> fromIndices = Lists.newArrayList();
+		private List<Integer> toIndices = Lists.newArrayList();
+
 		public boolean couldContradict(AtomicProp aap, QuantifierPart quantifierPart) {
 			if (!(name.equals(aap.name) && negate != aap.negate)) {
 				return false;
@@ -505,6 +500,8 @@ public class Prop extends Value {
 				toList.add(to);
 				fromList.add(from);
 			}
+			fromIndices = fromList;
+			toIndices = toList;
 			return true;
 		}
 
@@ -915,10 +912,6 @@ public class Prop extends Value {
 		return quantifierPart.quantifiers.size() <= n;
 	}
 
-	public boolean couldContradict(Prop b) {
-		return booleanPart.couldContradict(b.booleanPart, quantifierPart);
-	}
-
 	public boolean hasPotentialContradictions() {
 		return booleanPart.hasPotentialContradictions(quantifierPart);
 	}
@@ -974,7 +967,6 @@ public class Prop extends Value {
 		}
 		trace.removeContradictions();
 		booleanPart.removeContradictions();
-		// TODO: this is the problem method
 		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
 		}
