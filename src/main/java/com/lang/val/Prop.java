@@ -487,7 +487,7 @@ public class Prop extends Value {
 					to = qB.index;
 				} else if (qB.canTransmitInto(qA)) {
 					from = qB.index;
-					to = qB.index;
+					to = qA.index;
 				} else {
 					return false;
 				}
@@ -918,49 +918,18 @@ public class Prop extends Value {
 
 	// watch out, this mutates the object!
 	public void simplifyViaContradictions(ProofTrace trace) {
+		// pre-condition check--can we do this?
 		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
 			return;
 		}
-		List<Integer> from = Lists.newArrayList();
-		List<Integer> to = Lists.newArrayList();
-		// pre-condition check--can we do this?
 		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
-		List<Integer> left = l.getLeft();
-		List<Integer> right = l.getRight();
-		for (int i = 0, ii = left.size(); i < ii; i++) {
-			int a = right.get(i);
-			int b = left.get(i);
-			int t, f;
-			if (a == b) {
-				continue;
-			}
-			if (a < b) {
-				t = a;
-				f = b;
-			} else {
-				t = b;
-				f = a;
-			}
-
-			Quantifier qq = quantifierPart.getQuantifier(f);
-			if (qq.type != Quantifier.QuantifierType.FORALL) {
-				continue;
-			}
-			to.add(t);
-			from.add(f);
-		}
-
+		List<Integer> from = l.getLeft();
+		List<Integer> to = l.getRight();
 		for (int i = 0, ii = from.size(); i < ii; i++) {
 			int f = from.get(i);
 			int t = to.get(i);
-			if (f == t) {
-				continue;
-			}
 			Quantifier qq = quantifierPart.getQuantifier(t);
 			Quantifier old = quantifierPart.getQuantifier(f);
-			if (old == null || qq == null) {
-				continue;
-			}
 			quantifierPart.removeQuantifier(f);
 			trace.replaceHeccity(t, f, qq.name, old.name);
 			booleanPart.replaceHeccity(t, f, qq.name);
