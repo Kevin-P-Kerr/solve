@@ -9,7 +9,10 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.ProofResult;
+import com.lang.ProofResult.PROOF_VALUE;
+import com.lang.Tuple;
 import com.lang.val.prop.Prop;
+import com.lang.val.prop.Quantifier;
 
 public class AxiomSet {
 	private final List<Prop> axioms;
@@ -89,8 +92,40 @@ public class AxiomSet {
 
 	}
 
+	private ProofResult findContradiction(List<Prop> props, int order) {
+		if (order < 0) {
+			ProofResult p = new ProofResult();
+			p.setProofValue(PROOF_VALUE.PF_UNPROVED);
+			return p;
+		}
+		List<Prop> collect = Lists.newArrayList();
+		for (Prop p : props) {
+			for (Prop axiom : baseAxioms) {
+				Prop test = p.multiply(axiom);
+				if (test.hasPotentialContradictions()) {
+					List<Tuple<Quantifier, Quantifier>> replacements = test.getIterations();
+					// to, from
+					for (Tuple<Quantifier, Quantifier> rep : replacements) {
+						Quantifier to = rep.getLeft();
+						Quantifier from = rep.getRight();
+						Prop replaced = test.copy().replaceHeccity(to, from);
+						if (replaced.isContradiction()) {
+							ProofResult found = new ProofResult();
+							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
+							return found;
+						}
+						collect.add(replaced);
+					}
+				}
+			}
+		}
+		return findContradiction(collect, order - 1);
+	}
+
 	public ProofResult contradicts(Prop toBeProven, int order) {
-		return null;
+		List<Prop> l = Lists.newArrayList();
+		l.add(toBeProven);
+		return findContradiction(l, order);
 	}
 
 }

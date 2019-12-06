@@ -197,7 +197,12 @@ public class Prop extends Value {
 		quantifierPart.removeQuantifier(index);
 	}
 
-	public void replaceHeccity(int to, int from, String name) {
+	protected void replaceHeccity(int to, int from, String name) {
 		booleanPart.replaceHeccity(to, from, name);
+	}
+
+	public Prop replaceHeccity(Quantifier to, Quantifier from) {
+		replaceHeccity(to.index, from.index, to.name);
+		return this;
 	}
 }

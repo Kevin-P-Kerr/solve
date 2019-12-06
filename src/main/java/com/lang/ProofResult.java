@@ -1,5 +1,7 @@
 package com.lang;
 
+import com.lang.val.prop.ProofTrace;
+
 public class ProofResult {
 	public static enum PROOF_VALUE {
 		PF_PROVED_TRUE, PF_PROVED_FALSE, PF_UNPROVED;

@@ -16,6 +16,7 @@ import com.lang.val.prop.AtomicProp;
 import com.lang.val.prop.BooleanPart;
 import com.lang.val.prop.ConjunctProp;
 import com.lang.val.prop.Heccity;
+import com.lang.val.prop.ProofTrace;
 import com.lang.val.prop.Prop;
 import com.lang.val.prop.Quantifier;
 import com.lang.val.prop.QuantifierPart;
