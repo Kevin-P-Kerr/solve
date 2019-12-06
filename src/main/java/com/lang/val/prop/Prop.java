@@ -205,4 +205,40 @@ public class Prop extends Value {
 		replaceHeccity(to.index, from.index, to.name);
 		return this;
 	}
+
+	private static List<Prop> getIterations(Prop p, List<Prop> cached) {
+		if (p.quantifierPart.quantifiers.size() <= 1) {
+			return Lists.newArrayList();
+		}
+		List<Prop> ret = Lists.newArrayList();
+		for (int i = 0, ii = p.quantifierPart.quantifiers.size(); i < ii; i++) {
+			Quantifier q = p.quantifierPart.quantifiers.get(i);
+			for (int l = i + 1, ll = ii; l < ll; l++) {
+				Quantifier qq = p.quantifierPart.quantifiers.get(l);
+				if (q.canTransmitInto(qq)) {
+					Prop n = p.copy();
+					n.replaceHeccity(qq, q);
+					n.removeQuantifier(q.index);
+					if (cached.indexOf(n) < 0) {
+						ret.add(n);
+						ret.addAll(getIterations(n, cached));
+					}
+				}
+				if (qq.canTransmitInto(q)) {
+					Prop n = p.copy();
+					n.replaceHeccity(q, qq);
+					n.removeQuantifier(qq.index);
+					if (cached.indexOf(n) < 0) {
+						ret.add(n);
+						ret.addAll(getIterations(n, cached));
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	public List<Prop> getIterations() {
+		return getIterations(this, Lists.newArrayList());
+	}
 }

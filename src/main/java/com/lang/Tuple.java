@@ -16,4 +16,19 @@ public class Tuple<L, R> {
 	public R getRight() {
 		return r;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Tuple<?, ?>)) {
+			return false;
+		}
+		Tuple<?, ?> t = (Tuple<?, ?>) o;
+		return t.getLeft().equals(getLeft()) && t.getRight().equals(getRight());
+	}
 }

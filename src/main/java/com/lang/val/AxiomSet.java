@@ -103,18 +103,15 @@ public class AxiomSet {
 			for (Prop axiom : baseAxioms) {
 				Prop test = p.multiply(axiom);
 				if (test.hasPotentialContradictions()) {
-					List<Tuple<Quantifier, Quantifier>> replacements = test.getIterations();
+					List<Prop> replacements = test.getIterations();
 					// to, from
-					for (Tuple<Quantifier, Quantifier> rep : replacements) {
-						Quantifier to = rep.getLeft();
-						Quantifier from = rep.getRight();
-						Prop replaced = test.copy().replaceHeccity(to, from);
-						if (replaced.isContradiction()) {
+					for (Prop rep : replacements) {
+						if (rep.isContradiction()) {
 							ProofResult found = new ProofResult();
 							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
 							return found;
 						}
-						collect.add(replaced);
+						collect.add(rep);
 					}
 				}
 			}
