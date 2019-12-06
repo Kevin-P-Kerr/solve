@@ -105,7 +105,6 @@ public class AxiomSet {
 					List<Prop> replacements = test.getIterations();
 					// to, from
 					for (Prop rep : replacements) {
-						rep.removeContradictions();
 						if (rep.isContradiction()) {
 							ProofResult found = new ProofResult();
 							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);

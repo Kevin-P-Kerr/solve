@@ -103,6 +103,7 @@ public class Interpreter {
 							break;
 						case PF_PROVED_TRUE:
 							System.out.println("proven true");
+							axioms.add(p);
 							break;
 						case PF_UNPROVED:
 							System.out.println("could not prove in given time");
@@ -111,7 +112,6 @@ public class Interpreter {
 							break;
 
 						}
-
 						ProofTrace proofTrace = ret.getTrace();
 						if (proofTrace != null) {
 							proofTrace.doTrace();

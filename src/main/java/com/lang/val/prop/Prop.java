@@ -219,8 +219,15 @@ public class Prop extends Value {
 					Prop n = p.copy();
 					n.replaceHeccity(qq, q);
 					n.removeQuantifier(q.index);
+					n.removeContradictions();
+					if (n.isContradiction()) {
+						List<Prop> early = Lists.newArrayList();
+						early.add(n);
+						return early;
+					}
 					if (cached.indexOf(n) < 0) {
 						ret.add(n);
+						cached.add(n);
 						ret.addAll(getIterations(n, cached));
 					}
 				}
@@ -228,8 +235,15 @@ public class Prop extends Value {
 					Prop n = p.copy();
 					n.replaceHeccity(q, qq);
 					n.removeQuantifier(qq.index);
+					n.removeContradictions();
+					if (n.isContradiction()) {
+						List<Prop> early = Lists.newArrayList();
+						early.add(n);
+						return early;
+					}
 					if (cached.indexOf(n) < 0) {
 						ret.add(n);
+						cached.add(n);
 						ret.addAll(getIterations(n, cached));
 					}
 				}
