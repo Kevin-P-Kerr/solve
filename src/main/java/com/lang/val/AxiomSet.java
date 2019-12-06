@@ -10,9 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.ProofResult;
 import com.lang.ProofResult.PROOF_VALUE;
-import com.lang.Tuple;
 import com.lang.val.prop.Prop;
-import com.lang.val.prop.Quantifier;
 
 public class AxiomSet {
 	private final List<Prop> axioms;
@@ -106,6 +104,7 @@ public class AxiomSet {
 					List<Prop> replacements = test.getIterations();
 					// to, from
 					for (Prop rep : replacements) {
+						rep.removeContradictions();
 						if (rep.isContradiction()) {
 							ProofResult found = new ProofResult();
 							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);

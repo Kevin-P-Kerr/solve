@@ -2,9 +2,9 @@ forall a thereis b: ~Man(a) + Man(b)*Mother(b a).
 forall a forall b forall c: ~Mother(a b) + ~Mother(b c) + Grandmother(a c).
 #forall a forall b forall c: ~Grandmother(a b) + ~Mother(b c) + GreatGrandmother(a c).
 #forall a forall b thereis c: ~Man(a) + ~Mother(b a) + Grandmother(c a).
-betterProve forall a forall b thereis c: ~Man(a) + ~Mother(b a) + Grandmother(c a).
+#betterProve forall a forall b thereis c: ~Man(a) + ~Mother(b a) + Grandmother(c a).
 #prove 3 400 forall a thereis b: ~Man(a) + Grandmother(b a).
-betterProve thereis a forall b: Man(a)*~Mother(b a).
-betterProve forall a thereis b: ~Man(a) + Grandmother(b a).
+prove thereis a forall b: Man(a)*~Mother(b a).
+prove forall a thereis b: ~Man(a) + Grandmother(b a).
 #betterProve thereis a forall b: Man(a)*~Grandmother(b a).
 #betterProve forall a thereis b: ~Man(a) + GreatGrandmother(b a).
