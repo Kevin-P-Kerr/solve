@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
-import com.lang.val.Prop;
 import com.lang.val.Undefined;
 import com.lang.val.Value;
+import com.lang.val.prop.Prop;
 
 public class Environment {
 

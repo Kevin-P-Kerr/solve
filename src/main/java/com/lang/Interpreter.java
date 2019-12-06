@@ -12,7 +12,7 @@ import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.AxiomSet;
-import com.lang.val.Prop;
+import com.lang.val.prop.Prop;
 
 public class Interpreter {
 

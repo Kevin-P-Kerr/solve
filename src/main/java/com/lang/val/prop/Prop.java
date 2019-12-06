@@ -1,4 +1,4 @@
-package com.lang.val;
+package com.lang.val.prop;
 
 import java.util.List;
 import java.util.Set;
@@ -7,7 +7,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.ProofTrace;
 import com.lang.Tuple;
-import com.lang.val.Prop.Quantifier.QuantifierType;
+import com.lang.val.Value;
+import com.lang.val.prop.Prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
 

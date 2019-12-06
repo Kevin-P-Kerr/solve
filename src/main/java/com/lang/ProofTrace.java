@@ -3,7 +3,7 @@ package com.lang;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.lang.val.Prop;
+import com.lang.val.prop.Prop;
 
 public class ProofTrace {
 	public static interface Instruction {

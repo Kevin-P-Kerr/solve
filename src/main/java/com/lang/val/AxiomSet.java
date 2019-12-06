@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.ProofResult;
 import com.lang.ProofResult.PROOF_VALUE;
+import com.lang.val.prop.Prop;
 import com.lang.ProofTrace;
 
 public class AxiomSet {

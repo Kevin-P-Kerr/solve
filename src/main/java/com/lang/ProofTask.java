@@ -3,7 +3,7 @@ package com.lang;
 import java.util.concurrent.Callable;
 
 import com.lang.val.AxiomSet;
-import com.lang.val.Prop;
+import com.lang.val.prop.Prop;
 
 public class ProofTask implements Callable<ProofResult> {
 
