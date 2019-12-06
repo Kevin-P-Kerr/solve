@@ -58,29 +58,6 @@ public class Interpreter {
 					}
 				} else if (t.getLit().equals("prove")) {
 					tokens.getNext(); // throw the "prove" away
-					int order = parseInt(tokens);
-					int resources = parseInt(tokens);
-
-					Prop p = ParseProp(tokens);
-					AxiomSet as = new AxiomSet(axioms);
-
-					System.out.println("attempting proof of " + p.toString());
-					if (as.contradicts(p, order, resources)) {
-						System.out.println("proven false");
-					} else {
-						Prop neg = p.negate();
-						System.out.println("negating:  " + neg.toString());
-
-						if (as.contradicts(neg, order, resources)) {
-
-							System.out.println("proven true");
-
-						} else {
-							System.out.println("cannot prove true or false given resources");
-						}
-					}
-				} else if (t.getLit().equals("betterProve")) {
-					tokens.getNext(); // throw the "prove" away
 					Prop p = ParseProp(tokens);
 					AxiomSet as1 = new AxiomSet(axioms);
 					AxiomSet as2 = new AxiomSet(axioms);

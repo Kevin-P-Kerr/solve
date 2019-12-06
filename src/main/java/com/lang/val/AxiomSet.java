@@ -30,12 +30,18 @@ public class AxiomSet {
 		for (Prop ax : a) {
 			conclusions.add(ax);
 		}
-		Prop ax = a.get(0);
-		for (int i = 1, ii = a.size(); i < ii; i++) {
-			ax = ax.multiply(a.get(i));
+		this.conclusions = conclusions;
+	}
+
+	private void initColligated() {
+		if (colligatedConclusions.size() > 0) {
+			return;
+		}
+		Prop ax = baseAxioms.get(0);
+		for (int i = 1, ii = baseAxioms.size(); i < ii; i++) {
+			ax = ax.multiply(baseAxioms.get(i));
 		}
 		colligatedConclusions.add(ax);
-		this.conclusions = conclusions;
 	}
 
 	private void generateColligated(int n) {
@@ -103,39 +109,6 @@ public class AxiomSet {
 		public int get() {
 			return i;
 		}
-	}
-
-	private boolean checkForContradictions(Prop p, IntWrapper limit) {
-		Set<Prop> ret = Sets.newHashSet();
-		if (ret.size() >= limit.get()) {
-			return false;
-		}
-		List<Prop> bases = p.transmitLastUniveral(limit.get());
-		ret.addAll(bases);
-		for (Prop x : bases) {
-			if (x.isContradiction()) {
-				return true;
-			}
-		}
-		limit.decrement(ret.size());
-		for (Prop b : bases) {
-			boolean iscontra = checkForContradictions(b, limit);
-			if (iscontra) {
-				return true;
-			}
-			if (ret.size() > limit.get()) {
-				break;
-			}
-		}
-		return false;
-
-	}
-
-	public boolean contradicts(Prop p, int order, int i) {
-		order--;
-		generateColligated(order);
-		Prop x = colligatedConclusions.get(order).multiply(p);
-		return checkForContradictions(x, new IntWrapper(i));
 	}
 
 	public ProofResult contradicts(Prop toBeProven, int order) {
