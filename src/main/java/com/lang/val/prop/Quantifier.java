@@ -12,7 +12,7 @@ public class Quantifier {
 	Quantifier.QuantifierType type;
 	String name;
 	int index;
-	final List<Integer> indicesForTransmission = Lists.newArrayList();
+	private final List<Integer> indicesForTransmission = Lists.newArrayList();
 
 	private Quantifier(Quantifier.QuantifierType t, String name, int index) {
 		this.type = t;
@@ -41,7 +41,14 @@ public class Quantifier {
 	}
 
 	public boolean canTransmitInto(Quantifier q) {
-		return type.equals(QuantifierType.FORALL) && indicesForTransmission.contains(q.index);
+		boolean contains = indicesForTransmission.contains(q.index);
+		if (contains) {
+			if (type.equals(QuantifierType.FORALL)) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -59,7 +66,7 @@ public class Quantifier {
 	public Quantifier copy() {
 		Quantifier q = new Quantifier(type, name, index);
 		for (Integer i : indicesForTransmission) {
-			q.indicesForTransmission.add(i);
+			q.addIndex(i);
 		}
 		return q;
 	}
@@ -80,9 +87,21 @@ public class Quantifier {
 		if (type == QuantifierType.THEREIS) {
 			return;
 		}
-		while (i-- >= 0) {
-			indicesForTransmission.add(i);
+		while (i >= 0) {
+			addIndex(i);
+			i--;
 		}
 
+	}
+
+	protected void addIndex(int i) {
+		if (type == QuantifierType.THEREIS) {
+			return;
+		}
+		indicesForTransmission.add(i);
+	}
+
+	protected void clearIndices() {
+		indicesForTransmission.clear();
 	}
 }

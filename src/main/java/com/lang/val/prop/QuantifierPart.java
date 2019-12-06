@@ -59,10 +59,10 @@ public class QuantifierPart {
 			for (Quantifier qq : quantifiers) {
 				boolean localForAll = qq.type == QuantifierType.FORALL;
 				if (isForall) {
-					q.indicesForTransmission.add(qq.index);
+					q.addIndex(qq.index);
 				}
 				if (localForAll) {
-					qq.indicesForTransmission.add(q.index);
+					qq.addIndex(q.index);
 				}
 			}
 		}
@@ -81,6 +81,7 @@ public class QuantifierPart {
 		for (Quantifier q : quantifiers) {
 			if (q.type == QuantifierType.FORALL) {
 				q.type = QuantifierType.THEREIS;
+				q.clearIndices();
 			} else {
 				q.type = QuantifierType.FORALL;
 			}
