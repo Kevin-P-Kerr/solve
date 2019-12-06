@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.lang.Tuple;
-import com.lang.val.prop.Prop.ConjunctProp;
 
 public class ConjunctProp {
 	final List<AtomicProp> atoms;

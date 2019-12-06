@@ -3,6 +3,7 @@ package com.lang.val.prop;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.lang.val.prop.Quantifier.QuantifierType;
 
 public class QuantifierPart {
 	List<Quantifier> quantifiers;

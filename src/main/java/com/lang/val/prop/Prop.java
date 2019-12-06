@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.lang.ProofTrace;
 import com.lang.Tuple;
 import com.lang.val.Value;
+import com.lang.val.prop.Quantifier.QuantifierType;
 
 public class Prop extends Value {
 

@@ -6,7 +6,6 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.Tuple;
-import com.lang.val.prop.Prop.BooleanPart;
 
 public class BooleanPart {
 	List<ConjunctProp> conjunctions;

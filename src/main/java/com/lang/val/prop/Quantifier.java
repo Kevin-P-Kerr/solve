@@ -3,7 +3,6 @@ package com.lang.val.prop;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.lang.val.prop.Prop.Quantifier.QuantifierType;
 
 public class Quantifier {
 	public enum QuantifierType {
