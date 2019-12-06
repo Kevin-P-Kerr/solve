@@ -3,8 +3,6 @@ package com.lang.val.prop;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.lang.ProofTrace;
-import com.lang.Tuple;
 import com.lang.val.Value;
 import com.lang.val.prop.Quantifier.QuantifierType;
 
@@ -193,33 +191,6 @@ public class Prop extends Value {
 
 	public boolean hasPotentialContradictions() {
 		return booleanPart.hasPotentialContradictions(quantifierPart);
-	}
-
-	// watch out, this mutates the object!
-	public void simplifyViaContradictions(ProofTrace trace) {
-		// pre-condition check--can we do this?
-		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
-			return;
-		}
-		Tuple<List<Integer>, List<Integer>> l = booleanPart.getFirstContradiction();
-		List<Integer> from = l.getLeft();
-		List<Integer> to = l.getRight();
-		for (int i = 0, ii = from.size(); i < ii; i++) {
-			int f = from.get(i);
-			int t = to.get(i);
-			Quantifier qq = quantifierPart.getQuantifier(t);
-			Quantifier old = quantifierPart.getQuantifier(f);
-			quantifierPart.removeQuantifier(f);
-			trace.replaceHeccity(t, f, qq.name, old.name);
-			booleanPart.replaceHeccity(t, f, qq.name);
-		}
-		trace.removeContradictions();
-		simplify();
-		booleanPart.removeContradictions();
-		if (!booleanPart.hasPotentialContradictions(quantifierPart)) {
-			return;
-		}
-		simplifyViaContradictions(trace);
 	}
 
 	public void removeQuantifier(int index) {
