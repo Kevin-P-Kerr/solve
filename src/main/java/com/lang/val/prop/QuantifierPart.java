@@ -79,9 +79,9 @@ public class QuantifierPart {
 		// forall a thereis b
 		// ~ exists a forall b
 		for (Quantifier q : quantifiers) {
+			q.clearIndices();
 			if (q.type == QuantifierType.FORALL) {
 				q.type = QuantifierType.THEREIS;
-				q.clearIndices();
 			} else {
 				q.type = QuantifierType.FORALL;
 			}

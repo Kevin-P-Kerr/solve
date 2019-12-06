@@ -41,14 +41,11 @@ public class Quantifier {
 	}
 
 	public boolean canTransmitInto(Quantifier q) {
-		boolean contains = indicesForTransmission.contains(q.index);
-		if (contains) {
-			if (type.equals(QuantifierType.FORALL)) {
-				return false;
-			}
-			return true;
-		}
-		return false;
+		return indicesForTransmission.contains(q.index);
+		/*
+		 * boolean contains = indicesForTransmission.contains(q.index); if (contains) { if
+		 * (type.equals(QuantifierType.THEREIS)) { return false; } return true; } return false;
+		 */
 	}
 
 	@Override

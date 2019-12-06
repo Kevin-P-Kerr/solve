@@ -172,6 +172,7 @@ public class Prop extends Value {
 
 		r.quantifierPart.negate();
 		r.booleanPart.negate();
+		r.init();
 		return r;
 	}
 
