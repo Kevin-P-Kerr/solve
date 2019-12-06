@@ -93,7 +93,7 @@ public class Prop extends Value {
 
 	private static boolean DEBUG = false;
 
-	static void d(Object o) {
+	protected static void d(Object o) {
 		if (DEBUG) {
 			System.err.println(o.toString());
 		}
@@ -128,7 +128,6 @@ public class Prop extends Value {
 		}
 		d("done");
 		return ret;
-
 	}
 
 	private void replaceQuantifier(int to, int from, String name) {
@@ -221,7 +220,6 @@ public class Prop extends Value {
 			return;
 		}
 		simplifyViaContradictions(trace);
-
 	}
 
 	public void removeQuantifier(int index) {
