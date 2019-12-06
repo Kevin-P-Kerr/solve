@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.lang.ProofResult;
 import com.lang.ProofResult.PROOF_VALUE;
+import com.lang.val.prop.ProofTrace;
 import com.lang.val.prop.Prop;
 
 public class AxiomSet {
@@ -90,7 +91,7 @@ public class AxiomSet {
 
 	}
 
-	private ProofResult findContradiction(List<Prop> props, int order) {
+	private ProofResult findContradiction(List<Prop> props, int order, ProofTrace pt) {
 		if (order < 0) {
 			ProofResult p = new ProofResult();
 			p.setProofValue(PROOF_VALUE.PF_UNPROVED);
@@ -115,13 +116,14 @@ public class AxiomSet {
 				}
 			}
 		}
-		return findContradiction(collect, order - 1);
+		return findContradiction(collect, order - 1, pt);
 	}
 
 	public ProofResult contradicts(Prop toBeProven, int order) {
 		List<Prop> l = Lists.newArrayList();
 		l.add(toBeProven);
-		return findContradiction(l, order);
+		ProofTrace pt = new ProofTrace(toBeProven);
+		return findContradiction(l, order, pt);
 	}
 
 }
