@@ -91,18 +91,18 @@ public class AxiomSet {
 
 	}
 
-	private ProofResult findContradiction(List<Prop> props, int order, ProofTrace pt) {
+	private ProofResult findContradiction(Prop toBeProven, int order, ProofTrace pt) {
+		ProofResult noProof = new ProofResult();
+		noProof.setProofValue(PROOF_VALUE.PF_UNPROVED);
 		if (order < 0) {
-			ProofResult p = new ProofResult();
-			p.setProofValue(PROOF_VALUE.PF_UNPROVED);
-			return p;
+			return noProof;
 		}
-		List<Prop> collect = Lists.newArrayList();
-		for (Prop p : props) {
+		while (order-- > 0) {
 			for (Prop axiom : baseAxioms) {
-				Prop test = p.multiply(axiom);
+				Prop test = toBeProven.multiply(axiom);
 				if (test.hasPotentialContradictions()) {
-					List<Prop> replacements = test.getIterations();
+					toBeProven = test;
+					List<Prop> replacements = toBeProven.getIterations();
 					// to, from
 					for (Prop rep : replacements) {
 						if (rep.isContradiction()) {
@@ -110,19 +110,18 @@ public class AxiomSet {
 							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
 							return found;
 						}
-						collect.add(rep);
 					}
 				}
 			}
 		}
-		return findContradiction(collect, order - 1, pt);
+		return noProof;
 	}
 
 	public ProofResult contradicts(Prop toBeProven, int order) {
 		List<Prop> l = Lists.newArrayList();
 		l.add(toBeProven);
 		ProofTrace pt = new ProofTrace(toBeProven);
-		return findContradiction(l, order, pt);
+		return findContradiction(toBeProven, order, pt);
 	}
 
 }
