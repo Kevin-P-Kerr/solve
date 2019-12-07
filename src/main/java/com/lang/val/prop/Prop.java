@@ -305,4 +305,14 @@ public class Prop extends Value {
 		c.removeContradictions();
 		return c;
 	}
+
+	public boolean hasContradictionsAtIndices(List<Integer> unresolved, Prop ax) {
+		for (Integer i : unresolved) {
+			ConjunctProp cp = booleanPart.conjunctions.get(i);
+			if (cp.couldContradictSimply(ax.booleanPart)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -154,4 +154,8 @@ public class AtomicProp {
 		fromToList = Lists.newArrayList();
 		return local;
 	}
+
+	public boolean couldSimplyContradict(AtomicProp atom) {
+		return atom.name.equals(name) && heccesities.size() == atom.heccesities.size() && atom.negate != negate;
+	}
 }

@@ -130,19 +130,32 @@ public class ConjunctProp {
 		return sb.toString();
 	}
 
-	public void replaceHecceities(int from, int to, String name) {
+	protected void replaceHecceities(int from, int to, String name) {
 		for (AtomicProp ap : atoms) {
 			ap.replaceHecceities(from, to, name);
 		}
 	}
 
-	public List<Tuple<Integer, Integer>> getFirstContradiction(QuantifierPart quantifierPart) {
+	protected List<Tuple<Integer, Integer>> getFirstContradiction(QuantifierPart quantifierPart) {
 		if (!hasPotentialContradictions(quantifierPart)) {
 			return null;
 		}
 		List<Tuple<Integer, Integer>> local = fromToL;
 		fromToL = null;
 		return local;
+	}
+
+	protected boolean couldContradictSimply(BooleanPart booleanPart) {
+		for (ConjunctProp cp : booleanPart.conjunctions) {
+			for (AtomicProp atom : atoms) {
+				for (AtomicProp a : cp.atoms) {
+					if (a.couldSimplyContradict(atom)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }
