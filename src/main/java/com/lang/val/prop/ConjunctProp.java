@@ -1,6 +1,7 @@
 package com.lang.val.prop;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.lang.Tuple;
@@ -147,6 +148,11 @@ public class ConjunctProp {
 		for (AtomicProp ap : atoms) {
 			ap.replaceHecceities(from, to, name);
 		}
+	}
+
+	public boolean hasPotentialContradictions(QuantifierPart quantifierPart, Map<Integer, Integer> fromToMap) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

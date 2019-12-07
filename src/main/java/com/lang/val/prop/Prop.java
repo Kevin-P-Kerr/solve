@@ -1,8 +1,11 @@
 package com.lang.val.prop;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.lang.Tuple;
 import com.lang.val.Value;
 import com.lang.val.prop.Quantifier.QuantifierType;
 
@@ -255,5 +258,20 @@ public class Prop extends Value {
 
 	public List<Prop> getIterations() {
 		return getIterations(this, Lists.newArrayList());
+	}
+
+	private List<Integer> nonContradictedIndices;
+
+	public List<Integer> getNonContradictedConjunctIndices() {
+		nonContradictedIndices = Lists.newArrayList();
+		Map<Integer, Integer> fromToMap = Maps.newHashMap();
+		for (int i = 0, ii = booleanPart.conjunctions.size(); i < ii; i++) {
+			ConjunctProp cj = booleanPart.conjunctions.get(i);
+			if (cj.hasPotentialContradictions(quantifierPart, fromToMap)) {
+				continue;
+			}
+			nonContradictedIndices.add(i);
+		}
+		return nonContradictedIndices;
 	}
 }
