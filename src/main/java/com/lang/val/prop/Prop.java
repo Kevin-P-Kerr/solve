@@ -279,31 +279,37 @@ public class Prop extends Value {
 		Map<Integer, Integer> fromToMap = Maps.newHashMap();
 		for (ConjunctProp c : booleanPart.conjunctions) {
 			List<Tuple<Integer, Integer>> fromToL = c.getFirstContradiction(quantifierPart);
+			if (fromToL == null) {
+				continue;
+			}
 			for (Tuple<Integer, Integer> fromTo : fromToL) {
 				Integer from = fromTo.getLeft();
 				Integer to = fromTo.getRight();
 				Integer n = fromToMap.get(from);
-				if (n != null || n != to) {
+				if (n != null && n != to) {
 					break;
 				}
 			}
 			for (Tuple<Integer, Integer> fromTo : fromToL) {
 				Integer from = fromTo.getLeft();
 				Integer to = fromTo.getRight();
-				Integer n = fromToMap.get(from);
 				fromToMap.put(from, to);
 			}
 		}
 		Prop c = copy();
 		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
-			Quantifier fromQ = quantifierPart.getQuantifier(e.getKey());
-			Quantifier toQ = quantifierPart.getQuantifier(e.getValue());
-			replaceHeccity(toQ, fromQ);
-			quantifierPart.removeQuantifier(fromQ);
+			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getKey());
+			Quantifier toQ = c.quantifierPart.getQuantifier(e.getValue());
+			c.replaceHeccity(toQ, fromQ);
+			c.quantifierPart.removeQuantifier(fromQ);
 		}
 		c.simplify();
 		c.removeContradictions();
+		if (c.hasPotentialContradictions()) {
+			return c.copy().produceFirstContradiction();
+		}
 		return c;
+
 	}
 
 	public boolean hasContradictionsAtIndices(List<Integer> unresolved, Prop ax) {

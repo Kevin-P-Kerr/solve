@@ -17,6 +17,7 @@ public class ConjunctProp {
 			for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 				AtomicProp aap = atoms.get(l);
 				if (ap.couldContradict(aap, quantifierPart)) {
+					fromToL = ap.getDiscoveredContradiction();
 					return true;
 				}
 			}
@@ -30,7 +31,6 @@ public class ConjunctProp {
 		for (AtomicProp ap : atoms) {
 			for (AtomicProp aap : ccp.atoms) {
 				if (ap.couldContradict(aap, quantifierPart)) {
-					fromToL = ap.getDiscoveredContradiction();
 					return true;
 				}
 			}
