@@ -45,6 +45,7 @@ public class AxiomSet {
 	}
 
 	private void generateColligated(int n) {
+		initColligated();
 		Prop x = colligatedConclusions.get(colligatedConclusions.size() - 1);
 		n = n - colligatedConclusions.size();
 		Prop premier = colligatedConclusions.get(0);
@@ -98,21 +99,7 @@ public class AxiomSet {
 			return noProof;
 		}
 		while (order-- > 0) {
-			for (Prop axiom : baseAxioms) {
-				Prop test = toBeProven.multiply(axiom);
-				if (test.hasPotentialContradictions()) {
-					toBeProven = test;
-					List<Prop> replacements = toBeProven.getIterations();
-					// to, from
-					for (Prop rep : replacements) {
-						if (rep.isContradiction()) {
-							ProofResult found = new ProofResult();
-							found.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
-							return found;
-						}
-					}
-				}
-			}
+
 		}
 		return noProof;
 	}
