@@ -1,9 +1,8 @@
 package com.lang.val.prop;
 
 import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
+import com.lang.Tuple;
 
 public class ConjunctProp {
 	final List<AtomicProp> atoms;
@@ -25,10 +24,13 @@ public class ConjunctProp {
 		return false;
 	}
 
+	private List<Tuple<Integer, Integer>> fromToL = null;
+
 	public boolean couldContradict(ConjunctProp ccp, QuantifierPart quantifierPart) {
 		for (AtomicProp ap : atoms) {
 			for (AtomicProp aap : ccp.atoms) {
 				if (ap.couldContradict(aap, quantifierPart)) {
+					fromToL = ap.getDiscoveredContradiction();
 					return true;
 				}
 			}
@@ -134,9 +136,13 @@ public class ConjunctProp {
 		}
 	}
 
-	public boolean hasPotentialContradictions(QuantifierPart quantifierPart, Map<Integer, Integer> fromToMap) {
-		// TODO Auto-generated method stub
-		return false;
+	public List<Tuple<Integer, Integer>> getFirstContradiction(QuantifierPart quantifierPart) {
+		if (!hasPotentialContradictions(quantifierPart)) {
+			return null;
+		}
+		List<Tuple<Integer, Integer>> local = fromToL;
+		fromToL = null;
+		return local;
 	}
 
 }

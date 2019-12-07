@@ -2,6 +2,7 @@ package com.lang.val.prop;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -264,14 +265,44 @@ public class Prop extends Value {
 
 	public List<Integer> getNonContradictedConjunctIndices() {
 		nonContradictedIndices = Lists.newArrayList();
-		Map<Integer, Integer> fromToMap = Maps.newHashMap();
 		for (int i = 0, ii = booleanPart.conjunctions.size(); i < ii; i++) {
 			ConjunctProp cj = booleanPart.conjunctions.get(i);
-			if (cj.hasPotentialContradictions(quantifierPart, fromToMap)) {
+			if (cj.hasPotentialContradictions(quantifierPart)) {
 				continue;
 			}
 			nonContradictedIndices.add(i);
 		}
 		return nonContradictedIndices;
+	}
+
+	public Prop produceFirstContradiction() {
+		Map<Integer, Integer> fromToMap = Maps.newHashMap();
+		for (ConjunctProp c : booleanPart.conjunctions) {
+			List<Tuple<Integer, Integer>> fromToL = c.getFirstContradiction(quantifierPart);
+			for (Tuple<Integer, Integer> fromTo : fromToL) {
+				Integer from = fromTo.getLeft();
+				Integer to = fromTo.getRight();
+				Integer n = fromToMap.get(from);
+				if (n != null || n != to) {
+					break;
+				}
+			}
+			for (Tuple<Integer, Integer> fromTo : fromToL) {
+				Integer from = fromTo.getLeft();
+				Integer to = fromTo.getRight();
+				Integer n = fromToMap.get(from);
+				fromToMap.put(from, to);
+			}
+		}
+		Prop c = copy();
+		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
+			Quantifier fromQ = quantifierPart.getQuantifier(e.getKey());
+			Quantifier toQ = quantifierPart.getQuantifier(e.getValue());
+			replaceHeccity(toQ, fromQ);
+			quantifierPart.removeQuantifier(fromQ);
+		}
+		c.simplify();
+		c.removeContradictions();
+		return c;
 	}
 }
