@@ -101,17 +101,20 @@ public class AxiomSet {
 		while (order-- > 0) {
 			List<Integer> unresolved = toBeProven.getNonContradictedConjunctIndices();
 			if (unresolved.isEmpty()) {
+				pt.removeContradictions();
 				Prop counter = toBeProven.produceFirstContradiction();
 				toBeProven = counter;
 				if (counter.isContradiction()) {
 					ProofResult pr = new ProofResult();
 					pr.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
+					pr.setProofTrace(pt);
 					return pr;
 				}
 			}
 			for (Prop ax : baseAxioms) {
 				if (toBeProven.hasContradictionsAtIndices(unresolved, ax)) {
 					toBeProven = toBeProven.multiply(ax);
+					pt.multiply(ax);
 					unresolved = toBeProven.getNonContradictedConjunctIndices();
 					if (unresolved.isEmpty()) {
 						order++;

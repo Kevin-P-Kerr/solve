@@ -58,11 +58,16 @@ public class ProofTrace {
 	}
 
 	public static class RemoveContradictionsInstruction implements Instruction {
+		private final ProofTrace pt;
+
+		public RemoveContradictionsInstruction(ProofTrace pt) {
+			this.pt = pt;
+		}
 
 		@Override
 		public void doInstruction(Prop p) {
 			p.simplify();
-			p.removeContradictions();
+			pt.base = p.produceFirstContradiction();
 		}
 
 		@Override
@@ -97,7 +102,7 @@ public class ProofTrace {
 	}
 
 	public void removeContradictions() {
-		instructions.add(new RemoveContradictionsInstruction());
+		instructions.add(new RemoveContradictionsInstruction(this));
 	}
 
 }
