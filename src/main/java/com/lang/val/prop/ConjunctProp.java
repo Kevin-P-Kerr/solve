@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.lang.Tuple;
 
 public class ConjunctProp {
 	final List<AtomicProp> atoms;
@@ -13,27 +12,12 @@ public class ConjunctProp {
 		this.atoms = atoms;
 	}
 
-	private int firstContradictionIndex = -1;
-
-	// must be called after hasPotentialContradictions()
-	protected Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
-		AtomicProp ap = atoms.get(firstContradictionIndex);
-		firstContradictionIndex = -1;
-		List<Integer> from = ap.fromIndices;
-		List<Integer> tol = ap.toIndices;
-		ap.fromIndices = Lists.newArrayList();
-		ap.toIndices = Lists.newArrayList();
-		return new Tuple<List<Integer>, List<Integer>>(from, tol);
-
-	}
-
 	public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
 		for (int i = 0, ii = atoms.size(); i < ii; i++) {
 			AtomicProp ap = atoms.get(i);
 			for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 				AtomicProp aap = atoms.get(l);
 				if (ap.couldContradict(aap, quantifierPart)) {
-					firstContradictionIndex = i;
 					return true;
 				}
 			}

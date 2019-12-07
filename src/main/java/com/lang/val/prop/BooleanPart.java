@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.lang.Tuple;
 
 public class BooleanPart {
 	List<ConjunctProp> conjunctions;
@@ -173,9 +172,4 @@ public class BooleanPart {
 		return false;
 	}
 
-	public Tuple<List<Integer>, List<Integer>> getFirstContradiction() {
-		ConjunctProp cp = conjunctions.get(firstContradictionIndex);
-		firstContradictionIndex = -1;
-		return cp.getFirstContradiction();
-	}
 }
