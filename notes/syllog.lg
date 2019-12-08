@@ -1,0 +1,23 @@
+forall a: A(a a)*~E(a a)*O(a a)*~I(a a).
+#forall a forall b : ~A(a b) + ~O(a b)*~E(a b).
+#forall a forall b: ~E(a b) + ~I(a b)*~A(a b).
+#forall a forall b: ~O(a b) + ~A(a b).
+#forall a forall b: ~I(a b) + ~E(a b).
+forall a forall b: ~E(a b) + E(b a).
+forall a forall b: ~I(a b) + I(b a).
+forall a forall b: ~A(a b) + I(b a).
+forall a forall b: A(a b)*~O(a b) + ~A(a b)*O(a b).
+forall a forall b: E(a b)*~I(a b) + ~E(a b)*I(a b).
+# barbara
+forall a forall b forall c: ~A(a b) + ~A(b c) + A(a c).
+# celarent 
+forall a forall b forall c: ~E(a b) + ~A(b c) + ~E(a c).
+# darii
+forall a forall b forall c: ~A(a b) + ~I(b c) + I(a c).
+# ferio
+forall a forall b forall c: ~E(a b) + ~I(b c) + O(a c).
+
+prove forall a forall b forall c: ~A(a b) + ~E(a c) + E(b c).
+prove forall a forall b forall c: ~A(a b) + ~A(b c) + O(a c).
+prove forall a forall b forall c: A(a b) + ~A(b c) + O(a c).
+
