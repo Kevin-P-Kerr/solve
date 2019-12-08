@@ -101,8 +101,9 @@ public class AxiomSet {
 		while (order-- > 0) {
 			List<Integer> unresolved = toBeProven.getNonContradictedConjunctIndices();
 			if (unresolved.isEmpty()) {
-				pt.removeContradictions();
-				Prop counter = toBeProven.produceFirstContradiction();
+
+				Prop counter = toBeProven.produceFirstContradiction(pt);
+
 				toBeProven = counter;
 				if (counter.isContradiction()) {
 					ProofResult pr = new ProofResult();
@@ -111,7 +112,11 @@ public class AxiomSet {
 					return pr;
 				}
 			}
+			int numThereis = toBeProven.getNumberOfExistentials();
 			for (Prop ax : baseAxioms) {
+				if (numThereis > 8 && ax.containsExistential()) {
+					continue;
+				}
 				if (toBeProven.hasContradictionsAtIndices(unresolved, ax)) {
 					toBeProven = toBeProven.multiply(ax);
 					pt.multiply(ax);

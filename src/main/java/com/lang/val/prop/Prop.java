@@ -71,8 +71,8 @@ public class Prop extends Value {
 		a.quantifierPart.add(b.quantifierPart);
 		a.booleanPart.multiply(b.booleanPart);
 		a.resetHecNames();
-		a.simplify();
-		a.removeContradictions();
+		// a.simplify();
+		// a.removeContradictions();
 		return a;
 	}
 
@@ -275,7 +275,7 @@ public class Prop extends Value {
 		return nonContradictedIndices;
 	}
 
-	public Prop produceFirstContradiction() {
+	public Prop produceFirstContradiction(ProofTrace pt) {
 		Map<Integer, Integer> fromToMap = Maps.newHashMap();
 		for (ConjunctProp c : booleanPart.conjunctions) {
 			List<Tuple<Integer, Integer>> fromToL = c.getFirstContradiction(quantifierPart);
@@ -300,13 +300,15 @@ public class Prop extends Value {
 		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
 			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getKey());
 			Quantifier toQ = c.quantifierPart.getQuantifier(e.getValue());
+			pt.replaceHeccity(toQ.index, fromQ.index, toQ.name, fromQ.name);
 			c.replaceHeccity(toQ, fromQ);
 			c.quantifierPart.removeQuantifier(fromQ);
 		}
+		pt.removeContradictions();
 		c.simplify();
 		c.removeContradictions();
 		if (c.hasPotentialContradictions()) {
-			return c.copy().produceFirstContradiction();
+			return c.copy().produceFirstContradiction(pt);
 		}
 		return c;
 
@@ -316,6 +318,25 @@ public class Prop extends Value {
 		for (Integer i : unresolved) {
 			ConjunctProp cp = booleanPart.conjunctions.get(i);
 			if (cp.couldContradictSimply(ax.booleanPart)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int getNumberOfExistentials() {
+		int i = 0;
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.type == QuantifierType.THEREIS) {
+				i++;
+			}
+		}
+		return i;
+	}
+
+	public boolean containsExistential() {
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.type == QuantifierType.THEREIS) {
 				return true;
 			}
 		}

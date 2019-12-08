@@ -67,7 +67,7 @@ public class ProofTrace {
 		@Override
 		public void doInstruction(Prop p) {
 			p.simplify();
-			pt.base = p.produceFirstContradiction();
+			p.removeContradictions();
 		}
 
 		@Override
