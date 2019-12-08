@@ -158,4 +158,8 @@ public class AtomicProp {
 	public boolean couldSimplyContradict(AtomicProp atom) {
 		return atom.name.equals(name) && heccesities.size() == atom.heccesities.size() && atom.negate != negate;
 	}
+
+	public List<Heccity> getHeccesities() {
+		return heccesities;
+	}
 }

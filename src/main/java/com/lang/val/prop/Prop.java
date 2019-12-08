@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lang.Tuple;
+import com.lang.val.LambdaHeccity;
+import com.lang.val.LambdaHeccitySet;
 import com.lang.val.Value;
 import com.lang.val.prop.Quantifier.QuantifierType;
 
@@ -320,5 +322,16 @@ public class Prop extends Value {
 			}
 		}
 		return false;
+	}
+
+	public LambdaHeccitySet inferConcreteLambdaHeccities() {
+		List<LambdaHeccity> ret = Lists.newArrayList();
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.type == QuantifierType.THEREIS) {
+				ret.add(new LambdaHeccity(q));
+			}
+		}
+		LambdaHeccitySet lhs = new LambdaHeccitySet(ret);
+		booleanPart.registerLambdaRelations(lhs);
 	}
 }

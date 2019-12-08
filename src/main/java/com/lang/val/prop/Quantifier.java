@@ -101,4 +101,12 @@ public class Quantifier {
 	protected void clearIndices() {
 		indicesForTransmission.clear();
 	}
+
+	public QuantifierType getType() {
+		return type;
+	}
+
+	public int getIndex() {
+		return index;
+	}
 }
