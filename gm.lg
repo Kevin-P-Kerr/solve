@@ -1,7 +1,7 @@
 forall a thereis b: ~Man(a) + Mother(b a).
 forall a forall b forall c: ~Mother(a b)*~Grandmother(a c) + ~Mother(b c)*~Grandmother(a c) + Grandmother(a c)*Mother(a b)*Mother(a c).
 forall a forall b forall c: ~Grandmother(a b)*~GreatGrandmother(a c) + ~Mother(b c)*~GreatGrandmother(a c) + GreatGrandmother(a c)*Grandmother(a b)*Mother(b c).
-#prove forall a thereis b: ~Man(a) + Grandmother(b a).
-#prove forall a thereis b: ~Man(a) + GreatGrandmother(b a).
+prove forall a thereis b: ~Man(a) + Grandmother(b a).
+prove forall a thereis b: ~Man(a) + GreatGrandmother(b a).
 prove forall a forall b forall c forall d: ~Mother(a b) + ~Mother(b c) + ~Mother(c d) + Grandmother(a c)*Mother(c d).
 prove forall a forall b forall c forall d: ~Mother(a b) + ~Mother(b c) + ~Mother(c d) + GreatGrandmother(a d).

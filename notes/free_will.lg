@@ -11,7 +11,7 @@ thereis a forall b: Determines(a b).
 #forall a : ~FreeWill(a).
 # given that, it seems that there cannot be free will
 #prove 3 2000 thereis a: FreeWill(a).
-betterProve thereis a: FreeWill(a).
+prove thereis a: FreeWill(a).
 # which, being proven, we then add to our axioms
 #get 1 20
 # examining the conclusions, we see this
@@ -33,4 +33,4 @@ forall a forall b forall c: ~Wills(a b)*~WillsForSomeOther(a b c)*~WillsForItsel
 forall a forall b: ~Culpable(a b) + FreeWill(a)*Wills(a b).
 # but that implies that no one is morally culpable
 #prove 4 6000 thereis a thereis b: Culpable(a b).
-betterProve thereis a thereis b: Culpable(a b).
+prove thereis a thereis b: Culpable(a b).
