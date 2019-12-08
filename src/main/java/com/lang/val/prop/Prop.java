@@ -333,5 +333,18 @@ public class Prop extends Value {
 		}
 		LambdaHeccitySet lhs = new LambdaHeccitySet(ret);
 		booleanPart.registerLambdaRelations(lhs);
+		return lhs;
+	}
+
+	public LambdaHeccitySet inferAbstractLambdaHeccities() {
+		List<LambdaHeccity> ret = Lists.newArrayList();
+		for (Quantifier q : quantifierPart.quantifiers) {
+			if (q.type == QuantifierType.FORALL) {
+				ret.add(new LambdaHeccity(q));
+			}
+		}
+		LambdaHeccitySet lhs = new LambdaHeccitySet(ret);
+		booleanPart.registerLambdaRelations(lhs);
+		return lhs;
 	}
 }

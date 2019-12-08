@@ -11,12 +11,21 @@ public class LambdaHeccitySet {
 	List<LambdaHeccity> hecs;
 	List<ConjunctProp> conjunctions = Lists.newArrayList();
 
-	public LambdaHeccitySet(List<LambdaHeccity> l) {
+	public static enum Type {
+		ABSTRACT, CONCRETE;
+	}
+
+	private final Type type;
+
+	public LambdaHeccitySet(List<LambdaHeccity> l, Type type) {
 		this.hecs = l;
+		this.type = type;
 	}
 
 	public void registerConjunction(ConjunctProp cp) {
-		if (containsOnlyHecs(cp)) {
+		if (!containsOnlyHecs(cp) && type == Type.CONCRETE) {
+			return;
+		} else if (type == Type.ABSTRACT && !containsAtLeastOne(cp)) {
 			return;
 		}
 		conjunctions.add(cp.copy());
@@ -35,6 +44,17 @@ public class LambdaHeccitySet {
 			}
 		}
 		return true;
+	}
+
+	private boolean containsAtLeastOne(ConjunctProp cp) {
+		for (AtomicProp ap : cp.getAtoms()) {
+			for (Heccity h : ap.getHeccesities()) {
+				if (getHeccity(h.getIndex()) != null) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public LambdaHeccity getHeccity(int index) {
