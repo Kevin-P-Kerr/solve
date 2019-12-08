@@ -92,13 +92,13 @@ public class ProofTrace {
 	}
 
 	public void doTrace() {
-		System.out.println("starting with: " + base.toString());
+		System.err.println("starting with: " + base.toString());
 		int i = 1;
 		for (Instruction instruction : instructions) {
 			instruction.doInstruction(base);
-			System.out.println("(" + i++ + ")\t" + base.toString() + "," + instruction.getNote());
+			System.err.println("(" + i++ + ")\t" + base.toString() + "," + instruction.getNote());
 		}
-		System.out.println("fin");
+		System.err.println("fin");
 	}
 
 	public void removeContradictions() {
