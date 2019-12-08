@@ -3,7 +3,6 @@ package com.lang.val;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.lang.Permutator;
 import com.lang.ProofResult;
 import com.lang.val.prop.Prop;
 
@@ -21,8 +20,6 @@ public class LambdaSet {
 		LambdaHeccitySet hecs = p.inferConcreteLambdaHeccities();
 		LambdaHeccitySet toBeProven = p.inferAbstractLambdaHeccities();
 		List<LambdaHeccity> args = hecs.getHecs();
-		List<List<Integer>> perms = Permutator.getAllPermutations(args.size());
-		int order = 100;
 
 	}
 
