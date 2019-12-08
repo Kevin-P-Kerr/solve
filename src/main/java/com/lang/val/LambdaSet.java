@@ -18,9 +18,8 @@ public class LambdaSet {
 
 	public ProofResult infer(Prop p) {
 		LambdaHeccitySet hecs = p.inferConcreteLambdaHeccities();
-		LambdaHeccitySet toBeProven = p.inferAbstractLambdaHeccities();
+		LambdaHeccitySet toBeProven = p.inferConcreteLambdaHeccities();
 		List<LambdaHeccity> args = hecs.getHecs();
-
 	}
 
 }
