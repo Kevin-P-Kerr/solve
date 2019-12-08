@@ -98,6 +98,7 @@ public class AxiomSet {
 		if (order < 0) {
 			return noProof;
 		}
+		int currentAxiom = 0;
 		while (order-- > 0) {
 			List<Integer> unresolved = toBeProven.getNonContradictedConjunctIndices();
 			if (unresolved.isEmpty()) {
@@ -110,10 +111,16 @@ public class AxiomSet {
 					pr.setProofValue(PROOF_VALUE.PF_PROVED_FALSE);
 					pr.setProofTrace(pt);
 					return pr;
+				} else {
+					unresolved = toBeProven.getNonContradictedConjunctIndices();
 				}
 			}
 			int numThereis = toBeProven.getNumberOfExistentials();
-			for (Prop ax : baseAxioms) {
+			if (currentAxiom == baseAxioms.size()) {
+				currentAxiom = 0;
+			}
+			for (int ii = baseAxioms.size(); currentAxiom < ii; currentAxiom++) {
+				Prop ax = baseAxioms.get(currentAxiom);
 				if (numThereis > 8 && ax.containsExistential()) {
 					continue;
 				}
@@ -122,6 +129,7 @@ public class AxiomSet {
 					pt.multiply(ax);
 					unresolved = toBeProven.getNonContradictedConjunctIndices();
 					if (unresolved.isEmpty()) {
+						currentAxiom++;
 						order++;
 						break;
 					}
