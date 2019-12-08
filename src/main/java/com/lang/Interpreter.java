@@ -12,7 +12,6 @@ import com.lang.parse.Tokenizer.Token;
 import com.lang.parse.Tokenizer.TokenStream;
 import com.lang.parse.Tokenizer.Token.TokenType;
 import com.lang.val.AxiomSet;
-import com.lang.val.LambdaSet;
 import com.lang.val.prop.AtomicProp;
 import com.lang.val.prop.BooleanPart;
 import com.lang.val.prop.ConjunctProp;
@@ -118,12 +117,6 @@ public class Interpreter {
 							proofTrace.doTrace();
 						}
 					}
-				} else if (t.getLit().equals("gameproof")) {
-					tokens.getNext(); // throw the "prove" away
-					Prop p = ParseProp(tokens);
-
-					LambdaSet l = new LambdaSet(axioms);
-					ProofResult pt = l.infer(p);
 				} else if (t.getLit().equals("negate")) {
 					System.out.println("negating");
 					tokens.getNext();

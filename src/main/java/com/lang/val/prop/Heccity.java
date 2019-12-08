@@ -28,8 +28,4 @@ public class Heccity {
 		}
 		return false;
 	}
-
-	public int getIndex() {
-		return index;
-	}
 }

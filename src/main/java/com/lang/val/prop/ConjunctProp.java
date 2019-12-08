@@ -158,8 +158,4 @@ public class ConjunctProp {
 		return false;
 	}
 
-	public List<AtomicProp> getAtoms() {
-		return atoms;
-	}
-
 }

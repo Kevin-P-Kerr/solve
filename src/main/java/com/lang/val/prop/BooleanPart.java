@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.lang.val.LambdaHeccitySet;
 
 public class BooleanPart {
 	List<ConjunctProp> conjunctions;
@@ -159,22 +158,18 @@ public class BooleanPart {
 		return false;
 	}
 
+	private int firstContradictionIndex = -1;
+
 	public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
 		int i = 0;
 		for (ConjunctProp cp : conjunctions) {
 			if (cp.hasPotentialContradictions(quantifierPart)) {
+				this.firstContradictionIndex = i;
 				return true;
 			}
 			i++;
 		}
 		return false;
-	}
-
-	public void registerLambdaRelations(LambdaHeccitySet lhs) {
-		for (ConjunctProp cp : conjunctions) {
-			lhs.registerConjunction(cp);
-		}
-
 	}
 
 }
