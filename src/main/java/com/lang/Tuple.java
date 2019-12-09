@@ -31,4 +31,10 @@ public class Tuple<L, R> {
 		Tuple<?, ?> t = (Tuple<?, ?>) o;
 		return t.getLeft().equals(getLeft()) && t.getRight().equals(getRight());
 	}
+
+	public static <L, R> Tuple<L, R> create(L l, R r) {
+		Tuple<L, R> t = new Tuple<L, R>(l, r);
+		return t;
+
+	}
 }

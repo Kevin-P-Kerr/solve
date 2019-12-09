@@ -289,6 +289,7 @@ public class Prop extends Value {
 				if (n != null && n != to) {
 					break;
 				}
+
 			}
 			for (Tuple<Integer, Integer> fromTo : fromToL) {
 				Integer from = fromTo.getLeft();
@@ -297,9 +298,9 @@ public class Prop extends Value {
 			}
 		}
 		Prop c = copy();
-		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
-			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getKey());
-			Quantifier toQ = c.quantifierPart.getQuantifier(e.getValue());
+		for (Tuple<Integer, Integer> e : deriveReplacementPath(fromToMap)) {
+			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getLeft());
+			Quantifier toQ = c.quantifierPart.getQuantifier(e.getRight());
 			pt.replaceHeccity(toQ.index, fromQ.index, toQ.name, fromQ.name);
 			c.replaceHeccity(toQ, fromQ);
 			c.quantifierPart.removeQuantifier(fromQ);
@@ -312,6 +313,44 @@ public class Prop extends Value {
 		}
 		return c;
 
+	}
+
+	private static Map<Integer, List<Integer>> invert(Map<Integer, Integer> fromToMap) {
+		Map<Integer, List<Integer>> ret = Maps.newHashMap();
+
+		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
+			Integer k = e.getKey();
+			Integer v = e.getValue();
+			if (ret.containsKey(v)) {
+				ret.get(v).add(k);
+			} else {
+				List<Integer> r = Lists.newArrayList();
+				r.add(k);
+				ret.put(v, r);
+			}
+		}
+		return ret;
+	}
+
+	// assumes paths are not circular
+	private static List<Tuple<Integer, Integer>> deriveReplacementPath(Map<Integer, Integer> fromToMap) {
+		List<Tuple<Integer, Integer>> path = Lists.newArrayList();
+		// 3->2,10->3
+		// 5->3, 7->5
+		// 7->5, 5->3, 10->3, 3->2
+		List<Integer> keys = Lists.newArrayList();
+		Map<Integer, List<Integer>> inverted = invert(fromToMap);
+		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
+			if (keys.size() == fromToMap.keySet().size()) {
+				break;
+			}
+			Integer h;
+			if (fromToMap.containsValue(e.getKey())) {
+				List<Integer>
+			}
+
+		}
+		return path;
 	}
 
 	public boolean hasContradictionsAtIndices(List<Integer> unresolved, Prop ax) {

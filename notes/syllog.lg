@@ -17,7 +17,7 @@ forall a forall b forall c: ~A(a b) + ~I(b c) + I(a c).
 # ferio
 forall a forall b forall c: ~E(a b) + ~I(b c) + O(a c).
 
-prove forall a forall b forall c: ~A(a b) + ~E(a c) + E(b c).
+#prove forall a forall b forall c: ~A(a b) + ~E(a c) + E(b c).
 prove forall a forall b forall c: ~A(a b) + ~A(b c) + O(a c).
-prove forall a forall b forall c: A(a b) + ~A(b c) + O(a c).
+#prove forall a forall b forall c: A(a b) + ~A(b c) + ~O(a c).
 
