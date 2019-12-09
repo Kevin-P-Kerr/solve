@@ -147,6 +147,24 @@ public class AtomicProp {
 	}
 
 	protected boolean couldSimplyContradict(AtomicProp atom) {
-		return atom.name.equals(name) && heccesities.size() == atom.heccesities.size() && atom.negate != negate;
+		boolean basic = atom.name.equals(name) && heccesities.size() == atom.heccesities.size()
+				&& atom.negate != negate;
+		if (!basic) {
+			return false;
+		}
+		Map<Integer, Integer> pattern = Maps.newHashMap();
+		for (int i = 0, ii = heccesities.size(); i < ii; i++) {
+			Heccity h = heccesities.get(i);
+			Heccity hh = atom.heccesities.get(i);
+			Integer x = pattern.get(h.index);
+			if (x == null) {
+				pattern.put(h.index, hh.index);
+			} else {
+				if (x != hh.index) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }
