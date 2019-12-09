@@ -1,11 +1,7 @@
 package com.lang.val.prop;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.lang.Tuple;
 import com.lang.val.Value;
 import com.lang.val.prop.Quantifier.QuantifierType;
@@ -283,7 +279,7 @@ public class Prop extends Value {
 			c.quantifierPart.removeQuantifier(fromQ);
 		}
 		pt.removeContradictions();
-		c.simplify();
+
 		c.removeContradictions();
 		if (c.hasPotentialContradictions()) {
 			return c.produceContradictions(pt);
@@ -294,33 +290,6 @@ public class Prop extends Value {
 
 	private List<Tuple<Integer, Integer>> getFirstContradictionsIndices() {
 		return booleanPart.getFirstContradiction(quantifierPart);
-	}
-
-	private static Integer getHead(Integer k, Map<Integer, Integer> fromToMap) {
-		Integer x = fromToMap.get(k);
-		Integer ret = x;
-		while (x != null) {
-			ret = x;
-			x = fromToMap.get(x);
-		}
-		return ret;
-	}
-
-	private static Map<Integer, List<Integer>> invert(Map<Integer, Integer> fromToMap) {
-		Map<Integer, List<Integer>> ret = Maps.newHashMap();
-
-		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
-			Integer k = e.getKey();
-			Integer v = e.getValue();
-			if (ret.containsKey(v)) {
-				ret.get(v).add(k);
-			} else {
-				List<Integer> r = Lists.newArrayList();
-				r.add(k);
-				ret.put(v, r);
-			}
-		}
-		return ret;
 	}
 
 	public boolean hasContradictionsAtIndices(List<Integer> unresolved, Prop ax) {
