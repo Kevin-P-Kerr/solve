@@ -315,6 +315,16 @@ public class Prop extends Value {
 
 	}
 
+	private static Integer getHead(Integer k, Map<Integer, Integer> fromToMap) {
+		Integer x = fromToMap.get(k);
+		Integer ret = x;
+		while (x != null) {
+			ret = x;
+			x = fromToMap.get(x);
+		}
+		return ret;
+	}
+
 	private static Map<Integer, List<Integer>> invert(Map<Integer, Integer> fromToMap) {
 		Map<Integer, List<Integer>> ret = Maps.newHashMap();
 
@@ -344,10 +354,24 @@ public class Prop extends Value {
 			if (keys.size() == fromToMap.keySet().size()) {
 				break;
 			}
-			Integer h;
-			if (fromToMap.containsValue(e.getKey())) {
+			Integer key = e.getKey();
+			if (fromToMap.containsValue(key)) {
 				List<Integer> l = inverted.get(e.getValue());
-
+				for (Integer k : l) {
+					Integer h = getHead(k, fromToMap);
+					while (h != null) {
+						Integer v = fromToMap.get(h);
+						if (v == null) {
+							break;
+						}
+						keys.add(h);
+						path.add(Tuple.create(h, v));
+						h = v;
+					}
+				}
+				if (keys.size() == fromToMap.keySet().size()) {
+					break;
+				}
 			}
 
 		}
