@@ -285,15 +285,6 @@ public class Prop extends Value {
 			for (Tuple<Integer, Integer> fromTo : fromToL) {
 				Integer from = fromTo.getLeft();
 				Integer to = fromTo.getRight();
-				Integer n = fromToMap.get(from);
-				if (n != null && n != to) {
-					break;
-				}
-
-			}
-			for (Tuple<Integer, Integer> fromTo : fromToL) {
-				Integer from = fromTo.getLeft();
-				Integer to = fromTo.getRight();
 				fromToMap.put(from, to);
 			}
 		}

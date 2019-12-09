@@ -2,8 +2,8 @@ package com.lang.val.prop;
 
 class UniqueString {
 	private int c = 0;
-	private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
-			"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z " };
+	private static String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
+			"q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
 	public String getString() {
 		int mod = alpha.length;
@@ -11,7 +11,7 @@ class UniqueString {
 		c++;
 		int digits = 1;
 		int m = mod;
-		while (m < i) {
+		while (m <= i) {
 			m = m * mod;
 			if (m > i) {
 				m = m / mod;
@@ -21,6 +21,7 @@ class UniqueString {
 			digits++;
 		}
 		String ret = "";
+
 		while (digits > 0) {
 			if (i > m) {
 				int index = i / m;

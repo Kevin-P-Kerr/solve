@@ -49,6 +49,7 @@ public class ProofTrace {
 		@Override
 		public void doInstruction(Prop p) {
 			pt.base = p.multiply(m);
+			pt.base.simplify();
 		}
 
 		@Override
