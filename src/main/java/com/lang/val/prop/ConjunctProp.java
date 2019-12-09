@@ -107,6 +107,11 @@ public class ConjunctProp {
 				return false;
 			}
 		}
+		for (AtomicProp atom : atoms) {
+			if (!cp.atoms.contains(atom)) {
+				return false;
+			}
+		}
 		return true;
 	}
 

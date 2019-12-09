@@ -6,8 +6,6 @@ forall a: A(a a)*~E(a a)*O(a a)*~I(a a).
 forall a forall b: ~E(a b) + E(b a).
 forall a forall b: ~I(a b) + I(b a).
 forall a forall b: ~A(a b) + I(b a).
-forall a forall b: A(a b)*~O(a b) + ~A(a b)*O(a b).
-forall a forall b: E(a b)*~I(a b) + ~E(a b)*I(a b).
 # barbara
 forall a forall b forall c: ~A(a b) + ~A(b c) + A(a c).
 # celarent 
@@ -19,6 +17,15 @@ forall a forall b forall c: ~E(a b) + ~I(b c) + O(a c).
 
 #prove forall a forall b forall c: ~A(a b) + ~E(a c) + E(b c).
 #prove forall a forall b forall c: ~A(a b) + ~E(a c) + ~E(b c).
+#prove thereis a thereis b thereis c: A(a b)*A(b c)*~O(a c)
+# mult 1
+# d->a A(a 
 prove forall a forall b forall c: ~A(a b) + ~A(b c) + O(a c).
+# mult 1
+# d->a
+# b->a 
+# forall a forall b forall c: ~A(a c)*A(a a)*~E(a a)*~I(a a) + O(a c)*A(a a)*~E(a a)*~I(a a)*O(a a).
+# c->a
+# forall a forall b forall c: O(a a)*A(a a)*~E(a a)*~I(a a)*O(a a) 
 #prove forall a forall b forall c: A(a b) + ~A(b c) + ~O(a c).
 
