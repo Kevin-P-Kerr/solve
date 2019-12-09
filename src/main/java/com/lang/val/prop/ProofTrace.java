@@ -58,6 +58,25 @@ public class ProofTrace {
 		}
 	}
 
+	public static class CopyInstruction implements Instruction {
+
+		private final ProofTrace pt;
+
+		public CopyInstruction(ProofTrace pt) {
+			this.pt = pt;
+		}
+
+		@Override
+		public void doInstruction(Prop p) {
+			pt.base = pt.base.copy();
+		}
+
+		@Override
+		public String getNote() {
+			return "(copy) : ";
+		}
+	}
+
 	public static class RemoveContradictionsInstruction implements Instruction {
 		private final ProofTrace pt;
 
@@ -67,7 +86,6 @@ public class ProofTrace {
 
 		@Override
 		public void doInstruction(Prop p) {
-			p.simplify();
 			p.removeContradictions();
 		}
 
@@ -104,6 +122,11 @@ public class ProofTrace {
 
 	public void removeContradictions() {
 		instructions.add(new RemoveContradictionsInstruction(this));
+	}
+
+	public void copy() {
+		instructions.add(new CopyInstruction(this));
+
 	}
 
 }

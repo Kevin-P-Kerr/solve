@@ -20,7 +20,7 @@ prove forall a forall b forall c: ~A(a b) + ~E(a c) + E(b c).
 #prove thereis a thereis b thereis c: A(a b)*A(b c)*~O(a c)
 # mult 1
 # d->a A(a 
-prove forall a forall b forall c: ~A(a b) + ~A(b c) + O(a c).
+#prove forall a forall b forall c: ~A(a b) + ~A(b c) + O(a c).
 # mult 1
 # d->a
 # b->a 
