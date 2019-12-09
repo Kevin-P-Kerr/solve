@@ -103,7 +103,7 @@ public class AxiomSet {
 			List<Integer> unresolved = toBeProven.getNonContradictedConjunctIndices();
 			if (unresolved.isEmpty()) {
 
-				Prop counter = toBeProven.produceFirstContradiction(pt);
+				Prop counter = toBeProven.produceContradictions(pt);
 
 				toBeProven = counter;
 				if (counter.isContradiction()) {

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lang.Tuple;
 
 public class BooleanPart {
 	List<ConjunctProp> conjunctions;
@@ -147,29 +148,26 @@ public class BooleanPart {
 		}
 	}
 
-	public boolean couldContradict(BooleanPart booleanPart, QuantifierPart quantifierPart) {
+	public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
+
 		for (ConjunctProp cp : conjunctions) {
-			for (ConjunctProp ccp : booleanPart.conjunctions) {
-				if (cp.couldContradict(ccp, quantifierPart)) {
-					return true;
-				}
+			if (cp.hasPotentialContradictions(quantifierPart, Lists.newArrayList())) {
+				return true;
 			}
+
 		}
 		return false;
 	}
 
-	private int firstContradictionIndex = -1;
-
-	public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
-		int i = 0;
+	public List<Tuple<Integer, Integer>> getFirstContradiction(QuantifierPart quantifierPart) {
+		List<Tuple<Integer, Integer>> ret = Lists.newArrayList();
 		for (ConjunctProp cp : conjunctions) {
-			if (cp.hasPotentialContradictions(quantifierPart)) {
-				this.firstContradictionIndex = i;
-				return true;
+			if (cp.hasPotentialContradictions(quantifierPart, ret)) {
+				return ret;
 			}
-			i++;
+			ret.clear();
 		}
-		return false;
+		return ret;
 	}
 
 }

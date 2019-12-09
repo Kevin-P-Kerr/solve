@@ -19,9 +19,8 @@ public class AtomicProp {
 		this.heccesities = h;
 	}
 
-	List<Tuple<Integer, Integer>> fromToList = Lists.newArrayList();
-
-	public boolean couldContradict(AtomicProp aap, QuantifierPart quantifierPart) {
+	protected boolean couldContradict(AtomicProp aap, QuantifierPart quantifierPart,
+			List<Tuple<Integer, Integer>> fromToList) {
 		if (!(name.equals(aap.name) && negate != aap.negate)) {
 			return false;
 		}
@@ -60,11 +59,10 @@ public class AtomicProp {
 			Tuple<Integer, Integer> ft = new Tuple<Integer, Integer>(e.getKey(), e.getValue());
 			fromToList.add(ft);
 		}
-
 		return true;
 	}
 
-	public void transmitHecName(int index, String s) {
+	protected void transmitHecName(int index, String s) {
 		for (Heccity h : heccesities) {
 			if (h.index == index) {
 				h.name = s;
@@ -72,7 +70,7 @@ public class AtomicProp {
 		}
 	}
 
-	public void setUpIndex(String n, int i) {
+	protected void setUpIndex(String n, int i) {
 		for (Heccity h : heccesities) {
 			if (h.name.equals(n)) {
 				h.index = i;
@@ -80,12 +78,12 @@ public class AtomicProp {
 		}
 	}
 
-	public boolean contradicts(AtomicProp ap) {
+	protected boolean contradicts(AtomicProp ap) {
 		AtomicProp c = new AtomicProp(!ap.negate, ap.name, ap.heccesities);
 		return equals(c);
 	}
 
-	public void replaceHecceities(int from, int to, String name) {
+	protected void replaceHecceities(int from, int to, String name) {
 		for (Heccity h : heccesities) {
 			if (h.index == from) {
 				h.index = to;
@@ -122,7 +120,7 @@ public class AtomicProp {
 		return true;
 	}
 
-	public AtomicProp copy() {
+	protected AtomicProp copy() {
 		List<Heccity> hh = Lists.newArrayList();
 		for (Heccity h : heccesities) {
 			hh.add(h.copy());
@@ -148,14 +146,7 @@ public class AtomicProp {
 		return sb.toString();
 	}
 
-	// from/to
-	public List<Tuple<Integer, Integer>> getDiscoveredContradiction() {
-		List<Tuple<Integer, Integer>> local = fromToList;
-		fromToList = Lists.newArrayList();
-		return local;
-	}
-
-	public boolean couldSimplyContradict(AtomicProp atom) {
+	protected boolean couldSimplyContradict(AtomicProp atom) {
 		return atom.name.equals(name) && heccesities.size() == atom.heccesities.size() && atom.negate != negate;
 	}
 }

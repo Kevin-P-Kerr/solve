@@ -11,13 +11,12 @@ public class ConjunctProp {
 		this.atoms = atoms;
 	}
 
-	public boolean hasPotentialContradictions(QuantifierPart quantifierPart) {
+	public boolean hasPotentialContradictions(QuantifierPart quantifierPart, List<Tuple<Integer, Integer>> collect) {
 		for (int i = 0, ii = atoms.size(); i < ii; i++) {
 			AtomicProp ap = atoms.get(i);
 			for (int l = i + 1, ll = atoms.size(); l < ll; l++) {
 				AtomicProp aap = atoms.get(l);
-				if (ap.couldContradict(aap, quantifierPart)) {
-					fromToL = ap.getDiscoveredContradiction();
+				if (ap.couldContradict(aap, quantifierPart, collect)) {
 					return true;
 				}
 			}
@@ -25,12 +24,10 @@ public class ConjunctProp {
 		return false;
 	}
 
-	private List<Tuple<Integer, Integer>> fromToL = null;
-
-	public boolean couldContradict(ConjunctProp ccp, QuantifierPart quantifierPart) {
+	protected boolean couldContradict(ConjunctProp ccp, QuantifierPart quantifierPart) {
 		for (AtomicProp ap : atoms) {
 			for (AtomicProp aap : ccp.atoms) {
-				if (ap.couldContradict(aap, quantifierPart)) {
+				if (ap.couldContradict(aap, quantifierPart, Lists.newArrayList())) {
 					return true;
 				}
 			}
@@ -142,12 +139,11 @@ public class ConjunctProp {
 	}
 
 	protected List<Tuple<Integer, Integer>> getFirstContradiction(QuantifierPart quantifierPart) {
-		if (!hasPotentialContradictions(quantifierPart)) {
+		List<Tuple<Integer, Integer>> collect = Lists.newArrayList();
+		if (!hasPotentialContradictions(quantifierPart, collect)) {
 			return null;
 		}
-		List<Tuple<Integer, Integer>> local = fromToL;
-		fromToL = null;
-		return local;
+		return collect;
 	}
 
 	protected boolean couldContradictSimply(BooleanPart booleanPart) {

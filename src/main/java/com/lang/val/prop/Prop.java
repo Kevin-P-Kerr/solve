@@ -261,13 +261,11 @@ public class Prop extends Value {
 		return getIterations(this, Lists.newArrayList());
 	}
 
-	private List<Integer> nonContradictedIndices;
-
 	public List<Integer> getNonContradictedConjunctIndices() {
-		nonContradictedIndices = Lists.newArrayList();
+		List<Integer> nonContradictedIndices = Lists.newArrayList();
 		for (int i = 0, ii = booleanPart.conjunctions.size(); i < ii; i++) {
 			ConjunctProp cj = booleanPart.conjunctions.get(i);
-			if (cj.hasPotentialContradictions(quantifierPart)) {
+			if (cj.hasPotentialContradictions(quantifierPart, Lists.newArrayList())) {
 				continue;
 			}
 			nonContradictedIndices.add(i);
@@ -275,21 +273,9 @@ public class Prop extends Value {
 		return nonContradictedIndices;
 	}
 
-	public Prop produceFirstContradiction(ProofTrace pt) {
-		Map<Integer, Integer> fromToMap = Maps.newHashMap();
-		for (ConjunctProp c : booleanPart.conjunctions) {
-			List<Tuple<Integer, Integer>> fromToL = c.getFirstContradiction(quantifierPart);
-			if (fromToL == null) {
-				continue;
-			}
-			for (Tuple<Integer, Integer> fromTo : fromToL) {
-				Integer from = fromTo.getLeft();
-				Integer to = fromTo.getRight();
-				fromToMap.put(from, to);
-			}
-		}
+	public Prop produceContradictions(ProofTrace pt) {
 		Prop c = copy();
-		for (Tuple<Integer, Integer> e : deriveReplacementPath(fromToMap)) {
+		for (Tuple<Integer, Integer> e : c.getFirstContradictionsIndices()) {
 			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getLeft());
 			Quantifier toQ = c.quantifierPart.getQuantifier(e.getRight());
 			pt.replaceHeccity(toQ.index, fromQ.index, toQ.name, fromQ.name);
@@ -300,10 +286,14 @@ public class Prop extends Value {
 		c.simplify();
 		c.removeContradictions();
 		if (c.hasPotentialContradictions()) {
-			return c.copy().produceFirstContradiction(pt);
+			return c.produceContradictions(pt);
 		}
 		return c;
 
+	}
+
+	private List<Tuple<Integer, Integer>> getFirstContradictionsIndices() {
+		return booleanPart.getFirstContradiction(quantifierPart);
 	}
 
 	private static Integer getHead(Integer k, Map<Integer, Integer> fromToMap) {
@@ -331,44 +321,6 @@ public class Prop extends Value {
 			}
 		}
 		return ret;
-	}
-
-	// assumes paths are not circular
-	private static List<Tuple<Integer, Integer>> deriveReplacementPath(Map<Integer, Integer> fromToMap) {
-		List<Tuple<Integer, Integer>> path = Lists.newArrayList();
-		// 3->2,10->3
-		// 5->3, 7->5
-		// 7->5, 5->3, 10->3, 3->2
-		List<Integer> keys = Lists.newArrayList();
-		Map<Integer, List<Integer>> inverted = invert(fromToMap);
-		for (Entry<Integer, Integer> e : fromToMap.entrySet()) {
-			if (keys.size() == fromToMap.keySet().size()) {
-				break;
-			}
-			Integer key = e.getKey();
-			if (fromToMap.containsValue(key)) {
-				List<Integer> l = inverted.get(e.getValue());
-				for (Integer k : l) {
-					Integer h = getHead(k, fromToMap);
-					while (h != null) {
-						Integer v = fromToMap.get(h);
-						if (v == null) {
-							break;
-						}
-						keys.add(h);
-						path.add(Tuple.create(h, v));
-						h = v;
-					}
-				}
-
-			} else {
-				path.add(Tuple.create(e.getKey(), e.getValue()));
-			}
-			if (keys.size() == fromToMap.keySet().size()) {
-				break;
-			}
-		}
-		return path;
 	}
 
 	public boolean hasContradictionsAtIndices(List<Integer> unresolved, Prop ax) {
