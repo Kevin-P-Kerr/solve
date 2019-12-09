@@ -369,11 +369,13 @@ public class Prop extends Value {
 						h = v;
 					}
 				}
-				if (keys.size() == fromToMap.keySet().size()) {
-					break;
-				}
-			}
 
+			} else {
+				path.add(Tuple.create(e.getKey(), e.getValue()));
+			}
+			if (keys.size() == fromToMap.keySet().size()) {
+				break;
+			}
 		}
 		return path;
 	}
