@@ -271,6 +271,7 @@ public class Prop extends Value {
 
 	public Prop produceContradictions(ProofTrace pt) {
 		Prop c = copy();
+		pt.copy();
 		for (Tuple<Integer, Integer> e : c.getFirstContradictionsIndices()) {
 			Quantifier fromQ = c.quantifierPart.getQuantifier(e.getLeft());
 			Quantifier toQ = c.quantifierPart.getQuantifier(e.getRight());
@@ -279,7 +280,6 @@ public class Prop extends Value {
 			c.quantifierPart.removeQuantifier(fromQ);
 		}
 		pt.removeContradictions();
-
 		c.removeContradictions();
 		if (c.hasPotentialContradictions()) {
 			return c.produceContradictions(pt);
