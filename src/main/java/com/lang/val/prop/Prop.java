@@ -346,7 +346,8 @@ public class Prop extends Value {
 			}
 			Integer h;
 			if (fromToMap.containsValue(e.getKey())) {
-				List<Integer>
+				List<Integer> l = inverted.get(e.getValue());
+
 			}
 
 		}
