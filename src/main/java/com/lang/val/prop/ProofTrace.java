@@ -111,11 +111,11 @@ public class ProofTrace {
 	}
 
 	public void doTrace() {
-		System.err.println("starting with: " + base.toString());
+		System.out.println("starting with: " + base.toString());
 		int i = 1;
 		for (Instruction instruction : instructions) {
 			instruction.doInstruction(base);
-			System.err.println("(" + i++ + ")\t" + base.toString() + "," + instruction.getNote());
+			System.out.println("(" + i++ + ")\t" + base.toString() + "," + instruction.getNote());
 		}
 		System.err.println("fin");
 	}
